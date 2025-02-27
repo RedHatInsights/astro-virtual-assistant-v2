@@ -7,7 +7,7 @@ objects:
 - apiVersion: cloud.redhat.com/v1alpha1
   kind: ClowdApp
   metadata:
-    name: virtual-assistant
+    name: virtual-assistant-v2
   spec:
     envName: ${ENV_NAME}
     optionalDependencies:
