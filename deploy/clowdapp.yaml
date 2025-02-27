@@ -74,8 +74,6 @@ objects:
                 key: api.key
           - name: WATSON_ENV_ID
             value: ${WATSON_ENV_ID}
-          - name: WATSON_ENV_VERSION
-            value: ${WATSON_ENV_VERSION}
         resources:
           limits:
             cpu: 250m
@@ -148,9 +146,6 @@ parameters:
 - description: Watson environment id to use.
   name: WATSON_ENV_ID
   required: true
-- description: Version of the watson environment
-  name: WATSON_ENV_VERSION
-  value: "2024-08-25"
 - description: Determines Clowder deployment
   name: CLOWDER_ENABLED
   value: "true"
