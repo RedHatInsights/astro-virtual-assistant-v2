@@ -32,7 +32,7 @@ objects:
           failureThreshold: 3
           httpGet:
             path: /api/virtual-assistant/v2/health/status
-            port: 5000
+            port: 8000
             scheme: HTTP
           initialDelaySeconds: 240
           periodSeconds: 10
@@ -101,7 +101,7 @@ objects:
           failureThreshold: 3
           httpGet:
             path: /api/virtual-assistant-watson-extension/v2/health/status
-            port: 10000
+            port: 8000
             scheme: HTTP
           initialDelaySeconds: 10
           periodSeconds: 10
@@ -111,7 +111,7 @@ objects:
           failureThreshold: 3
           httpGet:
             path: /api/virtual-assistant-watson-extension/v2/health/status
-            port: 10000
+            port: 8000
             scheme: HTTP
           initialDelaySeconds: 10
           periodSeconds: 10
@@ -132,6 +132,10 @@ objects:
             value: ${SESSION_STORAGE}
           - name: SERVER_REQUEST_MAX_HEADER_SIZE
             value: ${SERVER_REQUEST_MAX_HEADER_SIZE}
+          - name: AUTHENTICATION_TYPE
+            value: ${WATSON_EXTENSION_AUTHENTICATION_TYPE}
+          - name: SA_CLIENT_ID
+            value: ${WATSON_EXTENSION_SA_CLIENT_ID}
         resources:
           limits:
             cpu: 250m
@@ -179,6 +183,11 @@ parameters:
 - description: Server's max allowed header size
   name: SERVER_REQUEST_MAX_HEADER_SIZE
   value: "20000"
+- description: Watson extension authentication type
+  name: WATSON_EXTENSION_AUTHENTICATION_TYPE
+  required: true
+- description: Watson extension authentication client id for Service account
+  name: WATSON_EXTENSION_SA_CLIENT_ID
 - name: ENVIRONMENT_NAME
   description: The name of the environment. Needs to be either stage or prod
   value: "prod"
