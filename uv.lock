@@ -1,5 +1,4 @@
 version = 1
-revision = 1
 requires-python = ">=3.12"
 
 [manifest]
@@ -282,15 +281,19 @@ version = "0.1.0"
 source = { editable = "libs/common" }
 dependencies = [
     { name = "app-common-python" },
+    { name = "boto3" },
     { name = "python-decouple" },
     { name = "redis" },
+    { name = "watchtower" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "app-common-python", specifier = ">=0.2.7" },
+    { name = "boto3", specifier = ">=1.36.19" },
     { name = "python-decouple", specifier = ">=3.8" },
     { name = "redis", specifier = ">=5.2.1" },
+    { name = "watchtower", specifier = ">=3.3.1" },
 ]
 
 [[package]]
@@ -1095,21 +1098,17 @@ version = "0.1.0"
 source = { virtual = "services/virtual-assistant" }
 dependencies = [
     { name = "astro-virtual-assistant" },
-    { name = "boto3" },
     { name = "common" },
     { name = "ibm-cloud-sdk-core" },
     { name = "ibm-watson" },
-    { name = "watchtower" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "astro-virtual-assistant", virtual = "." },
-    { name = "boto3", specifier = ">=1.36.19" },
     { name = "common", editable = "libs/common" },
     { name = "ibm-cloud-sdk-core", specifier = ">=3.22.1" },
     { name = "ibm-watson", specifier = ">=9.0.0" },
-    { name = "watchtower", specifier = ">=3.3.1" },
 ]
 
 [[package]]

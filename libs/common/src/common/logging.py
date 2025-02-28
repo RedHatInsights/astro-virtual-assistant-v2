@@ -42,6 +42,7 @@ def _build_cloudwatch_logger() -> None:
         log_group_name=app.logging_cloudwatch_log_group,
         log_stream_name=app.logging_cloudwatch_log_stream,
         create_log_group=app.logging_cloudwatch_create_log_group,
+        level=app.log_level,
     )
 
     cw_handler.setFormatter(LogstashFormatterV1())
@@ -49,4 +50,4 @@ def _build_cloudwatch_logger() -> None:
 
 
 def _build_default_logger() -> None:
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=app.log_level)
