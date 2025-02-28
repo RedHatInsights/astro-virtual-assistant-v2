@@ -27,7 +27,6 @@ objects:
         image: ${API_IMAGE_NAME}:${IMAGE_TAG}
         command:
           - hypercorn
-          - --max-header-field-size ${SERVER_REQUEST_MAX_HEADER_SIZE}
           - run:app
         livenessProbe:
           failureThreshold: 3
@@ -97,7 +96,6 @@ objects:
         image: ${WATSON_EXTENSION_IMAGE_NAME}:${IMAGE_TAG}
         command:
           - hypercorn
-          - --max-header-field-size ${SERVER_REQUEST_MAX_HEADER_SIZE}
           - run:app
         livenessProbe:
           failureThreshold: 3
