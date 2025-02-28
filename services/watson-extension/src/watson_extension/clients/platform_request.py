@@ -2,7 +2,6 @@ import abc
 from typing import Optional
 
 import injector
-import jwt
 
 import aiohttp
 from aiohttp import ClientResponse
@@ -136,6 +135,8 @@ class DevPlatformRequest(AbstractPlatformRequest):
 
     @staticmethod
     def verify_token(token: str):
+        import jwt
+
         jwt.decode(
             token,
             options={"verify_signature": False, "verify_exp": True, "verify_nbf": True},
@@ -149,6 +150,8 @@ class DevPlatformRequest(AbstractPlatformRequest):
         user_identity: Optional[str] = None,
         **kwargs,
     ) -> ClientResponse:
+        import jwt
+
         if self._dev_token is not None:
             try:
                 self.verify_token(self._dev_token)
