@@ -22,8 +22,6 @@ session_storage = config(
 if session_storage == "redis":
     redis_hostname = config("REDIS_HOSTNAME")
     redis_port = config("REDIS_PORT")
-    redis_username = config("REDIS_USERNAME")
-    redis_password = config("REDIS_PASSWORD")
 
 watson_api_url = config("WATSON_API_URL")
 watson_api_key = config("WATSON_API_KEY")

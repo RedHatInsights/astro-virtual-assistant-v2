@@ -22,8 +22,6 @@ def redis_session_storage_provider() -> RedisSessionStorage:
         StrictRedis(
             host=config.redis_hostname,
             port=config.redis_port,
-            username=config.redis_username,
-            password=config.redis_password,
         )
     )
 
