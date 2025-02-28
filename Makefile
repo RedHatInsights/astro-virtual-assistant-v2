@@ -17,7 +17,7 @@ include scripts/make/Makefile.lint.mk
 
 # install
 install:
-	uv sync
+	uv sync --all-packages
 
 # runs the assistant
 run:

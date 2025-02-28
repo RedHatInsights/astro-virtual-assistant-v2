@@ -25,6 +25,8 @@ def build_logger(logger_type: str) -> None:
 
 
 def _build_cloudwatch_logger() -> None:
+    _build_default_logger()
+
     from boto3.session import Session
     import watchtower
 
