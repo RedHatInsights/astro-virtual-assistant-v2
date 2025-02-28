@@ -25,6 +25,10 @@ objects:
           enabled: true
       podSpec:
         image: ${API_IMAGE_NAME}:${IMAGE_TAG}
+        command:
+          - hypercorn
+          - --max-header-field-size ${SERVER_REQUEST_MAX_HEADER_SIZE}
+          - run:app
         livenessProbe:
           failureThreshold: 3
           httpGet:
@@ -91,6 +95,10 @@ objects:
           enabled: true
       podSpec:
         image: ${WATSON_EXTENSION_IMAGE_NAME}:${IMAGE_TAG}
+        command:
+          - hypercorn
+          - --max-header-field-size ${SERVER_REQUEST_MAX_HEADER_SIZE}
+          - run:app
         livenessProbe:
           failureThreshold: 3
           httpGet:
@@ -124,6 +132,8 @@ objects:
             value: ${ENVIRONMENT_NAME}
           - name: SESSION_STORAGE
             value: ${SESSION_STORAGE}
+          - name: SERVER_REQUEST_MAX_HEADER_SIZE
+            value: ${SERVER_REQUEST_MAX_HEADER_SIZE}
         resources:
           limits:
             cpu: 250m
