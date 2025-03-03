@@ -24,6 +24,7 @@ def clear_app_config():
         "CLOWDER_ENABLED": "true",
         "SESSION_STORAGE": "redis",
         "ACG_CONFIG": path_to_resource("clowdapp-ephemeral.json"),
+        "CONSOLE_ASSISTANT": "watson",
         "WATSON_API_URL": "some-url",
         "WATSON_API_KEY": "my-key",
         "WATSON_ENV_ID": "my-env",

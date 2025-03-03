@@ -4,7 +4,9 @@ import injector
 import pytest
 
 from virtual_assistant.routes.talk import blueprint
-from virtual_assistant.watson import WatsonAssistant
+from virtual_assistant.assistant.watson import WatsonAssistant
+from virtual_assistant.assistant import Assistant
+from virtual_assistant.api_types import TalkResponse
 from .. import async_value
 
 from .common import app_with_blueprint
@@ -18,15 +20,14 @@ async def watson() -> MagicMock:
 @pytest.fixture
 async def test_client(watson) -> TestClientProtocol:
     def injector_binder(binder: injector.Binder):
-        binder.bind(WatsonAssistant, watson)
+        binder.bind(Assistant, watson)
 
     return app_with_blueprint(blueprint, injector_binder).test_client()
 
 
 async def test_talk(test_client, watson) -> None:
-    watson.create_session = MagicMock(return_value=async_value("1234"))
-    watson.send_watson_message = MagicMock(
-        return_value=async_value({"output": {"generic": []}})
+    watson.send_message = MagicMock(
+        return_value=async_value(TalkResponse(session_id="x", response=[]))
     )
     response = await test_client.post(
         "/talk",

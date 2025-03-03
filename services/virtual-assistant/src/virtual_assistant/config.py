@@ -23,12 +23,17 @@ if session_storage == "redis":
     redis_hostname = config("REDIS_HOSTNAME")
     redis_port = config("REDIS_PORT")
 
-watson_api_url = config("WATSON_API_URL")
-watson_api_key = config("WATSON_API_KEY")
-watson_env_id = config("WATSON_ENV_ID")
-watson_env_version = config(
-    "WATSON_ENV_VERSION", default="2024-08-25"
-)  # Needs updating if watson releases breaking change. See: https://cloud.ibm.com/apidocs/assistant-v2?code=python#versioning
+
+console_assistant = config(
+    "CONSOLE_ASSISTANT", default="echo", cast=Choices(["echo", "watson"])
+)
+if console_assistant == "watson":
+    watson_api_url = config("WATSON_API_URL")
+    watson_api_key = config("WATSON_API_KEY")
+    watson_env_id = config("WATSON_ENV_ID")
+    watson_env_version = config(
+        "WATSON_ENV_VERSION", default="2024-08-25"
+    )  # Needs updating if watson releases breaking change. See: https://cloud.ibm.com/apidocs/assistant-v2?code=python#versioning
 
 
 def log_config():

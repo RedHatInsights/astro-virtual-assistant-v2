@@ -44,7 +44,7 @@ QuartSchema(
     ),
     servers=[
         Server(
-            url=f"https://{{env}}{config.base_url}",
+            url="https://{env}",
             description="Virtual assistant watson extension",
             variables={
                 "env": ServerVariable(
@@ -56,6 +56,10 @@ QuartSchema(
                     description="Available environments",
                 )
             },
+        ),
+        Server(
+            url=f"http://127.0.0.1:{config.port}",
+            description="Local development server",
         ),
     ],
     security_schemes={

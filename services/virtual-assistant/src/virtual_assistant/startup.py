@@ -9,11 +9,12 @@ from common.session_storage.file import FileSessionStorage
 import virtual_assistant.config as config
 from virtual_assistant.routes import health
 from virtual_assistant.routes import talk
-from virtual_assistant.watson import (
+from virtual_assistant.assistant import Assistant
+from virtual_assistant.assistant.watson import (
     WatsonAssistant,
-    WatsonAssistantImpl,
     build_assistant,
 )
+from virtual_assistant.assistant.echo import EchoAssistant
 
 
 @injector.provider
@@ -27,14 +28,19 @@ def redis_session_storage_provider() -> RedisSessionStorage:
 
 
 @injector.provider
-def watson_provider() -> WatsonAssistant:
-    return WatsonAssistantImpl(
+def console_assistant_watson_provider() -> Assistant:
+    return WatsonAssistant(
         assistant=build_assistant(
             config.watson_api_key, config.watson_env_version, config.watson_api_url
         ),
         assistant_id=config.watson_env_id,  # Todo: Should we use a different id for the assistant?
         environment_id=config.watson_env_id,
     )
+
+
+@injector.provider
+def console_assistant_echo_provider() -> Assistant:
+    return EchoAssistant()
 
 
 def injector_from_config(binder: injector.Binder) -> None:
@@ -51,7 +57,18 @@ def injector_from_config(binder: injector.Binder) -> None:
             scope=injector.singleton,
         )
 
-    binder.bind(WatsonAssistant, to=watson_provider, scope=injector.singleton)
+    if config.console_assistant == "echo":
+        binder.bind(
+            Assistant, to=console_assistant_echo_provider, scope=injector.singleton
+        )
+    elif config.console_assistant == "watson":
+        binder.bind(
+            Assistant, to=console_assistant_watson_provider, scope=injector.singleton
+        )
+    else:
+        raise RuntimeError(
+            f"Invalid console assistant requested ons startup {config.console_assistant}"
+        )
 
 
 def wire_routes(app: Quart) -> None:
