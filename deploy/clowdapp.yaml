@@ -31,7 +31,7 @@ objects:
         livenessProbe:
           failureThreshold: 3
           httpGet:
-            path: /api/virtual-assistant/v2/health/status
+            path: /health/status
             port: 8000
             scheme: HTTP
           initialDelaySeconds: 240
@@ -41,7 +41,7 @@ objects:
         readinessProbe:
           failureThreshold: 3
           httpGet:
-            path: /api/virtual-assistant/v2/health/status
+            path: /health/status
             port: 8000
             scheme: HTTP
           initialDelaySeconds: 240
@@ -100,7 +100,7 @@ objects:
         livenessProbe:
           failureThreshold: 3
           httpGet:
-            path: /api/virtual-assistant-watson-extension/v2/health/status
+            path: /health/status
             port: 8000
             scheme: HTTP
           initialDelaySeconds: 10
@@ -110,7 +110,7 @@ objects:
         readinessProbe:
           failureThreshold: 3
           httpGet:
-            path: /api/virtual-assistant-watson-extension/v2/health/status
+            path: /health/status
             port: 8000
             scheme: HTTP
           initialDelaySeconds: 10
