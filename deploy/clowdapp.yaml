@@ -82,10 +82,10 @@ objects:
         resources:
           limits:
             cpu: 250m
-            memory: 120Mi
+            memory: 210Mi
           requests:
             cpu: 100m
-            memory: 80Mi
+            memory: 140Mi
     - name: watson-extension
       minReplicas: ${{MIN_REPLICAS}}
       webServices:
@@ -143,9 +143,9 @@ objects:
         resources:
           limits:
             cpu: 250m
-            memory: 120Mi
+            memory: 210Mi
           requests:
-            cpu: 100m
+            cpu: 110m
             memory: 80Mi
 parameters:
 - description: Minimum number of replicas required
