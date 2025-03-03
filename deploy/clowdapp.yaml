@@ -27,6 +27,8 @@ objects:
         image: ${API_IMAGE_NAME}:${IMAGE_TAG}
         command:
           - hypercorn
+          - -b
+          - 0.0.0.0
           - run:app
         livenessProbe:
           failureThreshold: 3
@@ -96,6 +98,8 @@ objects:
         image: ${WATSON_EXTENSION_IMAGE_NAME}:${IMAGE_TAG}
         command:
           - hypercorn
+          - -b
+          - 0.0.0.0
           - run:app
         livenessProbe:
           failureThreshold: 3
