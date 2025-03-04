@@ -50,7 +50,7 @@ class BaseResponse(BaseModel):
     type: ResponseType
     """One of the supported response types"""
 
-    channel: Optional[List[str]] = None
+    channels: Optional[List[str]] = None
     """Intended channel for the response. i.e. console, slack or None to allow in all"""
 
 

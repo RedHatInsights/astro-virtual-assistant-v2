@@ -11,6 +11,7 @@ from . import (
     ResponseOption,
     ResponseOptions,
     OptionsType,
+    ResponsePause,
 )
 from ibm_watson import AssistantV2
 from ibm_watson.assistant_v2 import MessageInput
@@ -39,17 +40,15 @@ def format_response(response: dict) -> AssistantResponse:
     assistant_response: AssistantResponse = []
 
     for generic in watson_generic:
+        entry = None
+
         if generic["response_type"] == "text":
             if generic["text"].startswith("/"):  # command message
                 params = generic["text"].split(" ")
-                assistant_response.append(
-                    ResponseCommand(command=params[0].strip("/"), args=params[1:])
-                )
+                entry = ResponseCommand(command=params[0].strip("/"), args=params[1:])
             else:
-                assistant_response.append(
-                    ResponseText(
-                        text=generic["text"],
-                    )
+                entry = ResponseText(
+                    text=generic["text"],
                 )
 
         if generic["response_type"] == "option":
@@ -69,12 +68,10 @@ def format_response(response: dict) -> AssistantResponse:
                 elif generic["preference"] == "button":
                     options_type = OptionsType.BUTTON
 
-            assistant_response.append(
-                ResponseOptions(
-                    text=generic.get("title", None),
-                    options=options,
-                    options_type=options_type,
-                )
+            entry = ResponseOptions(
+                text=generic.get("title", None),
+                options=options,
+                options_type=options_type,
             )
 
         if generic["response_type"] == "suggestion":
@@ -87,13 +84,22 @@ def format_response(response: dict) -> AssistantResponse:
                     )
                 )
 
-            assistant_response.append(
-                ResponseOptions(
-                    text=generic["title"],
-                    options=options,
-                    options_type=OptionsType.SUGGESTION,
-                )
+            entry = ResponseOptions(
+                text=generic.get("title", None),
+                options=options,
+                options_type=OptionsType.SUGGESTION,
             )
+        if generic["response_type"] == "pause":
+            entry = ResponsePause(time=generic["time"], is_typing=generic["typing"])
+
+        if entry is not None:
+            channels = generic.get("channels", None)
+            if channels is not None:
+                entry.channels = []
+                for channel in channels:
+                    entry.channels.append(channel["channel"])
+
+            assistant_response.append(entry)
 
     return assistant_response
 
