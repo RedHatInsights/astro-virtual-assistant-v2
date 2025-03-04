@@ -36,20 +36,20 @@ objects:
             path: /health/status
             port: 8000
             scheme: HTTP
-          initialDelaySeconds: 240
+          initialDelaySeconds: 20
           periodSeconds: 10
           successThreshold: 1
-          timeoutSeconds: 15
+          timeoutSeconds: 1
         readinessProbe:
           failureThreshold: 3
           httpGet:
             path: /health/status
             port: 8000
             scheme: HTTP
-          initialDelaySeconds: 240
+          initialDelaySeconds: 10
           periodSeconds: 10
           successThreshold: 1
-          timeoutSeconds: 15
+          timeoutSeconds: 1
         env:
           - name: CLOWDER_ENABLED
             value: ${CLOWDER_ENABLED}
@@ -67,16 +67,20 @@ objects:
             value: ${CONSOLEDOT_BASE_URL}
           - name: SESSION_STORAGE
             value: ${SESSION_STORAGE}
+          - name: CONSOLE_ASSISTANT
+            value: ${CONSOLE_ASSISTANT}
           - name: WATSON_API_URL
             valueFrom:
               secretKeyRef:
                 name: virtual-assistant-watson
                 key: api.url
+                optional: true
           - name: WATSON_API_KEY
             valueFrom:
               secretKeyRef:
                 name: virtual-assistant-watson
                 key: api.key
+                optional: true
           - name: WATSON_ENV_ID
             value: ${WATSON_ENV_ID}
         resources:
@@ -107,10 +111,10 @@ objects:
             path: /health/status
             port: 8000
             scheme: HTTP
-          initialDelaySeconds: 10
+          initialDelaySeconds: 20
           periodSeconds: 10
           successThreshold: 1
-          timeoutSeconds: 27
+          timeoutSeconds: 1
         readinessProbe:
           failureThreshold: 3
           httpGet:
@@ -120,7 +124,7 @@ objects:
           initialDelaySeconds: 10
           periodSeconds: 10
           successThreshold: 1
-          timeoutSeconds: 30
+          timeoutSeconds: 1
         env:
           - name: CLOWDER_ENABLED
             value: ${CLOWDER_ENABLED}
@@ -161,7 +165,6 @@ parameters:
   value: redis
 - description: Watson environment id to use.
   name: WATSON_ENV_ID
-  required: true
 - description: Determines Clowder deployment
   name: CLOWDER_ENABLED
   value: "true"
@@ -187,6 +190,9 @@ parameters:
 - description: Server's max allowed header size
   name: SERVER_REQUEST_MAX_HEADER_SIZE
   value: "20000"
+- description: Default assistant to use in the console
+  name: CONSOLE_ASSISTANT
+  required: true
 - description: Watson extension authentication type
   name: WATSON_EXTENSION_AUTHENTICATION_TYPE
   required: true
