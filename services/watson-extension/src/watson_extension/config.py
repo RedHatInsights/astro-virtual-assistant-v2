@@ -15,6 +15,9 @@ else:
 
 # Urls
 advisor_url = config("ENDPOINT__ADVISOR_BACKEND__API__URL", default=__platform_url)
+vulnerability_url = config(
+    "ENDPOINT__VULNERABILITY_ENGINE__MANAGER_SERVICE__URL", default=__platform_url
+)
 
 # Platform requests
 platform_request = config(
