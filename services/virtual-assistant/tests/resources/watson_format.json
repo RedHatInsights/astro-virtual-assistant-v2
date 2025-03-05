@@ -1,0 +1,88 @@
+{
+  "output": {
+    "generic": [
+      {
+        "response_type": "text",
+        "text": "/dostuff arg1 arg2 arg3"
+      },
+      {
+        "response_type": "text",
+        "text": "regular_text"
+      },
+      {
+        "response_type": "option",
+        "options": [
+          {
+            "label": "my option 1",
+            "value": {
+              "input": "fire!"
+            }
+          },
+          {
+            "label": "last resort",
+            "value": {
+              "input": "run"
+            }
+          }
+        ],
+        "preference": "button",
+        "title": "Choose one"
+      },
+      {
+        "response_type": "option",
+        "options": [
+          {
+            "label": "no pref",
+            "value": {
+              "input": "none"
+            }
+          }
+        ],
+        "preference": "dropdown"
+      },
+      {
+        "response_type": "option",
+        "options": [
+          {
+            "label": "no title",
+            "value": {
+              "input": "without it"
+            }
+          }
+        ]
+      },
+      {
+        "response_type": "suggestion",
+        "suggestions": [
+          {
+            "label": "maybe",
+            "value": {
+              "input": "suggest"
+            }
+          }
+        ],
+        "channels": [
+          {
+            "channel": "console"
+          }
+        ]
+      },
+      {
+        "response_type": "pause",
+        "time": "3000",
+        "typing": true,
+        "channels": [
+          {
+            "channel": "console"
+          },
+          {
+            "channel": "slack"
+          }
+        ]
+      },
+      {
+        "response_type": "not-supported"
+      }
+    ]
+  }
+}

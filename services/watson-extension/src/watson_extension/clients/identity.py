@@ -1,4 +1,5 @@
 import abc
+from werkzeug.exceptions import BadRequest
 
 import injector
 from common.session_storage import SessionStorage
@@ -15,7 +16,11 @@ class QuartUserIdentityProvider(AbstractUserIdentityProvider):
     async def get_user_identity(self):
         from quart import request
 
-        session_id = request.headers["x-rh-session-id"]
+        session_header_name = "x-rh-session-id"
+        if session_header_name not in request.headers:
+            raise BadRequest(f"Missing ${session_header_name}")
+
+        session_id = request.headers[session_header_name]
         return (await self.session_storage.get(session_id)).user_identity
 
 

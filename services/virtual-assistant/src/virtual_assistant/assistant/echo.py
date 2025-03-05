@@ -1,16 +1,19 @@
-from . import Assistant, AssistantResponse, AssistantInput
-from virtual_assistant.api_types import TalkResponse
+import uuid
+
+from . import Assistant, AssistantInput, AssistantOutput, ResponseText
 
 
 class EchoAssistant(Assistant):
-    async def send_message(
-        self, session_id: str, user_id: str, message: AssistantInput
-    ) -> AssistantResponse:
-        return TalkResponse(
-            session_id="echo-session",
+    async def create_session(self, user_id: str) -> str:
+        return uuid.uuid4().__str__()
+
+    async def send_message(self, message: AssistantInput) -> AssistantOutput:
+        return AssistantOutput(
+            session_id=message.session_id,
+            user_id=message.user_id,
             response=[
-                {
-                    "text": message["text"],
-                }
+                ResponseText(
+                    text=message.query.text,
+                ),
             ],
         )

@@ -27,19 +27,32 @@ def session_storage(redis):
 
 
 async def test_redis_session_storage_store(session_storage, redis):
-    await session_storage.put(Session(key="my-key", user_identity="my.identity"))
+    await session_storage.put(
+        Session(key="my-key", user_identity="my.identity", user_id="1234")
+    )
     raw = await redis.get("my-key")
-    assert raw == b'{"key": "my-key", "user_identity": "my.identity"}'
+    session = json.loads(raw)
+    assert session["key"] == "my-key"
+    assert session["user_identity"] == "my.identity"
+    assert session["user_id"] == "1234"
 
 
 async def test_redis_session_storage_retrieval(session_storage, redis):
     await redis.set(
-        "my-key", json.dumps({"key": "my-key", "user_identity": "my.identity"})
+        "my-key",
+        json.dumps(
+            {
+                "key": "my-key",
+                "user_identity": "my.identity",
+                "user_id": "1234",
+            }
+        ),
     )
     retrieved = await session_storage.get("my-key")
     assert type(retrieved) is Session
     assert retrieved.key == "my-key"
     assert retrieved.user_identity == "my.identity"
+    assert retrieved.user_id == "1234"
 
 
 async def test_redis_session_storage_retrieval_not_found(session_storage, redis):

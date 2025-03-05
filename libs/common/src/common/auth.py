@@ -27,9 +27,9 @@ def require_identity_header(func):
     return wrapper
 
 
-def get_org_id_from_identity(identity):
+def assistant_user_id(identity):
     decoded_identity = base64.b64decode(identity).decode("utf8")
     identity_json = json.loads(decoded_identity)
-    identity = identity_json.get("identity", {})
-    org_id = identity.get("org_id")
-    return org_id
+    user_id = identity_json.get("identity").get("user").get("user_id")
+    org_id = identity_json.get("identity").get("org_id")
+    return f"{org_id}/{user_id}"
