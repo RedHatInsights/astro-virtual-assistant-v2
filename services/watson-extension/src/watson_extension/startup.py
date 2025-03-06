@@ -69,6 +69,15 @@ def sa_authentication_provider() -> Authentication:
     return ServiceAccountAuthentication(config.sa_client_id)
 
 
+@injector.provider
+async def quart_user_identity_provider(
+    session_storage: injector.Inject[SessionStorage],
+) -> QuartUserIdentityProvider:
+    import quart
+
+    return QuartUserIdentityProvider(quart.request, session_storage)
+
+
 def injector_from_config(binder: injector.Binder) -> None:
     # Read configuration and assemble our dependencies
     if config.is_running_locally:
@@ -81,7 +90,7 @@ def injector_from_config(binder: injector.Binder) -> None:
         # This injector is per request - as we should extract the data for each request.
         binder.bind(
             AbstractUserIdentityProvider,
-            QuartUserIdentityProvider,
+            quart_user_identity_provider,
             scope=quart_injector.RequestScope,
         )
 

@@ -1,5 +1,3 @@
-from unittest.mock import MagicMock
-
 from common.session_storage import SessionStorage
 from common.session_storage.memory import MemorySessionStorage
 from quart.typing import TestClientProtocol
@@ -8,15 +6,9 @@ import pytest
 
 from virtual_assistant.assistant.echo import EchoAssistant
 from virtual_assistant.routes.talk import blueprint, TalkResponse
-from virtual_assistant.assistant.watson import WatsonAssistant
 from virtual_assistant.assistant import Assistant, ResponseType
 
 from .common import app_with_blueprint
-
-
-@pytest.fixture
-async def watson() -> MagicMock:
-    return MagicMock(WatsonAssistant)
 
 
 @pytest.fixture

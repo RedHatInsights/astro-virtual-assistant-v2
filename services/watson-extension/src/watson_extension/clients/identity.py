@@ -1,4 +1,6 @@
 import abc
+
+import quart
 from werkzeug.exceptions import BadRequest
 
 import injector
@@ -10,17 +12,18 @@ class AbstractUserIdentityProvider(abc.ABC):
 
 
 class QuartUserIdentityProvider(AbstractUserIdentityProvider):
-    def __init__(self, session_storage: injector.Inject[SessionStorage]):
+    def __init__(
+        self, request: quart.Request, session_storage: injector.Inject[SessionStorage]
+    ):
+        self.request = request
         self.session_storage = session_storage
 
     async def get_user_identity(self):
-        from quart import request
-
         session_header_name = "x-rh-session-id"
-        if session_header_name not in request.headers:
+        if session_header_name not in self.request.headers:
             raise BadRequest(f"Missing ${session_header_name}")
 
-        session_id = request.headers[session_header_name]
+        session_id = self.request.headers[session_header_name]
         return (await self.session_storage.get(session_id)).user_identity
 
 
