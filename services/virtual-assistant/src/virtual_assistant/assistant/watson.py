@@ -14,7 +14,12 @@ from . import (
     ResponsePause,
 )
 from ibm_watson import AssistantV2
-from ibm_watson.assistant_v2 import MessageInput
+from ibm_watson.assistant_v2 import (
+    MessageInput,
+    MessageContext,
+    MessageContextSkills,
+    MessageContextActionSkill,
+)
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 
@@ -132,6 +137,13 @@ class WatsonAssistant(Assistant):
             environment_id=self.environment_id,
             session_id=message.session_id,
             user_id=message.user_id,
+            context=MessageContext(
+                skills=MessageContextSkills(
+                    actions_skill=MessageContextActionSkill(
+                        skill_variables={"Draft": False}
+                    )
+                )
+            ),
             input=MessageInput(message_type="text", text=message.query.text),
         )
 
