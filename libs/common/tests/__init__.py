@@ -6,6 +6,7 @@ _base = pathlib.Path(__file__).parent.resolve().joinpath("resources")
 def path_to_resource(resource):
     return str(_base.joinpath(resource))
 
+
 def get_resource_contents(resource):
     path = path_to_resource(resource)
     buff = []
