@@ -2,12 +2,13 @@ import injector
 from pydantic import BaseModel
 
 from quart import Blueprint, render_template
-from quart_schema import validate_response, validate_querystring
+from quart_schema import validate_response, validate_querystring, document_headers
 
 from watson_extension.core.insights.advisor import (
     RecommendationCategory,
     AdvisorCore,
 )
+from watson_extension.routes import RHSessionIdHeader
 
 blueprint = Blueprint("advisor", __name__, url_prefix="/advisor")
 
@@ -23,6 +24,7 @@ class RecommendationsResponse(BaseModel):
 @blueprint.get("/recommendations")
 @validate_querystring(RecommendationsRequestQuery)
 @validate_response(RecommendationsResponse)
+@document_headers(RHSessionIdHeader)
 async def recommendations(
     query_args: RecommendationsRequestQuery,
     advisor_service: injector.Inject[AdvisorCore],

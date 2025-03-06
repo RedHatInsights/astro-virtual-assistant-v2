@@ -6,6 +6,7 @@ from typing import Optional
 @dataclass
 class Session:
     key: str
+    user_id: str
     user_identity: str
 
 
