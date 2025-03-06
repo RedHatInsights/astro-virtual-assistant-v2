@@ -1,4 +1,5 @@
 import abc
+from werkzeug.exceptions import InternalServerError
 from typing import Optional
 
 import injector
@@ -17,9 +18,6 @@ from aiohttp.hdrs import (
 
 
 class AbstractPlatformRequest(abc.ABC):
-    def __init__(self, session: injector.Inject[aiohttp.ClientSession]):
-        self.session = session
-
     @abc.abstractmethod
     async def request(
         self,
@@ -111,7 +109,8 @@ class DevPlatformRequest(AbstractPlatformRequest):
         refresh_token: str,
         refresh_token_url: str,
     ):
-        super().__init__(session)
+        super().__init__()
+        self.session = session
         self._refresh_token = refresh_token
         self._refresh_token_url = refresh_token_url
         self._dev_token: Optional[str] = None
@@ -127,8 +126,7 @@ class DevPlatformRequest(AbstractPlatformRequest):
         )
 
         if not result.ok:
-            raise "Unable to refresh dev token"
-
+            raise InternalServerError("Unable to refresh dev token")
         token = (await result.json())["access_token"]
         self.verify_token(token)
         self._dev_token = token
@@ -170,6 +168,9 @@ class DevPlatformRequest(AbstractPlatformRequest):
 
 
 class PlatformRequest(AbstractPlatformRequest):
+    def __init__(self, session: injector.Inject[aiohttp.ClientSession]):
+        self.session = session
+
     async def request(
         self,
         method: str,
