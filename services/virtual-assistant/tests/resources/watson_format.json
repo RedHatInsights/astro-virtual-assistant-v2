@@ -15,13 +15,17 @@
           {
             "label": "my option 1",
             "value": {
-              "input": "fire!"
+              "input": {
+                "text": "fire!"
+              }
             }
           },
           {
             "label": "last resort",
             "value": {
-              "input": "run"
+              "input": {
+                "text": "run"
+              }
             }
           }
         ],
@@ -34,7 +38,9 @@
           {
             "label": "no pref",
             "value": {
-              "input": "none"
+              "input": {
+                "text": "none"
+              }
             }
           }
         ],
@@ -46,7 +52,9 @@
           {
             "label": "no title",
             "value": {
-              "input": "without it"
+              "input": {
+                "text": "without it"
+              }
             }
           }
         ]
@@ -57,7 +65,9 @@
           {
             "label": "maybe",
             "value": {
-              "input": "suggest"
+              "input": {
+                "text": "suggest"
+              }
             }
           }
         ],
