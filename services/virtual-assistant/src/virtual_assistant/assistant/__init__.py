@@ -1,6 +1,6 @@
 import enum
 from abc import ABC, abstractmethod
-from typing import Optional, List, Union, Any
+from typing import Optional, List, Union, Any, Literal
 from pydantic import BaseModel
 
 
@@ -33,15 +33,29 @@ class ResponseType(enum.StrEnum):
     """Types of supported responses"""
 
     TEXT = "TEXT"
+    """Used for displaying text entries"""
+
     PAUSE = "PAUSE"
+    """Used for displaying a pause in the flow"""
+
     OPTIONS = "OPTIONS"
+    """Used for displaying a selection"""
+
     COMMAND = "COMMAND"
+    """Used to request the UI to execute a command"""
 
 
 class OptionsType(enum.StrEnum):
+    """Suggestion on how to render the options"""
+
     BUTTON = "BUTTON"
+    """Display as buttons"""
+
     DROPDOWN = "DROPDOWN"
+    """Display as a dropdown"""
+
     SUGGESTION = "SUGGESTION"
+    """Display as a suggestion - similar to a button but optional"""
 
 
 class BaseResponse(BaseModel):
@@ -57,16 +71,20 @@ class BaseResponse(BaseModel):
 class ResponseText(BaseResponse):
     """Regular text response to a question'"""
 
-    type: ResponseType = ResponseType.TEXT
+    type: Literal[ResponseType.TEXT] = ResponseType.TEXT
     text: str
+    """Text response from the assistant"""
 
 
 class ResponsePause(BaseResponse):
     """Injects a pause into the interaction to simulate processing"""
 
-    type: ResponseType = ResponseType.PAUSE
+    type: Literal[ResponseType.PAUSE] = ResponseType.PAUSE
     time: int
+    """How many ms to wait for"""
+
     is_typing: bool
+    """Should display `typing` animations"""
 
 
 class ResponseOption(BaseModel):
@@ -82,17 +100,25 @@ class ResponseOption(BaseModel):
 class ResponseOptions(BaseResponse):
     """Represents a selection the user has to make"""
 
-    type: ResponseType = ResponseType.OPTIONS
+    type: Literal[ResponseType.OPTIONS] = ResponseType.OPTIONS
     options_type: Optional[OptionsType] = None
+    """Options type in case the assistant is suggesting how to render the options"""
+
     text: Optional[str]
+    """Text to show before the options"""
+
     options: List[ResponseOption]
+    """List of options to display"""
 
 
 #
 class ResponseCommand(BaseResponse):
-    type: ResponseType = ResponseType.COMMAND
+    type: Literal[ResponseType.COMMAND] = ResponseType.COMMAND
     command: str
+    """The command to execute"""
+
     args: Optional[List[Any]]
+    """Arguments passed to the command"""
 
 
 type Response = List[
