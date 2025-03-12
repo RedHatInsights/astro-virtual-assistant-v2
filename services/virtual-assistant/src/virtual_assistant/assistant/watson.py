@@ -57,7 +57,7 @@ def format_response(response: dict) -> AssistantResponse:
                 options.append(
                     ResponseOption(
                         text=option["label"],
-                        value=option["value"].get("input"),
+                        value=option["value"].get("input").get("text"),
                     )
                 )
 
@@ -80,7 +80,7 @@ def format_response(response: dict) -> AssistantResponse:
                 options.append(
                     ResponseOption(
                         text=suggestion["label"],
-                        value=suggestion["value"].get("input"),
+                        value=suggestion["value"].get("input").get("text"),
                     )
                 )
 
