@@ -12,12 +12,16 @@ from watson_extension.auth.no_authentication import NoAuthentication
 from watson_extension.auth.service_account_authentication import (
     ServiceAccountAuthentication,
 )
-from watson_extension.clients import AdvisorURL, VulnerabilityURL
+from watson_extension.clients import AdvisorURL, VulnerabilityURL, ContentSourcesURL
 from watson_extension.clients.aiohttp_session import aiohttp_session
 from watson_extension.clients.insights.advisor import AdvisorClient, AdvisorClientHttp
 from watson_extension.clients.insights.vulnerability import (
     VulnerabilityClient,
     VulnerabilityClientHttp,
+)
+from watson_extension.clients.insights.image_builder import (
+    ImageBuilderClient,
+    ImageBuilderClientHttp,
 )
 from watson_extension.clients.platform_request import (
     AbstractPlatformRequest,
@@ -130,6 +134,9 @@ def injector_from_config(binder: injector.Binder) -> None:
     # urls
     binder.bind(AdvisorURL, to=config.advisor_url, scope=injector.singleton)
     binder.bind(VulnerabilityURL, to=config.vulnerability_url, scope=injector.singleton)
+    binder.bind(
+        ContentSourcesURL, to=config.content_sources_url, scope=injector.singleton
+    )
 
 
 def injector_defaults(binder: injector.Binder) -> None:
@@ -137,6 +144,9 @@ def injector_defaults(binder: injector.Binder) -> None:
     binder.bind(AdvisorClient, AdvisorClientHttp, scope=quart_injector.RequestScope)
     binder.bind(
         VulnerabilityClient, VulnerabilityClientHttp, scope=quart_injector.RequestScope
+    )
+    binder.bind(
+        ImageBuilderClient, ImageBuilderClientHttp, scope=quart_injector.RequestScope
     )
 
     # aiohttp session

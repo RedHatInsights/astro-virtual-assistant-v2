@@ -1,0 +1,7 @@
+{%- if response_type == "enabled" -%}
+The {{ version }} repository has been enabled and can now be used when building images with Image Builder.
+{%- elif response_type == "already_enabled" -%}
+Looks like you already have the {{ version }} repository enabled.
+{%- else -%}
+I am sorry, I am having trouble viewing your repositories. Try visiting your repositories [here]({{ dashboard_link }}).
+{%- endif -%}
