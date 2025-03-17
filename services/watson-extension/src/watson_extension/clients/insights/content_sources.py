@@ -1,6 +1,6 @@
 import abc
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List
 
 import injector
 
@@ -10,18 +10,38 @@ from watson_extension.clients.platform_request import AbstractPlatformRequest
 
 
 @dataclass
-class EnableCustomRepositoriesResponse:
+class GetPopularRepositoriesResponse:
+    data: Optional[List[dict]]
+
+
+@dataclass
+class BulkCreateRepositoriesInfo:
+    suggested_name: str
+    distribution_arch: str
+    distribution_versions: List[str]
+    gpg_key: str
+    metadata_verification: bool
+    snapshot: bool
+    url: str
+
+
+@dataclass
+class RepositoriesBulkCreateResponse:
     response: Optional[str] = None
 
 
-class ImageBuilderClient(abc.ABC):
+class ContentSourcesClient(abc.ABC):
     @abc.abstractmethod
-    async def enable_custom_repositories(
-        self, version: str
-    ) -> EnableCustomRepositoriesResponse: ...
+    async def get_popular_repositories(self) -> GetPopularRepositoriesResponse: ...
+
+    @abc.abstractmethod
+    async def repositories_bulk_create(
+        self,
+        repository_info: List[BulkCreateRepositoriesInfo],
+    ) -> RepositoriesBulkCreateResponse: ...
 
 
-class ImageBuilderClientHttp(ImageBuilderClient):
+class ContentSourcesClientHttp(ContentSourcesClient):
     def __init__(
         self,
         content_sources_url: injector.Inject[ContentSourcesURL],
@@ -33,10 +53,7 @@ class ImageBuilderClientHttp(ImageBuilderClient):
         self.user_identity_provider = user_identity_provider
         self.platform_request = platform_request
 
-    async def enable_custom_repositories(
-        self,
-        version: str,
-    ) -> EnableCustomRepositoriesResponse:
+    async def get_popular_repositories(self) -> GetPopularRepositoriesResponse:
         request = "/api/content-sources/v1/popular_repositories/?offset=0&limit=20"
         response = await self.platform_request.get(
             self.content_sources_url,
@@ -47,31 +64,20 @@ class ImageBuilderClientHttp(ImageBuilderClient):
 
         content = await response.json()
 
-        repository = None
-        for repo in content["data"]:
-            if repo["suggested_name"] and repo["suggested_name"].startswith(version):
-                repository = repo
-                break
+        return GetPopularRepositoriesResponse(data=content["data"])
 
+    async def repositories_bulk_create(
+        self,
+        repository_info: List[BulkCreateRepositoriesInfo],
+    ) -> RepositoriesBulkCreateResponse:
         headers = {"Content-Type": "application/json"}
-        formatted = [
-            {
-                "name": repository["suggested_name"],
-                "distribution_arch": repository["distribution_arch"],
-                "distribution_versions": repository["distribution_versions"],
-                "gpg_key": repository["gpg_key"],
-                "metadata_verification": repository["metadata_verification"],
-                "snapshot": False,
-                "url": repository["url"],
-            }
-        ]
 
         request = "/api/content-sources/v1.0/repositories/bulk_create/"
         response = await self.platform_request.post(
             self.content_sources_url,
             request,
             user_identity=await self.user_identity_provider.get_user_identity(),
-            json=formatted,
+            json=repository_info,
             headers=headers,
         )
         status = response.status
@@ -92,4 +98,4 @@ class ImageBuilderClientHttp(ImageBuilderClient):
         else:
             repositories_response = "errors"
 
-        return EnableCustomRepositoriesResponse(response=repositories_response)
+        return RepositoriesBulkCreateResponse(response=repositories_response)

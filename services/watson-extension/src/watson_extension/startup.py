@@ -19,9 +19,9 @@ from watson_extension.clients.insights.vulnerability import (
     VulnerabilityClient,
     VulnerabilityClientHttp,
 )
-from watson_extension.clients.insights.image_builder import (
-    ImageBuilderClient,
-    ImageBuilderClientHttp,
+from watson_extension.clients.insights.content_sources import (
+    ContentSourcesClient,
+    ContentSourcesClientHttp,
 )
 from watson_extension.clients.platform_request import (
     AbstractPlatformRequest,
@@ -146,7 +146,9 @@ def injector_defaults(binder: injector.Binder) -> None:
         VulnerabilityClient, VulnerabilityClientHttp, scope=quart_injector.RequestScope
     )
     binder.bind(
-        ImageBuilderClient, ImageBuilderClientHttp, scope=quart_injector.RequestScope
+        ContentSourcesClient,
+        ContentSourcesClientHttp,
+        scope=quart_injector.RequestScope,
     )
 
     # aiohttp session
