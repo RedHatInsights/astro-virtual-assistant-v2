@@ -1,0 +1,19 @@
+{%- if subs_info -%}
+{%- if subs_info|length == 1 -%}
+You have {{subs_info[0].number}} {{subs_info[0].category}} subscriptions
+{%- else -%}
+You have:
+
+{% for sub_info in subs_info -%}
+{% if sub_info.category == "active" -%}
+* {{ sub_info.number }} active subscriptions
+{% elif sub_info.category == "expiring" -%}
+* {{ sub_info.number }} subscriptions that are expiring soon
+{% elif sub_info.category == "expired" -%}
+* {{ sub_info.number }} that have already expired
+{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{%- else -%}
+You don't have any subscriptions
+{%- endif -%}
