@@ -21,6 +21,7 @@ vulnerability_url = config(
 content_sources_url = config(
     "ENDPOINT__CONTENT_SOURCES_BACKEND__SERVICE__URL", default=__platform_url
 )
+rhsm_url = config("ENDPOINT__RHSM_API_PROXY__SERVICE__URL", default=__platform_url)
 
 # Platform requests
 platform_request = config(

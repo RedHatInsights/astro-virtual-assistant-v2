@@ -12,7 +12,12 @@ from watson_extension.auth.no_authentication import NoAuthentication
 from watson_extension.auth.service_account_authentication import (
     ServiceAccountAuthentication,
 )
-from watson_extension.clients import AdvisorURL, VulnerabilityURL, ContentSourcesURL
+from watson_extension.clients import (
+    AdvisorURL,
+    VulnerabilityURL,
+    ContentSourcesURL,
+    RhsmURL,
+)
 from watson_extension.clients.aiohttp_session import aiohttp_session
 from watson_extension.clients.insights.advisor import AdvisorClient, AdvisorClientHttp
 from watson_extension.clients.insights.vulnerability import (
@@ -22,6 +27,10 @@ from watson_extension.clients.insights.vulnerability import (
 from watson_extension.clients.insights.content_sources import (
     ContentSourcesClient,
     ContentSourcesClientHttp,
+)
+from watson_extension.clients.insights.rhsm import (
+    RhsmClient,
+    RhsmClientHttp,
 )
 from watson_extension.clients.platform_request import (
     AbstractPlatformRequest,
@@ -137,6 +146,7 @@ def injector_from_config(binder: injector.Binder) -> None:
     binder.bind(
         ContentSourcesURL, to=config.content_sources_url, scope=injector.singleton
     )
+    binder.bind(RhsmURL, to=config.rhsm_url, scope=injector.singleton)
 
 
 def injector_defaults(binder: injector.Binder) -> None:
@@ -150,6 +160,7 @@ def injector_defaults(binder: injector.Binder) -> None:
         ContentSourcesClientHttp,
         scope=quart_injector.RequestScope,
     )
+    binder.bind(RhsmClient, RhsmClientHttp, scope=quart_injector.RequestScope)
 
     # aiohttp session
     binder.bind(aiohttp.ClientSession, aiohttp_session, scope=injector.singleton)
