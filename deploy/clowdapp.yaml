@@ -67,6 +67,10 @@ objects:
             value: ${CONSOLEDOT_BASE_URL}
           - name: SESSION_STORAGE
             value: ${SESSION_STORAGE}
+          - name: RHEL_LIGHTSPEED_ENABLED
+            value: ${RHEL_LIGHTSPEED_ENABLED}
+          - name: RHEL_LIGHTSPEED_URL
+            value: ${RHEL_LIGHTSPEED_URL}
           - name: CONSOLE_ASSISTANT
             value: ${CONSOLE_ASSISTANT}
           - name: WATSON_API_URL
@@ -165,6 +169,11 @@ parameters:
   value: redis
 - description: Watson environment id to use.
   name: WATSON_ENV_ID
+- description: Enables RHEL lightspeed calls
+  name: RHEL_LIGHTSPEED_ENABLED
+  value: "false"
+- description: RHEL Lightspeed API URL
+  name: RHEL_LIGHTSPEED_URL
 - description: Determines Clowder deployment
   name: CLOWDER_ENABLED
   value: "true"

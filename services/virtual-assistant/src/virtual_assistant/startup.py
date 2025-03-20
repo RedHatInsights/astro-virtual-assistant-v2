@@ -1,3 +1,6 @@
+from typing import List
+
+import aiohttp
 import injector
 from quart import Quart, Blueprint
 from redis.asyncio import StrictRedis
@@ -7,6 +10,12 @@ from common.session_storage import SessionStorage
 from common.session_storage.file import FileSessionStorage
 
 import virtual_assistant.config as config
+from virtual_assistant.assistant.response_processor.response_processor import (
+    ResponseProcessor,
+)
+from virtual_assistant.assistant.response_processor.rhel_lightspeed import (
+    RhelLightspeed,
+)
 from virtual_assistant.routes import health
 from virtual_assistant.routes import talk
 from virtual_assistant.assistant import Assistant
@@ -43,6 +52,23 @@ def console_assistant_echo_provider() -> Assistant:
     return EchoAssistant()
 
 
+@injector.provider
+def client_session_provider() -> aiohttp.ClientSession:
+    return aiohttp.ClientSession()
+
+
+@injector.multiprovider
+def response_processors_rhel_lightspeed_provider(
+    session: injector.Inject[aiohttp.ClientSession],
+) -> List[ResponseProcessor]:
+    return [RhelLightspeed(session, config.rhel_lightspeed_url)]
+
+
+@injector.multiprovider
+def response_processors_empty() -> List[ResponseProcessor]:
+    return []
+
+
 def injector_from_config(binder: injector.Binder) -> None:
     # This gets injected into routes when it is requested.
     # e.g. async def status(session_storage: injector.Inject[SessionStorage]) -> StatusResponse:
@@ -68,6 +94,17 @@ def injector_from_config(binder: injector.Binder) -> None:
     else:
         raise RuntimeError(
             f"Invalid console assistant requested ons startup {config.console_assistant}"
+        )
+
+    binder.bind(
+        aiohttp.ClientSession, client_session_provider, scope=injector.singleton
+    )
+
+    if config.rhel_lightspeed_enabled:
+        binder.multibind(
+            List[ResponseProcessor],
+            response_processors_rhel_lightspeed_provider,
+            scope=injector.singleton,
         )
 
 
