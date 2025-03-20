@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Optional, List, Union, Tuple, Any
 from werkzeug.exceptions import BadRequest
 
 import injector
@@ -24,7 +24,9 @@ class TalkInput(BaseModel):
 
     text: str
     """User text to send to the assistant."""
-    # More elements can be added if we will support additional interactions
+
+    option_id: Optional[str] = None
+    """Option id to use"""
 
 
 class TalkRequest(BaseModel):
@@ -34,11 +36,21 @@ class TalkRequest(BaseModel):
     """User session id. Do not send if we want to start a new session"""
 
     input: TalkInput
+    """User input"""
+
+    include_debug: Optional[bool] = False
+    """Include debug information in the output"""
 
 
 class TalkResponse(BaseModel):
     session_id: str
-    response: Response
+    """User session id to use for the following requests"""
+
+    response: List[Response]
+    """List of responses given by the assistant"""
+
+    debug_output: Optional[dict[str, Any]] = None
+    """Debug output returned if specified - This will include details the assistant went on when fulfilling the request"""
 
 
 @blueprint.route("", methods=["POST"])
@@ -50,10 +62,14 @@ async def talk(
     data: TalkRequest,
     assistant: injector.Inject[Assistant],
     session_storage: injector.Inject[SessionStorage],
-) -> TalkResponse:
+) -> Union[TalkResponse, Tuple[ValidationError, 400]]:
     identity = request.headers.get("x-rh-identity")
     user_id = assistant_user_id(identity)
     session_id = data.session_id
+
+    debug_output = None
+    if data.include_debug:
+        debug_output = {}
 
     if session_id is not None:
         session = await session_storage.get(session_id)
@@ -72,19 +88,29 @@ async def talk(
 
     # Send message to the configured assistant
     try:
+        query = Query(
+            text=data.input.text,
+            option_id=data.input.option_id,
+        )
+
         assistant_response = await assistant.send_message(
             message=AssistantInput(
                 session_id=session_id,
                 user_id=user_id,
-                query=Query(
-                    text=data.input.text,
-                ),
+                query=query,
+                include_debug=data.include_debug,
             ),
         )
-    except ApiException as e:
-        # Todo: Should we just let raise this error and let the handler wrap it into a validation error?
-        return ValidationError(message=e.message), 400
 
-    # Todo: Check if this syntax is OK - should we update the return type to be Tuple[TalkResponse, 200] or
-    # verify if the validate_response decorator adds the http code for us
-    return TalkResponse(session_id=session_id, response=assistant_response.response)
+        if data.include_debug:
+            debug_output["assistant"] = assistant_response.debug_output
+
+    except ApiException as e:
+        # Todo: Should we just let raise this error and let the error handler wrap it into a validation error?
+        return ValidationError(message=str(e)), 400
+
+    return TalkResponse(
+        session_id=session_id,
+        response=assistant_response.response,
+        debug_output=debug_output,
+    )

@@ -87,8 +87,10 @@ async def test_format_response():
     assert len(formatted[2].options) == 2
     assert formatted[2].options[0].text == "my option 1"
     assert formatted[2].options[0].value == "fire!"
+    assert formatted[2].options[0].option_id is None
     assert formatted[2].options[1].text == "last resort"
     assert formatted[2].options[1].value == "run"
+    assert formatted[2].options[1].option_id is None
 
     assert formatted[3].type == ResponseType.OPTIONS
     assert formatted[3].options_type == OptionsType.DROPDOWN
@@ -96,6 +98,7 @@ async def test_format_response():
     assert len(formatted[3].options) == 1
     assert formatted[3].options[0].text == "no pref"
     assert formatted[3].options[0].value == "none"
+    assert formatted[3].options[0].option_id is None
 
     assert formatted[4].type == ResponseType.OPTIONS
     assert formatted[4].options_type is None
@@ -103,13 +106,21 @@ async def test_format_response():
     assert len(formatted[4].options) == 1
     assert formatted[4].options[0].text == "no title"
     assert formatted[4].options[0].value == "without it"
+    assert formatted[4].options[0].option_id is None
 
     assert formatted[5].type == ResponseType.OPTIONS
     assert formatted[5].options_type == OptionsType.SUGGESTION
-    assert formatted[5].text is None
-    assert len(formatted[5].options) == 1
+    assert formatted[5].text == "What do you mean?"
+    assert len(formatted[5].options) == 2
     assert formatted[5].options[0].text == "maybe"
     assert formatted[5].options[0].value == "suggest"
+    assert (
+        formatted[5].options[0].option_id
+        == '[{"intent": "some-intent", "confidence": 1}]'
+    )
+    assert formatted[5].options[1].text == "no-id"
+    assert formatted[5].options[1].value == "no-id-provided"
+    assert formatted[5].options[1].option_id is None
     assert len(formatted[5].channels) == 1
     assert formatted[5].channels[0] == "console"
 

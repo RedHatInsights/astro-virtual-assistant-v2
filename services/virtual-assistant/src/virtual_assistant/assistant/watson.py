@@ -1,5 +1,7 @@
 import asyncio
-from typing import List
+import json
+import re
+from typing import List, Any
 
 from . import (
     Assistant,
@@ -14,7 +16,7 @@ from . import (
     ResponsePause,
 )
 from ibm_watson import AssistantV2
-from ibm_watson.assistant_v2 import MessageInput
+from ibm_watson.assistant_v2 import MessageInput, RuntimeIntent
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 
@@ -26,8 +28,16 @@ def build_assistant(api_key: str, env_version: str, api_url: str) -> AssistantV2
     return assistant
 
 
-def format_response(response: dict) -> AssistantResponse:
-    """Formats the message response from watson and maps it to the VA API reponse for the user
+def get_debug_output(response: dict) -> dict[str, Any]:
+    output = response.get("output", {})
+    return {
+        "entities": output.get("entities", []),
+        "intents": output.get("intents", []),
+    }
+
+
+def format_response(response: dict) -> List[AssistantResponse]:
+    """Formats the message response from watson and maps it to the VA API response for the user
 
     Parameters:
     session_id: The watson assistant session_id
@@ -37,7 +47,7 @@ def format_response(response: dict) -> AssistantResponse:
     TalkResponse: The truncated watson message response information to be sent to the user
     """
     watson_generic = response["output"]["generic"]
-    assistant_response: AssistantResponse = []
+    assistant_response: List[AssistantResponse] = []
 
     for generic in watson_generic:
         entry = None
@@ -77,12 +87,16 @@ def format_response(response: dict) -> AssistantResponse:
         if generic["response_type"] == "suggestion":
             options: List[ResponseOption] = []
             for suggestion in generic["suggestions"]:
-                options.append(
-                    ResponseOption(
-                        text=suggestion["label"],
-                        value=suggestion["value"].get("input").get("text"),
-                    )
+                option = ResponseOption(
+                    text=suggestion["label"],
+                    value=suggestion["value"].get("input").get("text"),
                 )
+
+                intents = suggestion["value"].get("input").get("intents")
+                if intents:
+                    option.option_id = json.dumps(intents)
+
+                options.append(option)
 
             entry = ResponseOptions(
                 text=generic.get("title", None),
@@ -126,17 +140,33 @@ class WatsonAssistant(Assistant):
         return response.get_result()["session_id"]
 
     async def send_message(self, message: AssistantInput) -> AssistantOutput:
+        sanitized_text = re.sub("\s+", " ", message.query.text).strip()
+        message_input = MessageInput(message_type="text", text=sanitized_text)
+        if message.query.option_id:
+            intents_array = json.loads(message.query.option_id)
+            message_input.intents = [
+                RuntimeIntent(intent=i.get("intent"), confidence=i.get("confidence"))
+                for i in intents_array
+            ]
+
         response = await asyncio.to_thread(
             self.assistant.message,
             assistant_id=self.assistant_id,
             environment_id=self.environment_id,
             session_id=message.session_id,
             user_id=message.user_id,
-            input=MessageInput(message_type="text", text=message.query.text),
+            input=message_input,
         )
+
+        response_result = response.get_result()
+
+        debug_output = None
+        if message.include_debug:
+            debug_output = get_debug_output(response_result)
 
         return AssistantOutput(
             session_id=message.session_id,
             user_id=message.user_id,
-            response=format_response(response.get_result()),
+            response=format_response(response_result),
+            debug_output=debug_output,
         )

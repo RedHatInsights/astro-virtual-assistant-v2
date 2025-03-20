@@ -11,8 +11,11 @@ class Query(BaseModel):
     Not all of these might be supported by the assistant.
     """
 
-    text: Optional[str]
+    text: Optional[str] = None
     """Text query to forward to the assistant. Usually doesn't require additional context"""
+
+    option_id: Optional[str] = None
+    """Id of the selected option that should be used"""
 
 
 class AssistantInput(BaseModel):
@@ -27,6 +30,9 @@ class AssistantInput(BaseModel):
     """User identifier"""
 
     query: Query
+
+    include_debug: bool = False
+    """Include debug option if requested"""
 
 
 class ResponseType(enum.StrEnum):
@@ -96,6 +102,9 @@ class ResponseOption(BaseModel):
     value: str
     """A value that is sent back when the user selects this option"""
 
+    option_id: Optional[str] = None
+    """Id identifying this option"""
+
 
 class ResponseOptions(BaseResponse):
     """Represents a selection the user has to make"""
@@ -121,9 +130,7 @@ class ResponseCommand(BaseResponse):
     """Arguments passed to the command"""
 
 
-type Response = List[
-    Union[ResponseText, ResponsePause, ResponseOptions, ResponseCommand]
-]
+type Response = Union[ResponseText, ResponsePause, ResponseOptions, ResponseCommand]
 
 
 class AssistantOutput(BaseModel):
@@ -137,8 +144,11 @@ class AssistantOutput(BaseModel):
     user_id: str
     """User identifier"""
 
-    response: Response
+    response: List[Response]
     """Responses to the user"""
+
+    debug_output: Optional[dict[str, Any]] = None
+    """Include debug option if requested"""
 
 
 class Assistant(ABC):
