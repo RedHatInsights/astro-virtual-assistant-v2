@@ -61,12 +61,27 @@
       },
       {
         "response_type": "suggestion",
+        "title": "What do you mean?",
         "suggestions": [
           {
             "label": "maybe",
             "value": {
               "input": {
-                "text": "suggest"
+                "text": "suggest",
+                "intents": [
+                  {
+                    "intent": "some-intent",
+                    "confidence": 1
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "label": "no-id",
+            "value": {
+              "input": {
+                "text": "no-id-provided"
               }
             }
           }
