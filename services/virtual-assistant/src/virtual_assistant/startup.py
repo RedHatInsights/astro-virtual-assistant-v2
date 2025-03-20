@@ -100,7 +100,9 @@ def injector_from_config(binder: injector.Binder) -> None:
         aiohttp.ClientSession, client_session_provider, scope=injector.singleton
     )
 
-    binder.multibind(List[ResponseProcessor], response_processors_empty, scope=injector.singleton)
+    binder.multibind(
+        List[ResponseProcessor], response_processors_empty, scope=injector.singleton
+    )
 
     if config.rhel_lightspeed_enabled:
         binder.multibind(
