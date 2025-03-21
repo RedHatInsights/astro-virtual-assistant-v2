@@ -36,6 +36,13 @@ if console_assistant == "watson":
     )  # Needs updating if watson releases breaking change. See: https://cloud.ibm.com/apidocs/assistant-v2?code=python#versioning
 
 
+rhel_lightspeed_enabled = config("RHEL_LIGHTSPEED_ENABLED", default=False, cast=bool)
+if rhel_lightspeed_enabled:
+    rhel_lightspeed_url = config(
+        "RHEL_LIGHTSPEED_URL"
+    )  # This might change once we figure out how the url is provided
+
+
 def log_config():
     import sys
 

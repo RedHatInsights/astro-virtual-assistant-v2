@@ -13,6 +13,9 @@ from pydantic import BaseModel
 from common.auth import assistant_user_id, require_identity_header
 from common.types.errors import ValidationError
 from virtual_assistant.assistant import Assistant, Response, AssistantInput, Query
+from virtual_assistant.assistant.response_processor.response_processor import (
+    ResponseProcessor,
+)
 
 blueprint = Blueprint("talk", __name__, url_prefix="/talk")
 
@@ -62,6 +65,7 @@ async def talk(
     data: TalkRequest,
     assistant: injector.Inject[Assistant],
     session_storage: injector.Inject[SessionStorage],
+    assistant_response_processors: injector.Inject[List[ResponseProcessor]],
 ) -> Union[TalkResponse, Tuple[ValidationError, 400]]:
     identity = request.headers.get("x-rh-identity")
     user_id = assistant_user_id(identity)
@@ -104,6 +108,12 @@ async def talk(
 
         if data.include_debug:
             debug_output["assistant"] = assistant_response.debug_output
+
+        if assistant_response_processors:
+            for processor in assistant_response_processors:
+                assistant_response.response = await processor.process(
+                    assistant_response.response, query=query
+                )
 
     except ApiException as e:
         # Todo: Should we just let raise this error and let the error handler wrap it into a validation error?
