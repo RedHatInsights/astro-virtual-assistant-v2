@@ -143,7 +143,11 @@ objects:
           - name: AUTHENTICATION_TYPE
             value: ${WATSON_EXTENSION_AUTHENTICATION_TYPE}
           - name: SA_CLIENT_ID
-            value: ${WATSON_EXTENSION_SA_CLIENT_ID}
+            valueFrom:
+              secretKeyRef:
+                name: watson-extension-sa
+                key: id
+                optional: true
         resources:
           limits:
             cpu: 250m
@@ -196,8 +200,6 @@ parameters:
 - description: Watson extension authentication type
   name: WATSON_EXTENSION_AUTHENTICATION_TYPE
   required: true
-- description: Watson extension authentication client id for Service account
-  name: WATSON_EXTENSION_SA_CLIENT_ID
 - name: ENVIRONMENT_NAME
   description: The name of the environment. Needs to be either stage or prod
   value: "prod"
