@@ -14,13 +14,8 @@ RHEL_LIGHTSPEED_PARAM = "rhel"
 
 class RhelLightspeedData(BaseModel):
     model_id: str
-    model_version: str
-    created_at: str
-    generated_token_count: int
-    input_token_count: int
-    stop_reason: str
     text: str
-    prompt: str
+    # There is also sources - lets explore that by separate
 
 
 class RhelLightspeedResponse(BaseModel):

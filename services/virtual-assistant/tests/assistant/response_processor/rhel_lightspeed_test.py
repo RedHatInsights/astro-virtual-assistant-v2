@@ -40,13 +40,7 @@ async def test_rhel_lightspeed(rhel_lightspeed, aiohttp_mock):
         body=RhelLightspeedResponse(
             data=RhelLightspeedData(
                 model_id="a-model",
-                model_version="1.0.0",
-                created_at="2025-03-20T20:05:40Z",
-                generated_token_count=300,
-                input_token_count=200,
-                stop_reason="idk",
                 text="42",
-                prompt="the Ultimate Question of Life, the Universe, and Everything.",
             )
         ).model_dump_json(),
     )
@@ -69,13 +63,7 @@ async def test_rhel_lightspeed_ignores_others(rhel_lightspeed, aiohttp_mock):
         body=RhelLightspeedResponse(
             data=RhelLightspeedData(
                 model_id="a-model",
-                model_version="1.0.0",
-                created_at="2025-03-20T20:05:40Z",
-                generated_token_count=300,
-                input_token_count=200,
-                stop_reason="idk",
                 text="42",
-                prompt="the Ultimate Question of Life, the Universe, and Everything.",
             )
         ).model_dump_json(),
     )
