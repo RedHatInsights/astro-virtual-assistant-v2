@@ -14,6 +14,10 @@ class SubscriptionInfo:
     number: int
     category: str
 
+@dataclass
+class ActivationKeyResponse:
+    ok: bool
+    message: Optional[str]
 
 class RhsmClient(abc.ABC):
     @abc.abstractmethod
@@ -21,6 +25,7 @@ class RhsmClient(abc.ABC):
         self, category: Optional[str]
     ) -> List[SubscriptionInfo]: ...
 
+    async def create_activation_key(self, name: str): ...
 
 class RhsmClientHttp(RhsmClient):
     def __init__(
@@ -82,3 +87,23 @@ class RhsmClientHttp(RhsmClient):
                     )
 
         return subscriptions_info
+
+    async def create_activation_key(self, name: str):
+        body = {"name": name, "role": "", "serviceLevel": "", "usage": ""}
+        response = await self.platform_request.post(
+            self.rhsm_url,
+            "/api/rhsm/v2/activation_keys",
+            user_identity=await self.user_identity_provider.get_user_identity(),
+            json=body,
+        )
+
+        response_json = await response.json()
+
+        if not response.ok:
+            return ActivationKeyResponse(
+                ok=response.ok,
+                message=response_json.get("error", {}).get(
+                    "message", "Unknown error"
+                )
+            )
+        return ActivationKeyResponse(ok=response.ok, message=None)
