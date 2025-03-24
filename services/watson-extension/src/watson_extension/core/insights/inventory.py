@@ -3,7 +3,7 @@ from typing import Optional
 
 import injector
 
-from watson_extension.clients.insights.advisor import InventoryClient
+from watson_extension.clients.insights.inventory import InventoryClient
 
 class InventoryCore:
     def __init__(self, inventory_client: injector.Inject[InventoryClient]):
