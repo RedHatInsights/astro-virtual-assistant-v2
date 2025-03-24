@@ -12,6 +12,7 @@ objects:
     envName: ${ENV_NAME}
     optionalDependencies:
       - advisor-backend
+      - rhsm-api-proxy
 
     inMemoryDb: true
     deployments:

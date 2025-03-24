@@ -16,7 +16,7 @@ from watson_extension.clients import (
     AdvisorURL,
     VulnerabilityURL,
     ContentSourcesURL,
-    RhsmURL,
+    RHSMURL,
 )
 from watson_extension.clients.aiohttp_session import aiohttp_session
 from watson_extension.clients.insights.advisor import AdvisorClient, AdvisorClientHttp
@@ -146,7 +146,7 @@ def injector_from_config(binder: injector.Binder) -> None:
     binder.bind(
         ContentSourcesURL, to=config.content_sources_url, scope=injector.singleton
     )
-    binder.bind(RhsmURL, to=config.rhsm_url, scope=injector.singleton)
+    binder.bind(RHSMURL, to=config.rhsm_url, scope=injector.singleton)
 
 
 def injector_defaults(binder: injector.Binder) -> None:

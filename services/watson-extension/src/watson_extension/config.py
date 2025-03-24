@@ -15,6 +15,7 @@ else:
 
 # Urls
 advisor_url = config("ENDPOINT__ADVISOR_BACKEND__API__URL", default=__platform_url)
+rhsm_url = config("ENDPOINT__RHSM_API_PROXY__SERVICE__URL", default=__platform_url)
 vulnerability_url = config(
     "ENDPOINT__VULNERABILITY_ENGINE__MANAGER_SERVICE__URL", default=__platform_url
 )
