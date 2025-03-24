@@ -4,7 +4,7 @@ from typing import Optional, List
 
 import injector
 
-from watson_extension.clients import RhsmURL
+from watson_extension.clients import RHSMURL
 from watson_extension.clients.identity import AbstractUserIdentityProvider
 from watson_extension.clients.platform_request import AbstractPlatformRequest
 
@@ -25,7 +25,7 @@ class RhsmClient(abc.ABC):
 class RhsmClientHttp(RhsmClient):
     def __init__(
         self,
-        rhsm_url: injector.Inject[RhsmURL],
+        rhsm_url: injector.Inject[RHSMURL],
         user_identity_provider: injector.Inject[AbstractUserIdentityProvider],
         platform_request: injector.Inject[AbstractPlatformRequest],
     ):
