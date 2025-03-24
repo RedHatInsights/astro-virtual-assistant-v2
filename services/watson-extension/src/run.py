@@ -2,7 +2,6 @@ import quart_injector
 from quart import Quart
 import watson_extension.config as config
 from common.logging import build_logger
-from common.quart_schema import VirtualAssistantOpenAPIProvider
 
 from quart_schema import (
     QuartSchema,
@@ -13,6 +12,7 @@ from quart_schema import (
 )
 
 from common.types.errors import ValidationError
+from watson_extension.quart_schema import WatsonExtensionAPIProvider
 from watson_extension.startup import (
     wire_routes,
     injector_from_config,
@@ -36,7 +36,7 @@ async def handle_request_validation_error(error):
 QuartSchema(
     app,
     openapi_path=config.base_url + "/openapi.json",
-    openapi_provider_class=VirtualAssistantOpenAPIProvider,
+    openapi_provider_class=WatsonExtensionAPIProvider,
     info=Info(
         title="Virtual assistant watson extension",
         version="2.0.0",
@@ -67,15 +67,17 @@ QuartSchema(
             "type": "oauth2",
             "flows": {
                 "clientCredentials": {
-                    "tokenUrl": "https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token"
-                }
+                    "tokenUrl": "https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token",
+                    "scopes": {},
+                },
             },
         },
         "service2service-stage": {
             "type": "oauth2",
             "flows": {
                 "clientCredentials": {
-                    "tokenUrl": "https://sso.stage.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token"
+                    "tokenUrl": "https://sso.stage.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token",
+                    "scopes": {},
                 }
             },
         },

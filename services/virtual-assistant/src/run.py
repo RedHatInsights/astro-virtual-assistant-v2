@@ -10,7 +10,7 @@ from quart_schema import (
 import virtual_assistant.config as config
 
 from common.logging import build_logger
-from common.quart_schema import VirtualAssistantOpenAPIProvider
+from virtual_assistant.quart_schema import VirtualAssistantOpenAPIProvider
 from common.types.errors import ValidationError
 from virtual_assistant.startup import wire_routes, injector_from_config
 
@@ -28,7 +28,7 @@ async def handle_request_validation_error(error):
 
 
 # Must happen after routes, injector, etc
-QuartSchema(
+schema = QuartSchema(
     app,
     openapi_path=config.base_url + "/openapi.json",
     openapi_provider_class=VirtualAssistantOpenAPIProvider,
@@ -58,6 +58,9 @@ QuartSchema(
         ),
     ],
 )
+
+# Add openapi path to our temporal -v2 path
+app.add_url_rule("/api/virtual-assistant-v2/v2/openapi.json", "openapi", schema.openapi)
 
 if __name__ == "__main__":
     app.run(port=config.port)
