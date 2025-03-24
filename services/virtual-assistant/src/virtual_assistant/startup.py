@@ -113,8 +113,18 @@ def injector_from_config(binder: injector.Binder) -> None:
 
 
 def wire_routes(app: Quart) -> None:
-    public_root = Blueprint("public_root", __name__, url_prefix=config.base_url)
+    public_root_original = Blueprint(
+        "public_root_original", __name__, url_prefix=config.base_url
+    )
+    public_root_alias = Blueprint(
+        "public_root_alias", __name__, url_prefix="/api/virtual-assistant-v2/v2/"
+    )
+
+    public_root = Blueprint("public_root", __name__)
     private_root = Blueprint("private_root", __name__)
+
+    public_root_original.register_blueprint(public_root)
+    public_root_alias.register_blueprint(public_root)
 
     # Connecting private routes (/)
     private_root.register_blueprint(health.blueprint)
@@ -122,5 +132,6 @@ def wire_routes(app: Quart) -> None:
     # Connect public routes ({config.base_url})
     public_root.register_blueprint(talk.blueprint)
 
-    app.register_blueprint(public_root)
+    app.register_blueprint(public_root_original)
+    app.register_blueprint(public_root_alias)
     app.register_blueprint(private_root)
