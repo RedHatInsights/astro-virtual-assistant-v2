@@ -35,7 +35,7 @@ class TalkInput(BaseModel):
 class TalkRequest(BaseModel):
     """Request data for talk endpoint."""
 
-    session_id: Optional[str]
+    session_id: Optional[str] = None
     """User session id. Do not send if we want to start a new session"""
 
     input: TalkInput
