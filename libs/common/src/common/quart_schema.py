@@ -13,10 +13,7 @@ class VirtualAssistantOpenAPIProvider(OpenAPIProvider):
     def build_paths(self, rule: Rule) -> Tuple[dict, dict]:
         paths, components = super().build_paths(rule)
         if rule.endpoint.startswith("public_root_alias"):
-            for pathKey in paths:
-                path = paths[pathKey]
-                for method in path:
-                    path[method]["deprecated"] = True
+            return dict(), dict()
         return paths, components
 
     def generate_rules(self) -> Iterable[Rule]:
