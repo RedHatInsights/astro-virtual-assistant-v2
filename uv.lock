@@ -125,6 +125,7 @@ name = "astro-virtual-assistant"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "aiohttp" },
     { name = "logstash-formatter" },
     { name = "pydantic" },
     { name = "quart" },
@@ -146,6 +147,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "aiohttp", specifier = ">=3.11.11" },
     { name = "logstash-formatter", specifier = ">=0.5.17" },
     { name = "pydantic", specifier = ">=2.10.5" },
     { name = "quart", specifier = ">=0.20.0" },
@@ -1144,18 +1146,14 @@ name = "watson-extension"
 version = "0.1.0"
 source = { virtual = "services/watson-extension" }
 dependencies = [
-    { name = "aiohttp" },
     { name = "astro-virtual-assistant" },
     { name = "common" },
-    { name = "requests" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "aiohttp", specifier = ">=3.11.11" },
     { name = "astro-virtual-assistant", virtual = "." },
     { name = "common", editable = "libs/common" },
-    { name = "requests", specifier = ">=2.32.3" },
 ]
 
 [[package]]
