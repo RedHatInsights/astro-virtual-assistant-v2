@@ -1,8 +1,9 @@
 from typing import List
 
-import aiohttp
 from pydantic import BaseModel
 
+from common.identity import AbstractUserIdentityProvider
+from common.platform_request import AbstractPlatformRequest
 from virtual_assistant.assistant import Response, ResponseType, Query, ResponseText
 from virtual_assistant.assistant.response_processor.response_processor import (
     ResponseProcessor,
@@ -32,16 +33,24 @@ def is_lightspeed_command(response: Response, command: str, arg: str):
 
 
 class RhelLightspeed(ResponseProcessor):
-    def __init__(self, session: aiohttp.ClientSession, lightspeed_url: str):
-        self.session = session
+    def __init__(
+        self,
+        lightspeed_url: str,
+        user_identity_provider: AbstractUserIdentityProvider,
+        platform_request: AbstractPlatformRequest,
+    ):
+        self.platform_request = platform_request
         self.lightspeed_url = lightspeed_url
+        self.user_identity_provider = user_identity_provider
 
     async def lightspeed_query(self, query: Query) -> List[Response]:
-        result = await self.session.post(
-            f"{self.lightspeed_url}/infer",
+        result = await self.platform_request.post(
+            self.lightspeed_url,
+            "/api/lightspeed/v1/infer",
             json={
                 "question": query.text,
             },
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
         result.raise_for_status()

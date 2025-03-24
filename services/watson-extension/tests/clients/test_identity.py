@@ -8,7 +8,7 @@ import quart
 
 from .. import async_value
 
-from watson_extension.clients.identity import QuartUserIdentityProvider
+from common.identity import QuartUserIdentityProvider
 
 
 async def test_quart_user_identity_provider():
