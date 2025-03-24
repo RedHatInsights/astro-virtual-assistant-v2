@@ -6,7 +6,7 @@ import quart_injector
 import injector
 
 from watson_extension.clients import AdvisorURL
-from watson_extension.clients.identity import (
+from common.identity import (
     FixedUserIdentityProvider,
     AbstractUserIdentityProvider,
 )

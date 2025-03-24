@@ -4,13 +4,13 @@ from aioresponses import aioresponses
 
 from tests import get_resource_contents
 from watson_extension.clients import AdvisorURL
-from watson_extension.clients.identity import FixedUserIdentityProvider
+from common.identity import FixedUserIdentityProvider
 from watson_extension.clients.insights.advisor import (
     AdvisorClient,
     AdvisorClientHttp,
     FindRuleSort,
 )
-from watson_extension.clients.platform_request import PlatformRequest
+from common.platform_request import PlatformRequest
 
 
 @pytest.fixture

@@ -32,7 +32,7 @@ from watson_extension.clients.insights.rhsm import (
     RhsmClient,
     RhsmClientHttp,
 )
-from watson_extension.clients.platform_request import (
+from common.platform_request import (
     AbstractPlatformRequest,
     DevPlatformRequest,
     PlatformRequest,
@@ -44,7 +44,7 @@ import watson_extension.config as config
 
 from common.session_storage import SessionStorage
 from common.session_storage.file import FileSessionStorage
-from watson_extension.clients.identity import (
+from common.identity import (
     QuartUserIdentityProvider,
     AbstractUserIdentityProvider,
     FixedUserIdentityProvider,

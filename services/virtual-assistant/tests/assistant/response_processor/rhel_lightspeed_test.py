@@ -2,6 +2,8 @@ import aiohttp
 import pytest
 from aioresponses import aioresponses
 
+from common.identity import FixedUserIdentityProvider
+from common.platform_request import PlatformRequest
 from virtual_assistant.assistant import (
     Query,
     ResponseCommand,
@@ -30,12 +32,12 @@ async def session():
 
 @pytest.fixture
 async def rhel_lightspeed(session):
-    return RhelLightspeed(session, "")
+    return RhelLightspeed("", FixedUserIdentityProvider(), PlatformRequest(session))
 
 
 async def test_rhel_lightspeed(rhel_lightspeed, aiohttp_mock):
     aiohttp_mock.post(
-        "/infer",
+        "/api/lightspeed/v1/infer",
         status=200,
         body=RhelLightspeedResponse(
             data=RhelLightspeedData(
@@ -58,7 +60,7 @@ async def test_rhel_lightspeed(rhel_lightspeed, aiohttp_mock):
 
 async def test_rhel_lightspeed_ignores_others(rhel_lightspeed, aiohttp_mock):
     aiohttp_mock.post(
-        "/infer",
+        "/api/lightspeed/v1/infer",
         status=200,
         body=RhelLightspeedResponse(
             data=RhelLightspeedData(

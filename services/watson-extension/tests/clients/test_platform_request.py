@@ -10,7 +10,7 @@ from aioresponses import aioresponses
 import pytest
 import jwt
 
-from watson_extension.clients.platform_request import (
+from common.platform_request import (
     AbstractPlatformRequest,
     DevPlatformRequest,
 )

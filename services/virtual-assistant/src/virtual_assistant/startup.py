@@ -2,9 +2,21 @@ from typing import List
 
 import aiohttp
 import injector
+import quart_injector
 from quart import Quart, Blueprint
 from redis.asyncio import StrictRedis
 
+from common.identity import (
+    QuartUserIdentityProvider,
+    AbstractUserIdentityProvider,
+    FixedUserIdentityProvider,
+)
+from common.platform_request import (
+    AbstractPlatformRequest,
+    DevPlatformRequest,
+    PlatformRequest,
+    ServiceAccountPlatformRequest,
+)
 from common.session_storage.redis import RedisSessionStorage
 from common.session_storage import SessionStorage
 from common.session_storage.file import FileSessionStorage
@@ -24,6 +36,29 @@ from virtual_assistant.assistant.watson import (
     build_assistant,
 )
 from virtual_assistant.assistant.echo import EchoAssistant
+
+
+@injector.provider
+def dev_platform_request(
+    session: injector.Inject[aiohttp.ClientSession],
+) -> DevPlatformRequest:
+    return DevPlatformRequest(
+        session,
+        refresh_token=config.dev_platform_request_offline_token,
+        refresh_token_url=config.dev_platform_request_refresh_url,
+    )
+
+
+@injector.provider
+def sa_platform_request(
+    session: injector.Inject[aiohttp.ClientSession],
+) -> ServiceAccountPlatformRequest:
+    return ServiceAccountPlatformRequest(
+        session,
+        token_url=config.sa_platform_request_token_url,
+        sa_id=config.sa_platform_request_id,
+        sa_secret=config.sa_platform_request_secret,
+    )
 
 
 @injector.provider
@@ -54,19 +89,36 @@ def console_assistant_echo_provider() -> Assistant:
 
 @injector.provider
 def client_session_provider() -> aiohttp.ClientSession:
+    if config.proxy:
+        return aiohttp.ClientSession(proxy=f"http://{config.proxy}")
+
     return aiohttp.ClientSession()
 
 
 @injector.multiprovider
 def response_processors_rhel_lightspeed_provider(
-    session: injector.Inject[aiohttp.ClientSession],
+    platform_request: injector.Inject[AbstractPlatformRequest],
+    user_identity_provider: injector.Inject[AbstractUserIdentityProvider],
 ) -> List[ResponseProcessor]:
-    return [RhelLightspeed(session, config.rhel_lightspeed_url)]
+    return [
+        RhelLightspeed(
+            config.rhel_lightspeed_url, user_identity_provider, platform_request
+        )
+    ]
 
 
 @injector.multiprovider
 def response_processors_empty() -> List[ResponseProcessor]:
     return []
+
+
+@injector.provider
+async def quart_user_identity_provider(
+    session_storage: injector.Inject[SessionStorage],
+) -> QuartUserIdentityProvider:
+    import quart
+
+    return QuartUserIdentityProvider(quart.request, session_storage)
 
 
 def injector_from_config(binder: injector.Binder) -> None:
@@ -96,9 +148,36 @@ def injector_from_config(binder: injector.Binder) -> None:
             f"Invalid console assistant requested ons startup {config.console_assistant}"
         )
 
+    if config.is_running_locally:
+        binder.bind(
+            AbstractUserIdentityProvider,
+            FixedUserIdentityProvider,
+            scope=injector.singleton,
+        )
+    else:
+        # This injector is per request - as we should extract the data for each request.
+        binder.bind(
+            AbstractUserIdentityProvider,
+            quart_user_identity_provider,
+            scope=quart_injector.RequestScope,
+        )
+
     binder.bind(
         aiohttp.ClientSession, client_session_provider, scope=injector.singleton
     )
+
+    if config.platform_request == "dev":
+        binder.bind(
+            AbstractPlatformRequest, to=dev_platform_request, scope=injector.singleton
+        )
+    elif config.platform_request == "sa":
+        binder.bind(
+            AbstractPlatformRequest, to=sa_platform_request, scope=injector.singleton
+        )
+    else:
+        binder.bind(
+            AbstractPlatformRequest, to=PlatformRequest, scope=injector.singleton
+        )
 
     binder.multibind(
         List[ResponseProcessor], response_processors_empty, scope=injector.singleton
