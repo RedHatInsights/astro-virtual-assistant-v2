@@ -1,9 +1,7 @@
-import enum
-from typing import Optional
-
 import injector
 
 from watson_extension.clients.insights.rhsm import RhsmClient
+
 
 class InventoryCore:
     def __init__(self, rhsm_client: injector.Inject[RhsmClient]):

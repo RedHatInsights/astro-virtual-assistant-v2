@@ -14,10 +14,12 @@ class SubscriptionInfo:
     number: int
     category: str
 
+
 @dataclass
 class ActivationKeyResponse:
     ok: bool
     message: Optional[str]
+
 
 class RhsmClient(abc.ABC):
     @abc.abstractmethod
@@ -26,6 +28,7 @@ class RhsmClient(abc.ABC):
     ) -> List[SubscriptionInfo]: ...
 
     async def create_activation_key(self, name: str): ...
+
 
 class RhsmClientHttp(RhsmClient):
     def __init__(
@@ -102,8 +105,6 @@ class RhsmClientHttp(RhsmClient):
         if not response.ok:
             return ActivationKeyResponse(
                 ok=response.ok,
-                message=response_json.get("error", {}).get(
-                    "message", "Unknown error"
-                )
+                message=response_json.get("error", {}).get("message", "Unknown error"),
             )
         return ActivationKeyResponse(ok=response.ok, message=None)
