@@ -62,6 +62,13 @@ def sa_platform_request(
 
 
 @injector.provider
+def platform_request(
+    session: injector.Inject[aiohttp.ClientSession],
+) -> PlatformRequest:
+    return PlatformRequest(session)
+
+
+@injector.provider
 def redis_session_storage_provider() -> RedisSessionStorage:
     return RedisSessionStorage(
         StrictRedis(
@@ -176,7 +183,7 @@ def injector_from_config(binder: injector.Binder) -> None:
         )
     else:
         binder.bind(
-            AbstractPlatformRequest, to=PlatformRequest, scope=injector.singleton
+            AbstractPlatformRequest, to=platform_request, scope=injector.singleton
         )
 
     binder.multibind(
