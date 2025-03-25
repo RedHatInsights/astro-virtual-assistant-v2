@@ -1,3 +1,4 @@
+import json
 import pathlib
 
 _base = pathlib.Path(__file__).parent.resolve().joinpath("resources")
@@ -15,3 +16,7 @@ def get_resource_contents(resource):
             buff.append(line)
 
     return "".join(buff)
+
+
+def get_json_resource(json_resource):
+    return json.loads(get_resource_contents(json_resource))

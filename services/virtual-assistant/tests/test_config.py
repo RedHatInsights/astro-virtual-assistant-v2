@@ -7,15 +7,18 @@ import pytest
 
 __config_modules = [
     "app_common_python",
+    "common",
     "virtual_assistant.config",
 ]
 
 
 @pytest.fixture(autouse=True)
 def clear_app_config():
+    loaded_module_keys = [*sys.modules.keys()]
     for module in __config_modules:
-        if module in sys.modules:
-            del sys.modules[module]
+        for loaded_module_key in loaded_module_keys:
+            if loaded_module_key.startswith(module):
+                del sys.modules[loaded_module_key]
 
 
 @mock.patch.dict(

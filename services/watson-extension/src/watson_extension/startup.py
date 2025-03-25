@@ -45,7 +45,7 @@ import watson_extension.config as config
 from common.session_storage import SessionStorage
 from common.session_storage.file import FileSessionStorage
 from common.identity import (
-    QuartUserIdentityProvider,
+    QuartWatsonExtensionUserIdentityProvider,
     AbstractUserIdentityProvider,
     FixedUserIdentityProvider,
 )
@@ -85,10 +85,10 @@ def sa_authentication_provider() -> Authentication:
 @injector.provider
 async def quart_user_identity_provider(
     session_storage: injector.Inject[SessionStorage],
-) -> QuartUserIdentityProvider:
+) -> QuartWatsonExtensionUserIdentityProvider:
     import quart
 
-    return QuartUserIdentityProvider(quart.request, session_storage)
+    return QuartWatsonExtensionUserIdentityProvider(quart.request, session_storage)
 
 
 def injector_from_config(binder: injector.Binder) -> None:

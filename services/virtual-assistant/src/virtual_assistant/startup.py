@@ -7,9 +7,9 @@ from quart import Quart, Blueprint
 from redis.asyncio import StrictRedis
 
 from common.identity import (
-    QuartUserIdentityProvider,
     AbstractUserIdentityProvider,
     FixedUserIdentityProvider,
+    QuartRedHatUserIdentityProvider,
 )
 from common.platform_request import (
     AbstractPlatformRequest,
@@ -120,12 +120,10 @@ def response_processors_empty() -> List[ResponseProcessor]:
 
 
 @injector.provider
-async def quart_user_identity_provider(
-    session_storage: injector.Inject[SessionStorage],
-) -> QuartUserIdentityProvider:
+def quart_user_identity_provider() -> QuartRedHatUserIdentityProvider:
     import quart
 
-    return QuartUserIdentityProvider(quart.request, session_storage)
+    return QuartRedHatUserIdentityProvider(quart.request)
 
 
 def injector_from_config(binder: injector.Binder) -> None:
