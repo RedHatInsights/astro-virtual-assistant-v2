@@ -11,7 +11,7 @@ class AbstractUserIdentityProvider(abc.ABC):
     async def get_user_identity(self) -> str: ...
 
 
-class QuartUserIdentityProvider(AbstractUserIdentityProvider):
+class QuartWatsonExtensionUserIdentityProvider(AbstractUserIdentityProvider):
     def __init__(
         self, request: quart.Request, session_storage: injector.Inject[SessionStorage]
     ):
@@ -25,6 +25,18 @@ class QuartUserIdentityProvider(AbstractUserIdentityProvider):
 
         session_id = self.request.headers[session_header_name]
         return (await self.session_storage.get(session_id)).user_identity
+
+
+class QuartRedHatUserIdentityProvider(AbstractUserIdentityProvider):
+    def __init__(self, request: quart.Request):
+        self.request = request
+
+    async def get_user_identity(self) -> str:
+        session_header_name = "x-rh-identity"
+        if session_header_name not in self.request.headers:
+            raise BadRequest(f"Missing ${session_header_name}")
+
+        return self.request.headers[session_header_name]
 
 
 class FixedUserIdentityProvider(AbstractUserIdentityProvider):

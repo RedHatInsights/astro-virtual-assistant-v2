@@ -1,0 +1,14 @@
+{
+  "output": {
+    "generic": [
+      {
+        "response_type": "text",
+        "text": "hello world"
+      },
+      {
+        "response_type": "text",
+        "text": "/lightspeed rhel"
+      }
+    ]
+  }
+}

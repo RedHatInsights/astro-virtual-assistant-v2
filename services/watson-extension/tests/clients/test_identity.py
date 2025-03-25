@@ -8,7 +8,7 @@ import quart
 
 from .. import async_value
 
-from common.identity import QuartUserIdentityProvider
+from common.identity import QuartWatsonExtensionUserIdentityProvider
 
 
 async def test_quart_user_identity_provider():
@@ -22,7 +22,7 @@ async def test_quart_user_identity_provider():
         )
     )
 
-    testee = QuartUserIdentityProvider(request, session_storage)
+    testee = QuartWatsonExtensionUserIdentityProvider(request, session_storage)
     assert await testee.get_user_identity() == "identity"
     session_storage.get.assert_called_once_with("123456")
 
@@ -31,6 +31,6 @@ async def test_quart_user_identity_fails_on_missing_header():
     request = MagicMock(quart.Request)
     request.headers = {"other": "123456"}
 
-    testee = QuartUserIdentityProvider(request, MagicMock())
+    testee = QuartWatsonExtensionUserIdentityProvider(request, MagicMock())
     with pytest.raises(BadRequest):
         await testee.get_user_identity()
