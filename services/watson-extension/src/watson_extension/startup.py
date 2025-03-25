@@ -63,6 +63,13 @@ def dev_platform_request(
 
 
 @injector.provider
+def platform_request(
+    session: injector.Inject[aiohttp.ClientSession],
+) -> PlatformRequest:
+    return PlatformRequest(session)
+
+
+@injector.provider
 def redis_session_storage_provider() -> RedisSessionStorage:
     return RedisSessionStorage(
         StrictRedis(
@@ -83,7 +90,7 @@ def sa_authentication_provider() -> Authentication:
 
 
 @injector.provider
-async def quart_user_identity_provider(
+def quart_user_identity_provider(
     session_storage: injector.Inject[SessionStorage],
 ) -> QuartWatsonExtensionUserIdentityProvider:
     import quart
@@ -113,7 +120,7 @@ def injector_from_config(binder: injector.Binder) -> None:
         )
     else:
         binder.bind(
-            AbstractPlatformRequest, to=PlatformRequest, scope=injector.singleton
+            AbstractPlatformRequest, to=platform_request, scope=injector.singleton
         )
 
     # This gets injected into routes when it is requested.
