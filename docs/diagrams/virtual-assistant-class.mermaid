@@ -1,0 +1,164 @@
+---
+  config:
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+    direction LR
+
+    class App {
+
+    }
+
+    namespace assistant {
+        class Assistant {
+            <<abstract>>
+            +create_session(user_id: string): string
+            +send_message(input: AssistantInput): AssistantOutput
+        }
+
+        class WatsonAssistant {
+
+        }
+
+        class EchoAssistant {
+            <<dev>>
+        }
+
+        class Query {
+            text?: string
+            option_id?: string
+        }
+
+        class AssistantInput {
+            session_id: string
+            user_id: string
+            query: Query
+            include_debug: bool
+        }
+
+        class ResponseType {
+            <<enumeration>>
+            TEXT
+            PAUSE
+            OPTIONS
+            COMMAND
+
+        }
+
+        class OptionsType {
+            <<enumeration>>
+            BUTTON
+            DROPDOWN
+            SUGGESTION
+        }
+
+        class BaseResponse {
+            <<abstract>>
+            type: ResponseType
+            channels?: List[string]
+        }
+
+        class ResponseText {
+            type: ResponseType.TEXT
+            text: string
+        }
+
+        class ResponsePause {
+            type: ResponseType.PAUSE
+            time: int
+            is_typing: bool
+        }
+
+        class ResponseOption {
+            text: string
+            value: string
+            option_id?: string
+        }
+
+        class ResponseOptions {
+            type: ResponseType.OPTION
+            options_type?: OptionsType
+            text?: string
+            options: List[ResponseOption]
+        }
+
+        class ResponseCommand {
+            type: ResponseType.COMMAND
+            command: string
+            args: List[string]
+        }
+
+        class AssistantOutput {
+            session_id: string
+            user_id: string
+            response: List[BaseResponse]
+            debug_output?: boolean
+        }
+    }
+
+    namespace response_processor {
+        class ResponseProcessor {
+            <<abstract>>
+            +process(responses: List[BaseResponse], query: Query): List[BaseResponse]
+        }
+
+        class RhelLightspeed {
+        }
+    }
+
+    namespace Routes {
+        class Talk {
+            +call(request: TalkRequest) TalkResponse
+        }
+
+        class TalkRequest {
+            session_id?: string
+            input: TalkInput
+            include_debug?: bool
+        }
+
+        class TalkResponse {
+            session_id: string
+            response: List[BaseResponse]
+            debug_output: dict[string, any]
+        }
+
+        class TalkInput {
+            text: string
+            option_id?: string
+        }
+
+    }
+
+
+    App *-- Talk : Contains
+
+    Assistant *-- "*" ResponseProcessor
+    AssistantInput *-- Query
+
+    Assistant <|-- WatsonAssistant : Implements
+    Assistant <|-- EchoAssistant : Implements
+
+    ResponseProcessor <|-- RhelLightspeed : Implements
+    ResponseProcessor <-- Query
+    ResponseProcessor <-- BaseResponse
+
+    Assistant <-- AssistantInput
+    Assistant <-- AssistantOutput
+
+    BaseResponse *-- ResponseType
+
+    BaseResponse <|-- ResponseText : Extends
+    BaseResponse <|-- ResponsePause : Extends
+    BaseResponse <|-- ResponseOptions : Extends
+    BaseResponse <|-- ResponseCommand : Extends
+
+    ResponseOptions *-- "*" ResponseOption
+    ResponseOptions *-- OptionsType
+
+    Talk --> TalkResponse
+    Talk --> TalkRequest
+    TalkRequest *-- TalkInput
+    Talk --> Assistant
+    Talk --> ResponseProcessor
