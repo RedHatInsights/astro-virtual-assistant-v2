@@ -27,12 +27,19 @@ content_sources_url = config(
 platform_request = config(
     "PLATFORM_REQUEST",
     default="dev" if is_running_locally else "platform",
-    cast=Choices(["dev", "platform"]),
+    cast=Choices(["dev", "sa", "platform"]),
 )
 if platform_request == "dev":
     dev_platform_request_offline_token = config("DEV_PLATFORM_REQUEST_OFFLINE_TOKEN")
     dev_platform_request_refresh_url = config(
         "DEV_PLATFORM_REQUEST_REFRESH_URL",
+        default="https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token",
+    )
+elif platform_request == "sa":
+    sa_platform_request_id = config("SA_PLATFORM_REQUEST_ID")
+    sa_platform_request_secret = config("SA_PLATFORM_REQUEST_SECRET")
+    sa_platform_request_token_url = config(
+        "SA_PLATFORM_REQUEST_TOKEN_URL",
         default="https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token",
     )
 

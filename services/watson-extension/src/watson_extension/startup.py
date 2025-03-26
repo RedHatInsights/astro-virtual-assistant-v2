@@ -3,9 +3,14 @@ import injector
 import quart
 import quart_injector
 from quart import Quart, Blueprint
-from redis.asyncio import StrictRedis
 
-from common.session_storage.redis import RedisSessionStorage
+from common.providers import (
+    make_redis_session_storage_provider,
+    make_file_session_storage_provider,
+    make_dev_platform_request_provider,
+    make_sa_platform_request_provider,
+    make_platform_request_provider,
+)
 from watson_extension.auth import Authentication
 from watson_extension.auth.api_key_authentication import ApiKeyAuthentication
 from watson_extension.auth.no_authentication import NoAuthentication
@@ -34,8 +39,6 @@ from watson_extension.clients.insights.rhsm import (
 )
 from common.platform_request import (
     AbstractPlatformRequest,
-    DevPlatformRequest,
-    PlatformRequest,
 )
 from watson_extension.routes import health
 from watson_extension.routes import insights
@@ -43,40 +46,11 @@ from watson_extension.routes import insights
 import watson_extension.config as config
 
 from common.session_storage import SessionStorage
-from common.session_storage.file import FileSessionStorage
 from common.identity import (
     QuartWatsonExtensionUserIdentityProvider,
     AbstractUserIdentityProvider,
     FixedUserIdentityProvider,
 )
-
-
-@injector.provider
-def dev_platform_request(
-    session: injector.Inject[aiohttp.ClientSession],
-) -> DevPlatformRequest:
-    return DevPlatformRequest(
-        session,
-        refresh_token=config.dev_platform_request_offline_token,
-        refresh_token_url=config.dev_platform_request_refresh_url,
-    )
-
-
-@injector.provider
-def platform_request(
-    session: injector.Inject[aiohttp.ClientSession],
-) -> PlatformRequest:
-    return PlatformRequest(session)
-
-
-@injector.provider
-def redis_session_storage_provider() -> RedisSessionStorage:
-    return RedisSessionStorage(
-        StrictRedis(
-            host=config.redis_hostname,
-            port=config.redis_port,
-        )
-    )
 
 
 @injector.provider
@@ -100,6 +74,52 @@ def quart_user_identity_provider(
 
 def injector_from_config(binder: injector.Binder) -> None:
     # Read configuration and assemble our dependencies
+    if config.session_storage == "redis":
+        binder.bind(
+            SessionStorage,
+            to=make_redis_session_storage_provider(
+                hostname=config.redis_hostname,
+                port=config.redis_port,
+            ),
+            scope=injector.singleton,
+        )
+    elif config.session_storage == "file":
+        binder.bind(
+            SessionStorage,
+            to=make_file_session_storage_provider(".va-session-storage"),
+            scope=injector.singleton,
+        )
+
+    if config.platform_request == "dev":
+        binder.bind(
+            AbstractPlatformRequest,
+            to=make_dev_platform_request_provider(
+                refresh_token=config.dev_platform_request_offline_token,
+                refresh_token_url=config.dev_platform_request_refresh_url,
+            ),
+            scope=injector.singleton,
+        )
+    elif config.platform_request == "sa":
+        binder.bind(
+            AbstractPlatformRequest,
+            to=make_sa_platform_request_provider(
+                token_url=config.sa_platform_request_token_url,
+                sa_id=config.sa_platform_request_id,
+                sa_secret=config.sa_platform_request_secret,
+            ),
+            scope=injector.singleton,
+        )
+    elif config.platform_request == "platform":
+        binder.bind(
+            AbstractPlatformRequest,
+            to=make_platform_request_provider(),
+            scope=injector.singleton,
+        )
+    else:
+        raise RuntimeError(
+            f"Unexpected platform request configuration: {config.platform_request}"
+        )
+
     if config.is_running_locally:
         binder.bind(
             AbstractUserIdentityProvider,
@@ -114,28 +134,6 @@ def injector_from_config(binder: injector.Binder) -> None:
             scope=quart_injector.RequestScope,
         )
 
-    if config.platform_request == "dev":
-        binder.bind(
-            AbstractPlatformRequest, to=dev_platform_request, scope=injector.singleton
-        )
-    else:
-        binder.bind(
-            AbstractPlatformRequest, to=platform_request, scope=injector.singleton
-        )
-
-    # This gets injected into routes when it is requested.
-    # e.g. async def status(session_storage: injector.Inject[SessionStorage]) -> StatusResponse:
-    if config.session_storage == "redis":
-        binder.bind(
-            SessionStorage, to=redis_session_storage_provider, scope=injector.singleton
-        )
-    elif config.session_storage == "file":
-        binder.bind(
-            SessionStorage,
-            to=FileSessionStorage(".va-session-storage"),
-            scope=injector.singleton,
-        )
-
     if config.authentication_type == "no-auth":
         binder.bind(Authentication, to=NoAuthentication, scope=injector.singleton)
     elif config.authentication_type == "api-key":
@@ -145,6 +143,10 @@ def injector_from_config(binder: injector.Binder) -> None:
     elif config.authentication_type == "service-account":
         binder.bind(
             Authentication, to=sa_authentication_provider, scope=injector.singleton
+        )
+    else:
+        raise RuntimeError(
+            f"Unexpected authentication type {config.authentication_type}"
         )
 
     # urls

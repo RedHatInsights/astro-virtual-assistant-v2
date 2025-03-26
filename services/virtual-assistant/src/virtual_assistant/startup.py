@@ -4,7 +4,7 @@ import aiohttp
 import injector
 import quart_injector
 from quart import Quart, Blueprint
-from redis.asyncio import StrictRedis
+
 
 from common.identity import (
     AbstractUserIdentityProvider,
@@ -13,15 +13,18 @@ from common.identity import (
 )
 from common.platform_request import (
     AbstractPlatformRequest,
-    DevPlatformRequest,
-    PlatformRequest,
-    ServiceAccountPlatformRequest,
 )
-from common.session_storage.redis import RedisSessionStorage
 from common.session_storage import SessionStorage
-from common.session_storage.file import FileSessionStorage
 
 import virtual_assistant.config as config
+from common.providers import (
+    make_dev_platform_request_provider,
+    make_sa_platform_request_provider,
+    make_platform_request_provider,
+    make_client_session_provider,
+    make_redis_session_storage_provider,
+    make_file_session_storage_provider,
+)
 from virtual_assistant.assistant.response_processor.response_processor import (
     ResponseProcessor,
 )
@@ -39,46 +42,6 @@ from virtual_assistant.assistant.echo import EchoAssistant
 
 
 @injector.provider
-def dev_platform_request(
-    session: injector.Inject[aiohttp.ClientSession],
-) -> DevPlatformRequest:
-    return DevPlatformRequest(
-        session,
-        refresh_token=config.dev_platform_request_offline_token,
-        refresh_token_url=config.dev_platform_request_refresh_url,
-    )
-
-
-@injector.provider
-def sa_platform_request(
-    session: injector.Inject[aiohttp.ClientSession],
-) -> ServiceAccountPlatformRequest:
-    return ServiceAccountPlatformRequest(
-        session,
-        token_url=config.sa_platform_request_token_url,
-        sa_id=config.sa_platform_request_id,
-        sa_secret=config.sa_platform_request_secret,
-    )
-
-
-@injector.provider
-def platform_request(
-    session: injector.Inject[aiohttp.ClientSession],
-) -> PlatformRequest:
-    return PlatformRequest(session)
-
-
-@injector.provider
-def redis_session_storage_provider() -> RedisSessionStorage:
-    return RedisSessionStorage(
-        StrictRedis(
-            host=config.redis_hostname,
-            port=config.redis_port,
-        )
-    )
-
-
-@injector.provider
 def console_assistant_watson_provider() -> Assistant:
     return WatsonAssistant(
         assistant=build_assistant(
@@ -92,14 +55,6 @@ def console_assistant_watson_provider() -> Assistant:
 @injector.provider
 def console_assistant_echo_provider() -> Assistant:
     return EchoAssistant()
-
-
-@injector.provider
-def client_session_provider() -> aiohttp.ClientSession:
-    if config.proxy:
-        return aiohttp.ClientSession(proxy=f"http://{config.proxy}")
-
-    return aiohttp.ClientSession()
 
 
 @injector.multiprovider
@@ -131,26 +86,54 @@ def injector_from_config(binder: injector.Binder) -> None:
     # e.g. async def status(session_storage: injector.Inject[SessionStorage]) -> StatusResponse:
     if config.session_storage == "redis":
         binder.bind(
-            SessionStorage, to=redis_session_storage_provider, scope=injector.singleton
+            SessionStorage,
+            to=make_redis_session_storage_provider(
+                hostname=config.redis_hostname,
+                port=config.redis_port,
+            ),
+            scope=injector.singleton,
         )
     elif config.session_storage == "file":
         binder.bind(
             SessionStorage,
-            to=FileSessionStorage(".va-session-storage"),
+            to=make_file_session_storage_provider(".va-session-storage"),
             scope=injector.singleton,
         )
 
-    if config.console_assistant == "echo":
+    binder.bind(
+        aiohttp.ClientSession,
+        make_client_session_provider(config.proxy),
+        scope=injector.singleton,
+    )
+
+    if config.platform_request == "dev":
         binder.bind(
-            Assistant, to=console_assistant_echo_provider, scope=injector.singleton
+            AbstractPlatformRequest,
+            to=make_dev_platform_request_provider(
+                refresh_token=config.dev_platform_request_offline_token,
+                refresh_token_url=config.dev_platform_request_refresh_url,
+            ),
+            scope=injector.singleton,
         )
-    elif config.console_assistant == "watson":
+    elif config.platform_request == "sa":
         binder.bind(
-            Assistant, to=console_assistant_watson_provider, scope=injector.singleton
+            AbstractPlatformRequest,
+            to=make_sa_platform_request_provider(
+                token_url=config.sa_platform_request_token_url,
+                sa_id=config.sa_platform_request_id,
+                sa_secret=config.sa_platform_request_secret,
+            ),
+            scope=injector.singleton,
+        )
+    elif config.platform_request == "platform":
+        binder.bind(
+            AbstractPlatformRequest,
+            to=make_platform_request_provider(),
+            scope=injector.singleton,
         )
     else:
         raise RuntimeError(
-            f"Invalid console assistant requested ons startup {config.console_assistant}"
+            f"Unexpected platform request configuration: {config.platform_request}"
         )
 
     if config.is_running_locally:
@@ -167,21 +150,17 @@ def injector_from_config(binder: injector.Binder) -> None:
             scope=quart_injector.RequestScope,
         )
 
-    binder.bind(
-        aiohttp.ClientSession, client_session_provider, scope=injector.singleton
-    )
-
-    if config.platform_request == "dev":
+    if config.console_assistant == "echo":
         binder.bind(
-            AbstractPlatformRequest, to=dev_platform_request, scope=injector.singleton
+            Assistant, to=console_assistant_echo_provider, scope=injector.singleton
         )
-    elif config.platform_request == "sa":
+    elif config.console_assistant == "watson":
         binder.bind(
-            AbstractPlatformRequest, to=sa_platform_request, scope=injector.singleton
+            Assistant, to=console_assistant_watson_provider, scope=injector.singleton
         )
     else:
-        binder.bind(
-            AbstractPlatformRequest, to=platform_request, scope=injector.singleton
+        raise RuntimeError(
+            f"Invalid console assistant requested ons startup {config.console_assistant}"
         )
 
     binder.multibind(
