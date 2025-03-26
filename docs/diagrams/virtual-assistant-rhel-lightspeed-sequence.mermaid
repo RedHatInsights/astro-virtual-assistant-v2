@@ -1,0 +1,16 @@
+sequenceDiagram
+    actor Client
+    participant Virtual Assistant
+    box rgba(33,66,99,0.3)
+        participant Watsonx Assistant
+    end
+    box rgba(99,0,0,0.3)
+        participant RHEL Lightspeed
+    end
+
+    Client->>Virtual Assistant: What's new in RHEL 10?
+    Client->>Watsonx Assistant: What's new in RHEL 10?
+    Watsonx Assistant->>Virtual Assistant: Ask RHEL Lightspeed
+    Virtual Assistant->> RHEL Lightspeed: What's new in RHEL 10?
+    RHEL Lightspeed->>Virtual Assistant: RHEL 10 has...
+    Virtual Assistant->>Client: RHEL 10 has...
