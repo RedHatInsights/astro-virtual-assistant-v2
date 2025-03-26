@@ -6,6 +6,11 @@ If you would like to see the legacy code head over to the [astro-virtual-assista
 ![Highlevel diagram](./diagrams/highlevel.png)
 [View in excalidraw](https://excalidraw.com/#json=u_A0rWSnAufFxgBsFS03A,foUclO1KVOZ--IzTFIIJ6w)
 
+## Services
+
+- [Virtual Assistant](./services/virtual-assistant.md)
+- [Watson extension](./services/watson-extension.md)
+
 ## Development
 
 ### Setting up your environment
