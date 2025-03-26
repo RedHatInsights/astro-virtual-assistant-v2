@@ -64,7 +64,10 @@ if platform_request == "dev":
 elif platform_request == "sa":
     sa_platform_request_id = config("SA_PLATFORM_REQUEST_ID")
     sa_platform_request_secret = config("SA_PLATFORM_REQUEST_SECRET")
-    sa_platform_request_token_url = config("SA_PLATFORM_REQUEST_TOKEN_URL")
+    sa_platform_request_token_url = config(
+        "SA_PLATFORM_REQUEST_TOKEN_URL",
+        default="https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token",
+    )
 
 proxy = config("HTTPS_PROXY", default=None)
 
