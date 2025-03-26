@@ -6,6 +6,10 @@
 classDiagram
     direction LR
 
+    class App {
+
+    }
+
     namespace Client {
         class AbstractClient {
             <<interface>>
@@ -60,7 +64,13 @@ classDiagram
 
         }
 
+        class TestApp {
+
+        }
+
     }
+
+    App *-- "*" Route : Contains
 
     AbstractClient <|-- ConcreteClientHttp : Implements
     ConcreteClientHttp *-- UserIdentity
@@ -81,3 +91,5 @@ classDiagram
 
     TestRoute --> AbstractClient : Mocks
     TestRoute --> Route : Testee
+
+    TestApp --> App : Testee
