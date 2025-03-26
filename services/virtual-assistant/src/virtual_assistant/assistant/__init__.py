@@ -23,7 +23,7 @@ class AssistantInput(BaseModel):
     Vendor-agnostic input to the assistant module.
     """
 
-    session_id: str = None
+    session_id: str
     """session id for the user"""
 
     user_id: str
