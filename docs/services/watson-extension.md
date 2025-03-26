@@ -21,7 +21,7 @@ The diagram also highlights different test levels, showing what is being mocked 
 
 In reality, a route could use multiple clients to perform their operation.
 
-![API Diagram](/docs/diagrams/watson-extension-high-level-class.mermaid)
+![Class Diagram](/docs/diagrams/watson-extension-high-level-class.mermaid)
 
 ## Running locally
 

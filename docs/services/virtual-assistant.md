@@ -7,7 +7,7 @@ See more info at our [documentation](/docs/services/virtual-assistant.md)
 
 # Class Diagram
 
-![API Diagram](/docs/diagrams/virtual-assistant-class.mermaid)
+![Class Diagram](/docs/diagrams/virtual-assistant-class.mermaid)
 
 ## RHEL Lightspeed
 
