@@ -156,7 +156,9 @@ def injector_from_config(binder: injector.Binder) -> None:
         )
     elif config.console_assistant == "watson":
         binder.bind(
-            Assistant, to=console_assistant_watson_provider, scope=quart_injector.RequestScope
+            Assistant,
+            to=console_assistant_watson_provider,
+            scope=quart_injector.RequestScope,
         )
     else:
         raise RuntimeError(
