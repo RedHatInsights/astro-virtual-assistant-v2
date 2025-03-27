@@ -13,6 +13,8 @@ objects:
     optionalDependencies:
       - advisor-backend
       - rhsm-api-proxy
+      - vulnerability-engine
+      - content-sources-backend
 
     inMemoryDb: true
     deployments:
