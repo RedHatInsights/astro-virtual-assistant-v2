@@ -113,7 +113,7 @@ class ResponseOptions(BaseResponse):
     options_type: Optional[OptionsType] = None
     """Options type in case the assistant is suggesting how to render the options"""
 
-    text: Optional[str]
+    text: Optional[str] = None
     """Text to show before the options"""
 
     options: List[ResponseOption]
