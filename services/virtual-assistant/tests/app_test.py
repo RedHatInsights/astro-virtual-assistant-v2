@@ -122,8 +122,15 @@ async def test_app(assistant_v2, redis_fixture, aiohttp_mock, clear_app_config):
 
         assert talk_response is not None
         assert talk_response.session_id == "session_id_0001"
-        assert len(talk_response.response) == 2
+        assert len(talk_response.response) == 3
         assert talk_response.response[0].type == ResponseType.TEXT
         assert talk_response.response[0].text == "hello world"
         assert talk_response.response[1].type == ResponseType.TEXT
         assert talk_response.response[1].text == "42"
+        assert talk_response.response[2].type == ResponseType.OPTIONS
+        assert talk_response.response[2].text == "Do you want pie?"
+        assert len(talk_response.response[2].options) == 2
+        assert talk_response.response[2].options[0].text == "Bring it on!"
+        assert talk_response.response[2].options[0].value == "yes"
+        assert talk_response.response[2].options[1].text == "Eww!"
+        assert talk_response.response[2].options[1].value == "no"

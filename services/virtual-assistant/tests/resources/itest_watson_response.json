@@ -8,6 +8,31 @@
       {
         "response_type": "text",
         "text": "/lightspeed rhel"
+      },
+      {
+        "response_type": "text",
+        "text": "Do you want pie?"
+      },
+      {
+        "response_type": "option",
+        "options": [
+          {
+            "label": "Bring it on!",
+            "value": {
+              "input": {
+                "text": "yes"
+              }
+            }
+          },
+          {
+            "label": "Eww!",
+            "value": {
+              "input": {
+                "text": "no"
+              }
+            }
+          }
+        ]
       }
     ]
   }

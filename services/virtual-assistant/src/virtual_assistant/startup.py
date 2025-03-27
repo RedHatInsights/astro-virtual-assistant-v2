@@ -25,6 +25,7 @@ from common.providers import (
     make_redis_session_storage_provider,
     make_file_session_storage_provider,
 )
+from virtual_assistant.assistant.response_processor.combine_empty import CombineEmpty
 from virtual_assistant.assistant.response_processor.response_processor import (
     ResponseProcessor,
 )
@@ -70,8 +71,8 @@ def response_processors_rhel_lightspeed_provider(
 
 
 @injector.multiprovider
-def response_processors_empty() -> List[ResponseProcessor]:
-    return []
+def response_processors_default() -> List[ResponseProcessor]:
+    return [CombineEmpty()]
 
 
 @injector.provider
@@ -166,7 +167,7 @@ def injector_from_config(binder: injector.Binder) -> None:
         )
 
     binder.multibind(
-        List[ResponseProcessor], response_processors_empty, scope=injector.singleton
+        List[ResponseProcessor], response_processors_default, scope=injector.singleton
     )
 
     if config.rhel_lightspeed_enabled:
