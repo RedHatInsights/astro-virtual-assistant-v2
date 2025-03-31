@@ -22,6 +22,9 @@ vulnerability_url = config(
 content_sources_url = config(
     "ENDPOINT__CONTENT_SOURCES_BACKEND__SERVICE__URL", default=__platform_url
 )
+advisor_openshift_url = config(
+    "PRIVATE_ENDPOINT__CCX_SMART_PROXY__SERVICE__URL", default=__platform_url
+)
 
 # Platform requests
 platform_request = config(

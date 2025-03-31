@@ -1,0 +1,6 @@
+Here are your most recent clusters from OpenShift for Advisor.
+
+ 1. [Bond](/openshift/insights/advisor/clusters/007)
+ 2. [Johnny](/openshift/insights/advisor/clusters/one)
+
+You can see additional clusters on the [OpenShift for Advisor dashboard](/openshift/insights/advisor/clusters).

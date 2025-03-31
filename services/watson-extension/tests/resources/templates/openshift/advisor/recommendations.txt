@@ -1,0 +1,6 @@
+Here are your most recent recommendations from OpenShift for Advisor.
+
+ 1. [recommendation 1](/openshift/insights/advisor/recommendations/my-id)
+ 2. [recommendation 2](/openshift/insights/advisor/recommendations/my-id-2)
+
+You can see additional recommendations on the [OpenShift for Advisor dashboard](/openshift/insights/advisor/recommendations).

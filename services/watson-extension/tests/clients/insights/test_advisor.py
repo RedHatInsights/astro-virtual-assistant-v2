@@ -2,7 +2,7 @@ import aiohttp
 import pytest
 from aioresponses import aioresponses
 
-from tests import get_resource_contents
+from ... import get_resource_contents
 from watson_extension.clients import AdvisorURL
 from common.identity import FixedUserIdentityProvider
 from watson_extension.clients.insights.advisor import (

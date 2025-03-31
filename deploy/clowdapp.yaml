@@ -11,11 +11,11 @@ objects:
   spec:
     envName: ${ENV_NAME}
     optionalDependencies:
-      - advisor-backend
-      - rhsm-api-proxy
-      - vulnerability-engine
-      - content-sources-backend
-
+      - advisor-backend # advisor_url
+      - rhsm-api-proxy # rhsm_url
+      - vulnerability-engine # vulnerability_url
+      - content-sources-backend # content_sources_url
+      - ccx-smart-proxy # advisor_openshift_url
     inMemoryDb: true
     deployments:
     - name: api
