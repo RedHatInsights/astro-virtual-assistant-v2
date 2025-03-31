@@ -38,6 +38,7 @@ from virtual_assistant.assistant import Assistant
 from virtual_assistant.assistant.watson import (
     WatsonAssistant,
     build_assistant,
+    WatsonAssistantVariables,
 )
 from virtual_assistant.assistant.echo import EchoAssistant
 
@@ -50,6 +51,9 @@ def console_assistant_watson_provider() -> Assistant:
         ),
         assistant_id=config.watson_env_id,  # Todo: Should we use a different id for the assistant?
         environment_id=config.watson_env_id,
+        variables=WatsonAssistantVariables(
+            draft=config.watson_is_draft_env,
+        ),
     )
 
 

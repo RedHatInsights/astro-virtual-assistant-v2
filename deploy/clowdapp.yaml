@@ -90,6 +90,8 @@ objects:
                 optional: true
           - name: WATSON_ENV_ID
             value: ${WATSON_ENV_ID}
+          - name: WATSON_IS_DRAFT_ENV
+            value: ${WATSON_IS_DRAFT_ENV}
         resources:
           limits:
             cpu: 250m
@@ -215,3 +217,6 @@ parameters:
 - name: ENVIRONMENT_NAME
   description: The name of the environment. Needs to be either stage or prod
   value: "prod"
+- name: WATSON_IS_DRAFT_ENV
+  description: Is the draft environment being used for this service?
+  value: "false"

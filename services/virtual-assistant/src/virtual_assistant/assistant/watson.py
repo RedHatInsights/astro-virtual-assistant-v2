@@ -1,4 +1,5 @@
 import asyncio
+import dataclasses
 import json
 import re
 from typing import List, Any
@@ -16,7 +17,13 @@ from . import (
     ResponsePause,
 )
 from ibm_watson import AssistantV2
-from ibm_watson.assistant_v2 import MessageInput, RuntimeIntent
+from ibm_watson.assistant_v2 import RuntimeIntent
+from ibm_watson.assistant_v2 import (
+    MessageInput,
+    MessageContext,
+    MessageContextSkills,
+    MessageContextActionSkill,
+)
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 
@@ -118,12 +125,27 @@ def format_response(response: dict) -> List[AssistantResponse]:
     return assistant_response
 
 
+_WATSON_DRAFT_ENVIRONMENT_VARIABLE = "Draft"
+
+
+@dataclasses.dataclass
+class WatsonAssistantVariables:
+    draft: bool = True
+
+
 class WatsonAssistant(Assistant):
-    def __init__(self, assistant: AssistantV2, assistant_id: str, environment_id: str):
+    def __init__(
+        self,
+        assistant: AssistantV2,
+        assistant_id: str,
+        environment_id: str,
+        variables: WatsonAssistantVariables,
+    ):
         super().__init__()
         self.assistant = assistant
         self.assistant_id = assistant_id
         self.environment_id = environment_id
+        self.variables = variables
 
     async def create_session(self, user_id: str) -> str:
         """Creates a watson assistant session if the provided session id is None
@@ -156,6 +178,15 @@ class WatsonAssistant(Assistant):
             session_id=message.session_id,
             user_id=message.user_id,
             input=message_input,
+            context=MessageContext(
+                skills=MessageContextSkills(
+                    actions_skill=MessageContextActionSkill(
+                        skill_variables={
+                            _WATSON_DRAFT_ENVIRONMENT_VARIABLE: self.variables.draft
+                        }
+                    )
+                )
+            ),
         )
 
         response_result = response.get_result()
