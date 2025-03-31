@@ -9,7 +9,7 @@ from watson_extension.clients.openshift.advisor import AdvisorClient
 
 class RecommendationCategory(enum.Enum):
     """
-    Categories to group different searching queries for rhel advisor recommendations
+    Categories to group different searching queries for openshift advisor recommendations
     """
 
     RECOMMENDATION = "recommendation"

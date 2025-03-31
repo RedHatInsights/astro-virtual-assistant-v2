@@ -42,6 +42,7 @@ from common.platform_request import (
 )
 from watson_extension.routes import health
 from watson_extension.routes import insights
+from watson_extension.routes import openshift
 
 import watson_extension.config as config
 
@@ -184,6 +185,7 @@ def wire_routes(app: Quart) -> None:
 
     # Connect public routes ({config.base_url})
     public_root.register_blueprint(insights.blueprint)
+    public_root.register_blueprint(openshift.blueprint)
 
     @public_root.before_request
     async def authentication_check(authentication: injector.Inject[Authentication]):
