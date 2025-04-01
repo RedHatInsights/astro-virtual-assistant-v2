@@ -1,0 +1,44 @@
+{
+  "recommendations": [
+    {
+      "rule_id": "ccx_rules_ocp.external.rules.cso_degraded_due_to_missing_privilege|CSO_DEGRADED_DUE_TO_MISSING_PRIVILIGES",
+      "description": "The Cluster Storage Operator is degraded because the vCenter account misses the privilege of 'Inventory.Tagging.ObjectAttachable'",
+      "generic": "The Cluster Storage Operator is degraded because the vCenter account misses the privilege of 'Inventory.Tagging.ObjectAttachable' which is used by the vSphere CSI driver when creating StorageClasses.\n",
+      "publish_date": "2022-04-20T16:00:00Z",
+      "total_risk": 3,
+      "resolution_risk": 1,
+      "impact": 2,
+      "likelihood": 4,
+      "tags": ["service_availability", "incident"],
+      "disabled": false,
+      "impacted_clusters_count": 0
+    },
+    {
+      "rule_id": "ccx_rules_ocp.external.rules.config_build_strategy_incorrect|CONFIG_BUILD_STRATEGY_INCORRECTLY",
+      "description": "Configuring Build Strategy via admin or edit ClusterRoles is not recommended",
+      "generic": "OpenShift’s Build Strategies offer developers a range of options for efficiently\nbuilding and deploying containerized applications. Configuring Build Strategies\nvia `admin` or `edit` ClusterRoles for users is not recommended. It may conflict\nwith the configuration via the authorization policies, thereby introducing security\nrisks.\n",
+      "publish_date": "2025-01-31T12:00:00Z",
+      "total_risk": 3,
+      "resolution_risk": 3,
+      "impact": 4,
+      "likelihood": 3,
+      "tags": ["security"],
+      "disabled": false,
+      "impacted_clusters_count": 0
+    },
+    {
+      "rule_id": "ccx_rules_ocp.external.rules.okd_cluster_unsupported|OKD_CLUSTER_UNSUPPORTED",
+      "description": "GSS does not provide enterprise-level support for an OKD cluster",
+      "generic": "Red Hat Global Support Services does not provide enterprise-level support for an OKD cluster.",
+      "publish_date": "2021-07-22T12:00:00Z",
+      "total_risk": 2,
+      "resolution_risk": 1,
+      "impact": 1,
+      "likelihood": 4,
+      "tags": ["service_availability"],
+      "disabled": false,
+      "impacted_clusters_count": 0
+    }
+  ],
+  "status": "ok"
+}

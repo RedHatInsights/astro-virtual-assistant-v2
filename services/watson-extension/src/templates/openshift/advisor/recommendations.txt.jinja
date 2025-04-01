@@ -1,0 +1,10 @@
+{%- if recommendations -%}
+Here are your most recent {{ category }} from OpenShift for Advisor.
+{% for recommendation in recommendations %}
+ {{ loop.index }}. [{{ recommendation.description }}]({{ recommendation.link }})
+{%- endfor %}
+
+You can see additional {{ category }} on the [OpenShift for Advisor dashboard]({{ dashboard_link }}).
+{%- else -%}
+You don't have any {{ category }} right now.
+{%- endif -%}

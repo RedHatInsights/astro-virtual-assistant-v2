@@ -1,0 +1,32 @@
+{
+  "data": [
+    {
+      "cluster_id": "f0cc23f7-5dfa-440a-88f1-5a43e75b74d1",
+      "cluster_name": "Test disable recommendation",
+      "managed": false,
+      "last_checked_at": "2025-03-31T13:25:59Z",
+      "total_hit_count": 15,
+      "hits_by_total_risk": { "1": 1, "2": 5, "3": 9, "4": 0 },
+      "cluster_version": "4.18.0"
+    },
+    {
+      "cluster_id": "ee7d2bf4-8933-4a3a-8634-3328fe806e08",
+      "cluster_name": "No Issues Cluster",
+      "managed": false,
+      "last_checked_at": "2025-03-31T13:25:56Z",
+      "total_hit_count": 0,
+      "hits_by_total_risk": { "1": 0, "2": 0, "3": 0, "4": 0 },
+      "cluster_version": "4.18.0"
+    },
+    {
+      "cluster_id": "98ed1b12-08f2-11f0-9801-525400fdfea5",
+      "cluster_name": "iqe-ocp-vulnerability-stage-test-mar24",
+      "managed": false,
+      "total_hit_count": 17,
+      "hits_by_total_risk": { "1": 0, "2": 10, "3": 7, "4": 0 },
+      "cluster_version": "4.11.0"
+    }
+  ],
+  "meta": { "count": 3 },
+  "status": "ok"
+}
