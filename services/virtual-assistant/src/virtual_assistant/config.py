@@ -42,6 +42,8 @@ if console_assistant == "watson":
         "WATSON_ENV_VERSION", default="2024-08-25"
     )  # Needs updating if watson releases breaking change. See: https://cloud.ibm.com/apidocs/assistant-v2?code=python#versioning
 
+    watson_is_draft_env = config("WATSON_IS_DRAFT_ENV", default=True, cast=bool)
+
 
 rhel_lightspeed_enabled = config("RHEL_LIGHTSPEED_ENABLED", default=False, cast=bool)
 if rhel_lightspeed_enabled:
