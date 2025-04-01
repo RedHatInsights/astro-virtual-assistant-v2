@@ -14,7 +14,7 @@ from redis.asyncio import StrictRedis
 from pytest_mock_resources import create_redis_fixture, RedisConfig
 
 from common.session_storage.redis import RedisSessionStorage
-from . import path_to_resource
+from . import path_to_resource, get_resource_contents
 
 redis_fixture = create_redis_fixture()
 
@@ -130,6 +130,26 @@ async def test_app_advisor(default_app, aiohttp_mock, session_storage):
 
     response = await test_client.get(
         "/api/virtual-assistant-watson-extension/v2/insights/advisor/recommendations?category=performance",
+        headers={"x-rh-session-id": "1234"},
+    )
+
+    assert response.status == "200 OK"
+
+
+async def test_app_advisor_openshift(default_app, aiohttp_mock, session_storage):
+    test_client = default_app.test_client()
+    await session_storage.put(
+        Session(key="1234", user_identity="my-identity", user_id="theorg/theuser")
+    )
+
+    aiohttp_mock.get(
+        "http://openshift-advisor:8000/api/insights-results-aggregator/v2/clusters",
+        status=200,
+        body=get_resource_contents("requests/openshift/advisor/clusters.json"),
+    )
+
+    response = await test_client.get(
+        "/api/virtual-assistant-watson-extension/v2/openshift/advisor/recommendations?category=cluster",
         headers={"x-rh-session-id": "1234"},
     )
 
