@@ -66,12 +66,6 @@
       "port": 1337
     },
     {
-      "app": "ccx-smart-proxy",
-      "hostname": "openshift-advisor",
-      "name": "service",
-      "port": 8000
-    },
-    {
       "app": "rbac",
       "hostname": "rbac-service.svc",
       "name": "service",
@@ -85,6 +79,12 @@
       "name":"actions",
       "port":10000,
       "tlsPort":0
+    },
+    {
+      "app": "ccx-smart-proxy",
+      "hostname": "openshift-advisor",
+      "name": "service",
+      "port": 8000
     }
   ],
   "kafka": {
