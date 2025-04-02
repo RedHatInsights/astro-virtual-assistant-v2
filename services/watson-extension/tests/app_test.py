@@ -1,8 +1,12 @@
 import json
 import os
 import sys
+import aiohttp
 
 from unittest import mock
+import quart_injector
+
+import injector
 from aioresponses import aioresponses
 
 import pytest
@@ -55,7 +59,7 @@ def session_storage(redis):
 
 
 @pytest.fixture
-def default_app(redis_fixture):
+async def default_app(redis_fixture):
     redis_credentials = redis_fixture.pmr_credentials
     with (
         mock.patch.dict(
@@ -78,6 +82,33 @@ def default_app(redis_fixture):
         from run import app
 
         yield app
+        # Close the ClientSession to prevent some warnings
+        injector_container = app.extensions["injector"]
+        assert injector_container is not None
+        session: aiohttp.ClientSession = injector_container.get(aiohttp.ClientSession)
+        await session.close()
+
+
+async def test_app_injection(default_app):
+    injector_container = default_app.extensions["injector"]
+    assert injector_container is not None
+
+    # Manually inject the RequestScope - since we are not going to do any request
+    injector_container.get(quart_injector.RequestScope).push()
+
+    for rule in default_app.url_map.iter_rules():
+        if rule.endpoint not in default_app.view_functions:
+            continue
+
+        if rule.endpoint == "openapi":
+            continue
+
+        route_function = default_app.view_functions.get(rule.endpoint)
+        bindings = injector.get_bindings(route_function)
+
+        for param in bindings.values():
+            if injector_container.get(param) is None:
+                assert injector_container.create_object(param) is not None
 
 
 async def test_app_health(default_app):
