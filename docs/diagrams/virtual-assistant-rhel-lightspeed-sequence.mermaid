@@ -9,7 +9,7 @@ sequenceDiagram
     end
 
     Client->>Virtual Assistant: What's new in RHEL 10?
-    Client->>Watsonx Assistant: What's new in RHEL 10?
+    Virtual Assistant->>Watsonx Assistant: What's new in RHEL 10?
     Watsonx Assistant->>Virtual Assistant: Ask RHEL Lightspeed
     Virtual Assistant->> RHEL Lightspeed: What's new in RHEL 10?
     RHEL Lightspeed->>Virtual Assistant: RHEL 10 has...
