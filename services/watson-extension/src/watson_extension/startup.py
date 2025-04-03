@@ -10,6 +10,7 @@ from common.providers import (
     make_dev_platform_request_provider,
     make_sa_platform_request_provider,
     make_platform_request_provider,
+    make_client_session_provider,
 )
 from watson_extension.auth import Authentication
 from watson_extension.auth.api_key_authentication import ApiKeyAuthentication
@@ -24,7 +25,6 @@ from watson_extension.clients import (
     ContentSourcesURL,
     RhsmURL,
 )
-from watson_extension.clients.aiohttp_session import aiohttp_session
 from watson_extension.clients.insights.advisor import AdvisorClient, AdvisorClientHttp
 from watson_extension.clients.openshift.advisor import (
     AdvisorClient as AdvisorOpenshiftClient,
@@ -95,6 +95,12 @@ def injector_from_config(binder: injector.Binder) -> None:
             to=make_file_session_storage_provider(".va-session-storage"),
             scope=injector.singleton,
         )
+
+    binder.bind(
+        aiohttp.ClientSession,
+        make_client_session_provider(config.proxy),
+        scope=injector.singleton,
+    )
 
     if config.platform_request == "dev":
         binder.bind(
@@ -184,9 +190,6 @@ def injector_defaults(binder: injector.Binder) -> None:
         AdvisorOpenshiftClientHttp,
         scope=quart_injector.RequestScope,
     )
-
-    # aiohttp session
-    binder.bind(aiohttp.ClientSession, aiohttp_session, scope=injector.singleton)
 
 
 def wire_routes(app: Quart) -> None:

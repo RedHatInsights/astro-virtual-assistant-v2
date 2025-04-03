@@ -68,6 +68,8 @@ if session_storage == "redis":
     redis_hostname = config("REDIS_HOSTNAME")
     redis_port = config("REDIS_PORT")
 
+proxy = config("HTTPS_PROXY", default=None)
+
 
 def log_config():
     import sys
