@@ -30,15 +30,23 @@ def require_identity_header(func):
 def assistant_user_id(identity):
     decoded_identity = base64.b64decode(identity).decode("utf8")
     identity_wrapper = json.loads(decoded_identity)
-    identity_json = identity_wrapper.get("identity")
+    identity_json = identity_wrapper["identity"]
 
-    org_id = identity_json.get("org_id")
-    identity_type = identity_json.get("type")
+    org_id = identity_json["org_id"]
+    identity_type = identity_json["type"]
     if identity_type == "ServiceAccount":
-        user_id = identity_json.get("service_account").get("user_id")
+        user_id = identity_json["service_account"]["user_id"]
     elif identity_type == "User":
-        user_id = identity_json.get("user").get("user_id")
+        user_id = identity_json["user"]["user_id"]
     elif identity_type == "System":
-        user_id = identity_json.get("system").get("cn")
+        auth_type = identity_json["auth_type"]
+        if auth_type == "uhc-auth":
+            user_id = "cluster-" + identity_json["system"]["cluster_id"]
+        elif auth_type == "cert-auth":
+            user_id = identity_json["system"]["cn"]
+        else:
+            raise ValueError(f"Invalid auth_type for System identity: {auth_type}")
+    else:
+        raise ValueError(f"Invalid identity_type identity: {identity_type}")
 
     return f"{org_id}/{user_id}"
