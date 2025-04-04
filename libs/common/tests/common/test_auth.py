@@ -32,4 +32,4 @@ async def test_identity_service_account():
 
 async def test_identity_uhc():
     token = load_and_base64encode_resource("identities/uhc.json")
-    assert assistant_user_id(token) == "321/c87dcb4c-8af1-40dd-878e-60c744edddd0"
+    assert assistant_user_id(token) == "321/cluster-456"
