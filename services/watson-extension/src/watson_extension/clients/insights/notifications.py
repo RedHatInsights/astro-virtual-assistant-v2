@@ -1,10 +1,13 @@
 import abc
 
 import injector
-
+import logging
 from watson_extension.clients import NotificationsGWURL
 from watson_extension.clients.identity import AbstractUserIdentityProvider
 from watson_extension.clients.platform_request import AbstractPlatformRequest
+
+
+logger = logging.getLogger(__name__)
 
 
 class NotificationsClient(abc.ABC):
@@ -45,5 +48,5 @@ class NotificationsClientHttp(NotificationsClient):
 
 class NotificationClientNoOp(NotificationsClient):
     async def send_notification(self, event: dict):
-        print("event: ", event)
+        logger.info(event)
         return ""
