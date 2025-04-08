@@ -44,7 +44,6 @@ class NotificationsClientHttp(NotificationsClient):
         response.raise_for_status()
 
 
-
 class NotificationClientNoOp(NotificationsClient):
     async def send_notification(self, event: dict):
         logger.info(event)
