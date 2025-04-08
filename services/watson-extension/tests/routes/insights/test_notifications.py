@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, AsyncMock
 
 import injector
 import pytest
@@ -26,7 +26,7 @@ async def test_client(notifications_client) -> TestClientProtocol:
 
 
 async def test_send_rbac_request_admin_email(test_client, notifications_client) -> None:
-    notifications_client.send_notification = MagicMock(return_value="")
+    notifications_client.send_notification = AsyncMock(return_value="")
 
     response = await test_client.post(
         "/notifications/send_rbac_request_admin_email?requested_url=example.com&user_message=plzzz approve",
