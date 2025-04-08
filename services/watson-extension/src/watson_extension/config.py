@@ -25,6 +25,9 @@ content_sources_url = config(
 advisor_openshift_url = config(
     "ENDPOINT__CCX_SMART_PROXY__SERVICE__URL", default=__platform_url
 )
+notifications_gw_url = config(
+    "ENDPOINT__NOTIFICATIONS_GW__SERVICE__URL", default=__platform_url
+)
 
 # Platform requests
 platform_request = config(

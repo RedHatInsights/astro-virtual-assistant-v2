@@ -24,6 +24,7 @@ from watson_extension.clients import (
     VulnerabilityURL,
     ContentSourcesURL,
     RhsmURL,
+    NotificationsGWURL,
 )
 from watson_extension.clients.insights.advisor import AdvisorClient, AdvisorClientHttp
 from watson_extension.clients.openshift.advisor import (
@@ -42,6 +43,12 @@ from watson_extension.clients.insights.rhsm import (
     RhsmClient,
     RhsmClientHttp,
 )
+from watson_extension.clients.insights.notifications import (
+    NotificationsClient,
+    NotificationsClientHttp,
+    NotificationClientNoOp,
+)
+
 from common.platform_request import (
     AbstractPlatformRequest,
 )
@@ -138,11 +145,21 @@ def injector_from_config(binder: injector.Binder) -> None:
             FixedUserIdentityProvider,
             scope=injector.singleton,
         )
+        binder.bind(
+            NotificationsClient,
+            NotificationClientNoOp,
+            scope=quart_injector.RequestScope,
+        )
     else:
         # This injector is per request - as we should extract the data for each request.
         binder.bind(
             AbstractUserIdentityProvider,
             quart_user_identity_provider,
+            scope=quart_injector.RequestScope,
+        )
+        binder.bind(
+            NotificationsClient,
+            NotificationsClientHttp,
             scope=quart_injector.RequestScope,
         )
 
@@ -170,6 +187,9 @@ def injector_from_config(binder: injector.Binder) -> None:
     binder.bind(RhsmURL, to=config.rhsm_url, scope=injector.singleton)
     binder.bind(
         AdvisorOpenshiftURL, to=config.advisor_openshift_url, scope=injector.singleton
+    )
+    binder.bind(
+        NotificationsGWURL, to=config.notifications_gw_url, scope=injector.singleton
     )
 
 
