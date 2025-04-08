@@ -43,10 +43,8 @@ class NotificationsClientHttp(NotificationsClient):
 
         response.raise_for_status()
 
-        return ""
 
 
 class NotificationClientNoOp(NotificationsClient):
     async def send_notification(self, event: dict):
         logger.info(event)
-        return ""

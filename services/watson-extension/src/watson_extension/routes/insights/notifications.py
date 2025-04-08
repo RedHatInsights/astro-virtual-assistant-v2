@@ -36,10 +36,11 @@ async def send_rbac_request_admi_email(
     username = user_identity["identity"]["user"]["username"]
     user_email = user_identity["identity"]["user"]["email"]
 
-    return await notifications_service.send_rbac_request_admin(
+    await notifications_service.send_rbac_request_admin(
         org_id=org_id,
         username=username,
         user_email=user_email,
         user_message=query_args.user_message,
         requested_url=query_args.requested_url,
     )
+    return ""
