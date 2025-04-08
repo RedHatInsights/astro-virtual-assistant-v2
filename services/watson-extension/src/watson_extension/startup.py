@@ -24,6 +24,7 @@ from watson_extension.clients import (
     VulnerabilityURL,
     ContentSourcesURL,
     RhsmURL,
+    NotificationsGWURL,
 )
 from watson_extension.clients.insights.advisor import AdvisorClient, AdvisorClientHttp
 from watson_extension.clients.openshift.advisor import (
@@ -42,6 +43,11 @@ from watson_extension.clients.insights.rhsm import (
     RhsmClient,
     RhsmClientHttp,
 )
+from watson_extension.clients.insights.notifications import (
+    NotificationsClient,
+    NotificationsClientHttp,
+)
+
 from common.platform_request import (
     AbstractPlatformRequest,
 )
@@ -171,6 +177,9 @@ def injector_from_config(binder: injector.Binder) -> None:
     binder.bind(
         AdvisorOpenshiftURL, to=config.advisor_openshift_url, scope=injector.singleton
     )
+    binder.bind(
+        NotificationsGWURL, to=config.notifications_gw_url, scope=injector.singleton
+    )
 
 
 def injector_defaults(binder: injector.Binder) -> None:
@@ -189,6 +198,9 @@ def injector_defaults(binder: injector.Binder) -> None:
         AdvisorOpenshiftClient,
         AdvisorOpenshiftClientHttp,
         scope=quart_injector.RequestScope,
+    )
+    binder.bind(
+        NotificationsClient, NotificationsClientHttp, scope=quart_injector.RequestScope
     )
 
 
