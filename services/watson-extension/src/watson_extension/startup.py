@@ -146,7 +146,9 @@ def injector_from_config(binder: injector.Binder) -> None:
             scope=injector.singleton,
         )
         binder.bind(
-            NotificationsClient, NotificationClientNoOp, scope=quart_injector.RequestScope
+            NotificationsClient,
+            NotificationClientNoOp,
+            scope=quart_injector.RequestScope,
         )
     else:
         # This injector is per request - as we should extract the data for each request.
