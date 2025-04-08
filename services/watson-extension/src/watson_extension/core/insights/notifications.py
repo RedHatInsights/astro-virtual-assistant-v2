@@ -2,7 +2,6 @@ import injector
 import uuid
 from datetime import datetime
 
-import watson_extension.config as config
 from watson_extension.clients.insights.notifications import NotificationsClient
 
 
@@ -18,10 +17,6 @@ class NotificationsCore:
         user_message: str,
         requested_url: str,
     ):
-        if config.is_running_locally:
-            print("called send_rbac_request_admin in local environment")
-            return ""
-
         event = dict(
             {
                 "id": str(uuid.uuid4()),

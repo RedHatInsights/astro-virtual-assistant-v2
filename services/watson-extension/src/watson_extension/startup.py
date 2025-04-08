@@ -46,6 +46,7 @@ from watson_extension.clients.insights.rhsm import (
 from watson_extension.clients.insights.notifications import (
     NotificationsClient,
     NotificationsClientHttp,
+    NotificationClientNoOp,
 )
 
 from common.platform_request import (
@@ -144,11 +145,19 @@ def injector_from_config(binder: injector.Binder) -> None:
             FixedUserIdentityProvider,
             scope=injector.singleton,
         )
+        binder.bind(
+            NotificationsClient, NotificationClientNoOp, scope=quart_injector.RequestScope
+        )
     else:
         # This injector is per request - as we should extract the data for each request.
         binder.bind(
             AbstractUserIdentityProvider,
             quart_user_identity_provider,
+            scope=quart_injector.RequestScope,
+        )
+        binder.bind(
+            NotificationsClient,
+            NotificationsClientHttp,
             scope=quart_injector.RequestScope,
         )
 
@@ -198,9 +207,6 @@ def injector_defaults(binder: injector.Binder) -> None:
         AdvisorOpenshiftClient,
         AdvisorOpenshiftClientHttp,
         scope=quart_injector.RequestScope,
-    )
-    binder.bind(
-        NotificationsClient, NotificationsClientHttp, scope=quart_injector.RequestScope
     )
 
 
