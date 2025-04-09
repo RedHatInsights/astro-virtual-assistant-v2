@@ -2,7 +2,7 @@ import injector
 from pydantic import BaseModel
 
 from quart import Blueprint
-from quart_schema import validate_querystring, document_headers
+from quart_schema import validate_querystring, document_headers, validate_response
 
 from common.auth import decoded_identity_header
 
@@ -20,14 +20,19 @@ class RbacRequestAdminEmail(BaseModel):
     requested_url: str
 
 
+class ResponseSendRbacRequestAdminEmail(BaseModel):
+    response: str = ""
+
+
 @blueprint.post("/send_rbac_request_admin_email")
 @validate_querystring(RbacRequestAdminEmail)
+@validate_response(ResponseSendRbacRequestAdminEmail)
 @document_headers(RHSessionIdHeader)
 async def send_rbac_request_admi_email(
     query_args: RbacRequestAdminEmail,
     user_identity_provider: injector.Inject[AbstractUserIdentityProvider],
     notifications_service: injector.Inject[NotificationsCore],
-) -> None:
+) -> ResponseSendRbacRequestAdminEmail:
     user_identity = decoded_identity_header(
         await user_identity_provider.get_user_identity()
     )
@@ -43,4 +48,4 @@ async def send_rbac_request_admi_email(
         user_message=query_args.user_message,
         requested_url=query_args.requested_url,
     )
-    return ""
+    return ResponseSendRbacRequestAdminEmail()

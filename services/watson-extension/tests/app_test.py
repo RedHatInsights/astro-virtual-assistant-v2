@@ -8,6 +8,7 @@ import quart_injector
 
 import injector
 from aioresponses import aioresponses
+from openapi_spec_validator import validate
 
 import pytest
 
@@ -109,6 +110,15 @@ async def test_app_injection(default_app):
         for param in bindings.values():
             if injector_container.get(param) is None:
                 assert injector_container.create_object(param) is not None
+
+
+async def test_openapi(default_app):
+    test_client = default_app.test_client()
+    response = await test_client.get(
+        "/api/virtual-assistant-watson-extension/v2/openapi.json"
+    )
+    assert response.status == "200 OK"
+    validate(await response.get_json())
 
 
 async def test_app_health(default_app):
