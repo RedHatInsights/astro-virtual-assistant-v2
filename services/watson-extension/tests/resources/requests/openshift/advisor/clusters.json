@@ -25,8 +25,16 @@
       "total_hit_count": 17,
       "hits_by_total_risk": { "1": 0, "2": 10, "3": 7, "4": 0 },
       "cluster_version": "4.11.0"
+    },
+    {
+      "cluster_id": "98ed1b12-08f2-11f0-9801-525400fdfea5",
+      "cluster_name": "iqe-ocp-vulnerability-stage-test-mar24",
+      "managed": false,
+      "total_hit_count": 17,
+      "hits_by_total_risk": { "1": 0, "2": 10, "3": 7, "4": 0 },
+      "cluster_version": "4.11.0"
     }
   ],
-  "meta": { "count": 3 },
+  "meta": { "count": 4 },
   "status": "ok"
 }
