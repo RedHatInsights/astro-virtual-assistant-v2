@@ -32,6 +32,11 @@ class WatsonExtensionAPIProvider(OpenAPIProvider):
         for component in components.values():
             self._patch_schema(component)
 
+        for path in paths.values():
+            for method_name in path:
+                method = path[method_name]
+                method["operationId"] = f"{method_name.lower()}_{rule.endpoint}"
+
         return paths, components
 
     def build_querystring_parameters(
