@@ -53,6 +53,74 @@
         "highest_severity": 2,
         "hits_by_severity": { "1": 0, "2": 1, "3": 0, "4": 0 }
       }
+    },
+    {
+      "cluster": {
+        "uuid": "207b5151-9c8b-4fcc-9f18-e97c4cf7b512",
+        "display_name": "CCX test cluster for DVO recommendations"
+      },
+      "namespace": {
+        "uuid": "fe39d0d3-ea0b-4d37-bc3e-6358ed32ea18",
+        "name": ""
+      },
+      "metadata": {
+        "recommendations": 1,
+        "objects": 1,
+        "reported_at": "2025-03-31T13:18:25Z",
+        "highest_severity": 2,
+        "hits_by_severity": { "1": 0, "2": 1, "3": 0, "4": 0 }
+      }
+    },
+    {
+      "cluster": {
+        "uuid": "207b5151-9c8b-4fcc-9f18-e97c4cf7b512",
+        "display_name": "CCX test cluster for DVO recommendations"
+      },
+      "namespace": {
+        "uuid": "fe39d0d3-ea0b-4d37-bc3e-6358ed32ea18",
+        "name": ""
+      },
+      "metadata": {
+        "recommendations": 1,
+        "objects": 1,
+        "reported_at": "2025-03-31T13:18:25Z",
+        "highest_severity": 2,
+        "hits_by_severity": { "1": 0, "2": 1, "3": 0, "4": 0 }
+      }
+    },
+    {
+      "cluster": {
+        "uuid": "207b5151-9c8b-4fcc-9f18-e97c4cf7b512",
+        "display_name": "CCX test cluster for DVO recommendations"
+      },
+      "namespace": {
+        "uuid": "fe39d0d3-ea0b-4d37-bc3e-6358ed32ea18",
+        "name": ""
+      },
+      "metadata": {
+        "recommendations": 1,
+        "objects": 1,
+        "reported_at": "2025-03-31T13:18:25Z",
+        "highest_severity": 2,
+        "hits_by_severity": { "1": 0, "2": 1, "3": 0, "4": 0 }
+      }
+    },
+    {
+      "cluster": {
+        "uuid": "207b5151-9c8b-4fcc-9f18-e97c4cf7b512",
+        "display_name": "CCX test cluster for DVO recommendations"
+      },
+      "namespace": {
+        "uuid": "fe39d0d3-ea0b-4d37-bc3e-6358ed32ea18",
+        "name": ""
+      },
+      "metadata": {
+        "recommendations": 1,
+        "objects": 1,
+        "reported_at": "2025-03-31T13:18:25Z",
+        "highest_severity": 2,
+        "hits_by_severity": { "1": 0, "2": 1, "3": 0, "4": 0 }
+      }
     }
   ]
 }
