@@ -16,6 +16,7 @@ objects:
       - vulnerability-engine # vulnerability_url
       - content-sources-backend # content_sources_url
       - ccx-smart-proxy # advisor_openshift_url
+      - chrome-service # chrome_service_url
     inMemoryDb: true
     deployments:
     - name: api

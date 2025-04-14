@@ -1,0 +1,7 @@
+{%- if already -%}
+The {{service}} wasn't in your Favorites.
+{%- else if response.ok -%}
+The [{{service}}]({{link}}) ({{group}}) service is no longer favorited.
+{%- else -%}
+I'm sorry. I couldn't remove the [{{service}}]({{link}}) ({{group}}) service from your Favorites.
+{%- endif -%}

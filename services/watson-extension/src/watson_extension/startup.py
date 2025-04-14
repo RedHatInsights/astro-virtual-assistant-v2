@@ -21,6 +21,7 @@ from watson_extension.auth.service_account_authentication import (
 from watson_extension.clients import (
     AdvisorURL,
     AdvisorOpenshiftURL,
+    ChromeServiceURL,
     VulnerabilityURL,
     ContentSourcesURL,
     RhsmURL,
@@ -41,6 +42,10 @@ from watson_extension.clients.insights.content_sources import (
 from watson_extension.clients.insights.rhsm import (
     RhsmClient,
     RhsmClientHttp,
+)
+from watson_extension.clients.platform.chrome import (
+    ChromeServiceClient,
+    ChromeServiceClientHttp,
 )
 from common.platform_request import (
     AbstractPlatformRequest,
@@ -171,6 +176,7 @@ def injector_from_config(binder: injector.Binder) -> None:
     binder.bind(
         AdvisorOpenshiftURL, to=config.advisor_openshift_url, scope=injector.singleton
     )
+    binder.bind(ChromeServiceURL, to=config.chrome_service_url, scope=injector.singleton)
 
 
 def injector_defaults(binder: injector.Binder) -> None:
@@ -188,6 +194,11 @@ def injector_defaults(binder: injector.Binder) -> None:
     binder.bind(
         AdvisorOpenshiftClient,
         AdvisorOpenshiftClientHttp,
+        scope=quart_injector.RequestScope,
+    )
+    binder.bind(
+        ChromeServiceClient,
+        ChromeServiceClientHttp,
         scope=quart_injector.RequestScope,
     )
 
