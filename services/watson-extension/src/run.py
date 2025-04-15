@@ -25,6 +25,7 @@ app = Quart(__name__)
 config.log_config()
 
 wire_routes(app)
+quart_injector.QuartModule(app)
 quart_injector.wire(app, [injector_defaults, injector_from_config])
 quart_metrics.register_app(app)
 quart_metrics.register_http_metrics(
