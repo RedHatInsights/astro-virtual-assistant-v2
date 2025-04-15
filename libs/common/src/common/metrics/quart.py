@@ -20,12 +20,20 @@ def register_app(app: Quart, metrics_path="/metrics"):
         return content, http_headers
 
 
+def get_registry(app: Quart):
+    if QUART_EXTENSION_METRIC_REGISTRY not in app.extensions:
+        raise KeyError(
+            f"Metrics registry '{QUART_EXTENSION_METRIC_REGISTRY}' is missing. Please ensure it is registered via 'register_app'."
+        )
+    return app.extensions[QUART_EXTENSION_METRIC_REGISTRY]
+
+
 def register_http_metrics(
     app: Quart,
     app_name: str,
     accept_paths: Optional[Callable[[quart.Request], bool]] = None,
 ):
-    registry = app.extensions[QUART_EXTENSION_METRIC_REGISTRY]
+    registry = get_registry(app)
     http_requests_total = Counter(
         "http_requests_total",
         "Total number of HTTP requests",
