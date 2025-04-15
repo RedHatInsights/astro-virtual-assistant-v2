@@ -1,1 +1,1 @@
-Service [(bar3)]{/insights/bar3} is already favorited.
+Service [bar3](/insights/bar3/run-damnit) is already favorited.

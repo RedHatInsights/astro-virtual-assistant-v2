@@ -12,19 +12,24 @@ from watson_extension.routes import RHSessionIdHeader
 
 blueprint = Blueprint("chrome", __name__, url_prefix="/chrome")
 
+
 class FavoritesRequestQuery(BaseModel):
     title: str
-    favoriting: bool # true is adding a favorite
+    favoriting: bool  # true is adding a favorite
+
 
 class FavoritesResponse(BaseModel):
     response: str
+
 
 class ServiceResponseItem(BaseModel):
     data: dict
     synonyms: List[str]
 
+
 class ServicesResponse(BaseModel):
     response: List[ServiceResponseItem]
+
 
 @blueprint.get("/services")
 @validate_response(ServicesResponse)
@@ -32,10 +37,9 @@ class ServicesResponse(BaseModel):
 async def services(
     chrome_service: injector.Inject[ChromeServiceCore],
 ) -> ServicesResponse:
-    print("Getting services")
     options = await chrome_service.get_service_options()
-    print("Options:", options)
     return ServicesResponse(response=options)
+
 
 @blueprint.post("/favorites")
 @validate_querystring(FavoritesRequestQuery)
@@ -55,18 +59,24 @@ async def favorites(
                 title=query_args.title,
             )
         )
-    response = None
-    print("already favorited:", service_data["already"])
     if service_data["already"] != query_args.favoriting:
-        response = await chrome_service.modify_favorite_service(service_data["href"], favorite=query_args.favoriting)
-
+        try:
+            await chrome_service.modify_favorite_service(
+                service_data["href"], favorite=query_args.favoriting
+            )
+        except Exception:
+            return FavoritesResponse(
+                response=await render_template(
+                    "platform/chrome/request_error.txt.jinja",
+                    **service_data,
+                )
+            )
 
     if query_args.favoriting:
         return FavoritesResponse(
             response=await render_template(
                 "platform/chrome/add_favorite.txt.jinja",
                 **service_data,
-                response=response,
             )
         )
     else:
@@ -74,6 +84,5 @@ async def favorites(
             response=await render_template(
                 "platform/chrome/delete_favorite.txt.jinja",
                 **service_data,
-                response=response,
             )
         )

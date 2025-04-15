@@ -177,7 +177,9 @@ def injector_from_config(binder: injector.Binder) -> None:
     binder.bind(
         AdvisorOpenshiftURL, to=config.advisor_openshift_url, scope=injector.singleton
     )
-    binder.bind(ChromeServiceURL, to=config.chrome_service_url, scope=injector.singleton)
+    binder.bind(
+        ChromeServiceURL, to=config.chrome_service_url, scope=injector.singleton
+    )
 
 
 def injector_defaults(binder: injector.Binder) -> None:

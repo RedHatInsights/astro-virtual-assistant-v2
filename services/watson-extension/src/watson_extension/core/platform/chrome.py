@@ -2,25 +2,24 @@ import injector
 
 from watson_extension.clients.platform.chrome import ChromeServiceClient
 
+
 class ChromeServiceCore:
     def __init__(self, chrome_service_client: injector.Inject[ChromeServiceClient]):
         self.chrome_service_client = chrome_service_client
-    
+
     async def get_service_options(self):
         services = await self.chrome_service_client.get_generated_services()
         parsed = parse_generated_services(services)
         options = []
         for s in parsed:
-            print(f"Service: {s}")
             if s.get("href", ""):
                 options.append(convert_service_to_option(s))
-        
-        print(f"Options: {options}")
+
         return options
-    
+
     async def get_user(self):
         return await self.chrome_service_client.get_user()
-    
+
     async def _get_service_by_title(self, title):
         # get all services, find the href
         service = None
@@ -29,9 +28,9 @@ class ChromeServiceCore:
             if title.lower() in (t.lower() for t in s["synonyms"]):
                 service = s
                 break
-        
+
         return service["data"] if service else None
-    
+
     async def _is_favorited(self, href):
         user = await self.get_user()
         if not user.favorite_pages:
@@ -54,11 +53,14 @@ class ChromeServiceCore:
             "service": service["title"],
             "href": href,
             "group": service["group"],
-            "already": favorited_already
+            "already": favorited_already,
         }
-        
+
     async def modify_favorite_service(self, href, favorite):
-        return await self.chrome_service_client.modify_favorite_service(href=href, favorite=favorite)
+        return await self.chrome_service_client.modify_favorite_service(
+            href=href, favorite=favorite
+        )
+
 
 # Helpers
 def parse_generated_services(content):
@@ -82,6 +84,7 @@ def parse_generated_services(content):
                     service["alt_title"] = sublink.alt_title
                     services.append(service)
     return services
+
 
 def convert_service_to_option(service):
     value = {"group": service.get("group", "")}
