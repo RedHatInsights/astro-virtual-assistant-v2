@@ -1,7 +1,7 @@
 {%- if already -%}
 The {{service}} service is already in your Favorites.
-{%- else if response.ok -%}
-The [{{service}}]({{link}}) ({{group}}) service is now in your Favorites!
+{%- elif response.ok -%}
+The [{{service}}]({{href}}) ({{group}}) service is now in your Favorites!
 {%- else -%}
-I'm sorry. I couldn't add the [{{service}}]({{link}}) ({{group}}) service to your Favorites.
+I'm sorry. I couldn't add the [{{service}}]({{href}}) ({{group}}) service to your Favorites.
 {%- endif -%}

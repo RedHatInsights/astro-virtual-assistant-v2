@@ -19,8 +19,12 @@ class FavoritesRequestQuery(BaseModel):
 class FavoritesResponse(BaseModel):
     response: str
 
+class ServiceResponseItem(BaseModel):
+    data: dict
+    synonyms: List[str]
+
 class ServicesResponse(BaseModel):
-    response: List[dict]
+    response: List[ServiceResponseItem]
 
 @blueprint.get("/services")
 @validate_response(ServicesResponse)
@@ -28,7 +32,10 @@ class ServicesResponse(BaseModel):
 async def services(
     chrome_service: injector.Inject[ChromeServiceCore],
 ) -> ServicesResponse:
-    return await chrome_service.get_service_options()
+    print("Getting services")
+    options = await chrome_service.get_service_options()
+    print("Options:", options)
+    return ServicesResponse(response=options)
 
 @blueprint.post("/favorites")
 @validate_querystring(FavoritesRequestQuery)
@@ -41,7 +48,6 @@ async def favorites(
     service_data = await chrome_service.get_service_data(
         title=query_args.title,
     )
-    print("sd", service_data)
     if not service_data:
         return FavoritesResponse(
             response=await render_template(
@@ -49,14 +55,18 @@ async def favorites(
                 title=query_args.title,
             )
         )
+    response = None
+    print("already favorited:", service_data["already"])
     if service_data["already"] != query_args.favoriting:
-        await chrome_service.modify_favorite_service(service_data["href"], favorite=query_args.favoriting)
+        response = await chrome_service.modify_favorite_service(service_data["href"], favorite=query_args.favoriting)
+
 
     if query_args.favoriting:
         return FavoritesResponse(
             response=await render_template(
                 "platform/chrome/add_favorite.txt.jinja",
                 **service_data,
+                response=response,
             )
         )
     else:
@@ -64,5 +74,6 @@ async def favorites(
             response=await render_template(
                 "platform/chrome/delete_favorite.txt.jinja",
                 **service_data,
+                response=response,
             )
         )

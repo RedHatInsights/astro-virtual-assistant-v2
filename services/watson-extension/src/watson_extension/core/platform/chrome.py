@@ -2,7 +2,6 @@ import injector
 
 from watson_extension.clients.platform.chrome import ChromeServiceClient
 
-
 class ChromeServiceCore:
     def __init__(self, chrome_service_client: injector.Inject[ChromeServiceClient]):
         self.chrome_service_client = chrome_service_client
@@ -12,9 +11,11 @@ class ChromeServiceCore:
         parsed = parse_generated_services(services)
         options = []
         for s in parsed:
-            if "href" in s:
+            print(f"Service: {s}")
+            if s.get("href", ""):
                 options.append(convert_service_to_option(s))
         
+        print(f"Options: {options}")
         return options
     
     async def get_user(self):
@@ -23,15 +24,13 @@ class ChromeServiceCore:
     async def _get_service_by_title(self, title):
         # get all services, find the href
         service = None
-        services = await self.chrome_service_client.get_generated_services()
-        parsed = parse_generated_services(services)
-        print(f"Parsed services: {parsed}")
-        for s in parsed:
-            if title.lower() == s["title"].lower() or title.lower() in (t.lower() for t in s["alt_title"]):
+        options = await self.get_service_options()
+        for s in options:
+            if title.lower() in (t.lower() for t in s["synonyms"]):
                 service = s
                 break
         
-        return service
+        return service["data"] if service else None
     
     async def _is_favorited(self, href):
         user = await self.get_user()
@@ -53,42 +52,41 @@ class ChromeServiceCore:
 
         return {
             "service": service["title"],
-            "link": href,
+            "href": href,
             "group": service["group"],
             "already": favorited_already
         }
         
     async def modify_favorite_service(self, href, favorite):
-        await self.chrome_service_client.modify_favorite_service(href=href, favorite=favorite)
+        return await self.chrome_service_client.modify_favorite_service(href=href, favorite=favorite)
 
 # Helpers
 def parse_generated_services(content):
-    print("content", content)
     services = []
     for category in content:
-        for link in category["links"]:
-            group_title = link.get("title")
-            if "isGroup" in link and link["isGroup"]:
-                for sublink in link["links"]:
-                    if "isExternal" in sublink and sublink["isExternal"]:
+        for link in category.links:
+            group_title = link.title
+            if link.is_group:
+                for sublink in link.links:
+                    if sublink.is_external:
                         # not really a service
                         continue
                     service = {"group": group_title}
 
-                    if "href" in sublink:
-                        service["href"] = sublink["href"]
-                    if "title" in sublink:
-                        service["title"] = sublink["title"]
-                    if "appId" in sublink:
-                        service["app_id"] = sublink["appId"]
-                    service["alt_title"] = sublink.get("alt_title", [])
+                    if sublink.href:
+                        service["href"] = sublink.href
+                    if sublink.title:
+                        service["title"] = sublink.title
+                    if sublink.app_id:
+                        service["app_id"] = sublink.app_id
+                    service["alt_title"] = sublink.alt_title
                     services.append(service)
     return services
 
 def convert_service_to_option(service):
-    value = {"group": service["group"]}
-    synonyms = [service["href"]]
-    value["href"] = service["href"]
+    value = {"group": service.get("group", "")}
+    synonyms = [service.get("href", "")]
+    value["href"] = service.get("href", "")
 
     if "title" in service:
         value["title"] = service["title"]

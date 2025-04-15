@@ -43,10 +43,9 @@ class Link:
 class Service:
     description: str
     id: str
-    links: List[dict]
+    links: Optional[List[dict]]
     title: str
-    href: str
-    group: str
+    href: Optional[str]
 
 
 class ChromeServiceClient(abc.ABC):
@@ -75,23 +74,51 @@ class ChromeServiceClientHttp(ChromeServiceClient):
 
     async def get_user(self):
         # struggles to be a json response, manually doing it here
-        response, content = await self.platform_request.get(
+        response = await self.platform_request.get(
             self.chrome_url,
             "/api/chrome-service/v1/user",
             user_identity=await self.user_identity_provider.get_user_identity()
         )
         response.raise_for_status()
 
-        return json.loads(response.content)
+        data = json.loads(await response.text())["data"]
+        print(f"User data: {data}")
+        return User(
+            account_id=data["accountId"],
+            first_login=data["firstLogin"],
+            day_one=data["dayOne"],
+            last_login=data["lastLogin"],
+            last_visited_pages=data["lastVisitedPages"],
+            favorite_pages=[
+                Favorite(
+                    id=fp["id"],
+                    pathname=fp["pathname"],
+                    favorite=fp["favorite"],
+                    user_identity_id=fp["userIdentityId"]
+                ) for fp in data.get("favoritePages", [])
+            ],
+            visited_bundles=data.get("visitedBundles", {}),
+        )
     
-    async def get_generated_services(self):
-        return await self.platform_request.get(
+    async def get_generated_services(self) -> List[Service]:
+        response = await self.platform_request.get(
             self.chrome_url,
             "/api/chrome-service/v1/static/stable/prod/services/services-generated.json",
             user_identity=await self.user_identity_provider.get_user_identity()
         )
+        response.raise_for_status()
 
-    async def modify_favorite_service(self, href, favorite=True) -> List[Favorite]:
+        data = await response.json()
+        print(f"Generated services: {data}")
+        return [Service(
+            description=service.get("description", ""),
+            id=service.get("id", ""),
+            links=parse_links_into_obj(service.get("links", [])),
+            title=service.get("title", ""),
+            href=service.get("href", ""),
+        ) for service in data]
+
+    async def modify_favorite_service(self, href, favorite=True):
         response = await self.platform_request.post(
             self.chrome_url,
             "/api/chrome-service/v1/favorite-pages",
@@ -101,5 +128,24 @@ class ChromeServiceClientHttp(ChromeServiceClient):
                 "pathname": href,
             },
         )
-        response.raise_for_status()
         return response
+
+
+def parse_links_into_obj(links) -> List[Link]:
+    if not links:
+        return []
+    parsed_links = []
+    for link in links:
+        parsed_links.append(
+            Link(
+                id=link.get("id"),
+                title=link.get("title", ""),
+                alt_title=link.get("altTitle", []),
+                links=parse_links_into_obj(link.get("links", [])),
+                app_id=link.get("appId"),
+                is_group=link.get("isGroup", ""),
+                is_external=link.get("isExternal", ""),
+                href=link.get("href", "")
+            )
+        )
+    return parsed_links

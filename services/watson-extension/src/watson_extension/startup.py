@@ -53,6 +53,7 @@ from common.platform_request import (
 from watson_extension.routes import health
 from watson_extension.routes import insights
 from watson_extension.routes import openshift
+from watson_extension.routes import platform
 
 import watson_extension.config as config
 
@@ -211,6 +212,7 @@ def wire_routes(app: Quart) -> None:
     private_root.register_blueprint(health.blueprint)
 
     # Connect public routes ({config.base_url})
+    public_root.register_blueprint(platform.blueprint)
     public_root.register_blueprint(insights.blueprint)
     public_root.register_blueprint(openshift.blueprint)
 
