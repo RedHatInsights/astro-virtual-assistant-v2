@@ -1,4 +1,5 @@
 import quart_injector
+import common.metrics.quart as quart_metrics
 from quart import Quart
 import watson_extension.config as config
 from common.logging import build_logger
@@ -25,6 +26,10 @@ config.log_config()
 
 wire_routes(app)
 quart_injector.wire(app, [injector_defaults, injector_from_config])
+quart_metrics.register_app(app)
+quart_metrics.register_http_metrics(
+    app, config.name, lambda r: r.path.startswith("/api")
+)
 
 
 @app.errorhandler(RequestSchemaValidationError)
