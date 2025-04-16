@@ -7,6 +7,8 @@ base_url = config("BASE_URL", default="/api/virtual-assistant-watson-extension/v
 port = config("PORT", default=5050, cast=int)
 environment_name = config("ENVIRONMENT_NAME", default="stage", cast=str)
 
+metrics_port = config("METRICS_PORT", default=0, cast=int)
+
 is_running_locally = config("IS_RUNNING_LOCALLY", default=False, cast=bool)
 if is_running_locally:
     __platform_url = config("PLATFORM_URL", default="https://console.redhat.com")
