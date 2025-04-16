@@ -1,3 +1,4 @@
+import logging
 import time
 from typing import Callable, Optional
 
@@ -65,7 +66,12 @@ def register_http_metrics(
                 "status": str(response.status_code),
             }
 
-            http_requests_total.inc(labels)
-            http_request_duration.observe(labels, duration)
+            try:
+                http_requests_total.inc(labels)
+                http_request_duration.observe(labels, duration)
+            except Exception as e:
+                logging.getLogger(__name__).error(
+                    "Failed to send platform_request metrics", e
+                )
 
         return response
