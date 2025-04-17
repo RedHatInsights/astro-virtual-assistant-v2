@@ -25,7 +25,7 @@ async def chrome_client() -> MagicMock:
             [
                 Favorite(
                     id="asdfg",
-                    pathname="/insights/foo",
+                    pathname="/insights/bar3/run-damnit",
                     favorite=True,
                     user_identity_id="1234",
                 ),
@@ -170,3 +170,19 @@ async def test_favoriting_not_found(test_client, chrome_client) -> None:
     assert data["response"] == get_test_template(
         "platform/chrome/not_found_favorite.txt"
     )
+
+async def test_favoriting_remove_favorite(test_client, chrome_client) -> None:
+    response = await test_client.post(
+        "/chrome/favorites", query_string={"favoriting": False, "title": "bar3"}
+    )
+    assert response.status == "200 OK"
+    data = await response.get_json()
+    assert data["response"] == get_test_template("platform/chrome/remove_favorite.txt")
+
+async def test_favoriting_remove_service_not_favorited(test_client, chrome_client) -> None:
+    response = await test_client.post(
+        "/chrome/favorites", query_string={"favoriting": False, "title": "bar1"}
+    )
+    assert response.status == "200 OK"
+    data = await response.get_json()
+    assert data["response"] == get_test_template("platform/chrome/remove_not_favorite.txt")
