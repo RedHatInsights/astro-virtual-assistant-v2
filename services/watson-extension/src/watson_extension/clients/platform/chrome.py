@@ -35,8 +35,8 @@ class Link:
     alt_title: Optional[List[str]]
     links: Optional["Link"]
     app_id: Optional[str] = None
-    is_group: Optional[bool] = None
-    is_external: Optional[bool] = None
+    is_group: bool = False
+    is_external: bool = False
     href: Optional[str] = None
 
 
@@ -148,8 +148,8 @@ def parse_links_into_obj(links) -> List[Link]:
                 alt_title=link.get("altTitle", []),
                 links=parse_links_into_obj(link.get("links", [])),
                 app_id=link.get("appId"),
-                is_group=link.get("isGroup", ""),
-                is_external=link.get("isExternal", ""),
+                is_group=link.get("isGroup", False),
+                is_external=link.get("isExternal", False),
                 href=link.get("href", ""),
             )
         )
