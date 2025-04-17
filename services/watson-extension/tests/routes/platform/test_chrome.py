@@ -132,7 +132,9 @@ async def test_client(chrome_client) -> TestClientProtocol:
 
 @pytest.mark.asyncio
 async def test_favoriting_modify_favorite_service_exception(chrome_client: MagicMock):
-    chrome_client.modify_favorite_service.side_effect = Exception("Mocked network error")
+    chrome_client.modify_favorite_service.side_effect = Exception(
+        "Mocked network error"
+    )
 
     with pytest.raises(Exception) as excinfo:
         await chrome_client.modify_favorite_service()
@@ -180,6 +182,7 @@ async def test_favoriting_not_found(test_client, chrome_client) -> None:
         "platform/chrome/not_found_favorite.txt"
     )
 
+
 async def test_favoriting_remove_favorite(test_client, chrome_client) -> None:
     response = await test_client.post(
         "/chrome/favorites", query_string={"favoriting": False, "title": "bar3"}
@@ -188,10 +191,15 @@ async def test_favoriting_remove_favorite(test_client, chrome_client) -> None:
     data = await response.get_json()
     assert data["response"] == get_test_template("platform/chrome/remove_favorite.txt")
 
-async def test_favoriting_remove_service_not_favorited(test_client, chrome_client) -> None:
+
+async def test_favoriting_remove_service_not_favorited(
+    test_client, chrome_client
+) -> None:
     response = await test_client.post(
         "/chrome/favorites", query_string={"favoriting": False, "title": "bar1"}
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template("platform/chrome/remove_not_favorite.txt")
+    assert data["response"] == get_test_template(
+        "platform/chrome/remove_not_favorite.txt"
+    )

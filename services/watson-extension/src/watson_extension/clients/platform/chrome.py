@@ -57,9 +57,7 @@ class ChromeServiceClient(abc.ABC):
     async def get_generated_services(self) -> List[Service]: ...
 
     @abc.abstractmethod
-    async def modify_favorite_service(
-        self, service, favorite=True
-    ) -> str: ...
+    async def modify_favorite_service(self, service, favorite=True) -> str: ...
 
 
 class ChromeServiceClientHttp(ChromeServiceClient):
@@ -139,13 +137,16 @@ class ChromeServiceClientHttp(ChromeServiceClient):
 def parse_links_into_obj(links) -> List[Link]:
     if not links:
         return []
-    return [Link(
-                id=link.get("id"),
-                title=link.get("title", ""),
-                alt_title=link.get("altTitle", []),
-                links=parse_links_into_obj(link.get("links", [])),
-                app_id=link.get("appId"),
-                is_group=link.get("isGroup", False),
-                is_external=link.get("isExternal", False),
-                href=link.get("href", ""),
-            ) for link in links]
+    return [
+        Link(
+            id=link.get("id"),
+            title=link.get("title", ""),
+            alt_title=link.get("altTitle", []),
+            links=parse_links_into_obj(link.get("links", [])),
+            app_id=link.get("appId"),
+            is_group=link.get("isGroup", False),
+            is_external=link.get("isExternal", False),
+            href=link.get("href", ""),
+        )
+        for link in links
+    ]
