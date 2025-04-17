@@ -77,6 +77,7 @@ async def favorites(
             )
         )
 
+
 @blueprint.get("/favorites/options")
 @validate_response(FavoritesOptionsResponse)
 @document_headers(RHSessionIdHeader)
