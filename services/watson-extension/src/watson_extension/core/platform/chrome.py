@@ -34,10 +34,7 @@ class ChromeServiceCore:
         if not user.favorite_pages:
             return False
         favorites = user.favorite_pages
-        for favorite in favorites:
-            if favorite.pathname == href:
-                return True
-        return False
+        return any(favorite.pathname == href for favorite in favorites)
 
     async def get_service_data(self, title):
         service = await self._get_service_by_title(title)

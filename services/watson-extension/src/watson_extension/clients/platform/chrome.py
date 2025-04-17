@@ -139,10 +139,7 @@ class ChromeServiceClientHttp(ChromeServiceClient):
 def parse_links_into_obj(links) -> List[Link]:
     if not links:
         return []
-    parsed_links = []
-    for link in links:
-        parsed_links.append(
-            Link(
+    return [Link(
                 id=link.get("id"),
                 title=link.get("title", ""),
                 alt_title=link.get("altTitle", []),
@@ -151,6 +148,4 @@ def parse_links_into_obj(links) -> List[Link]:
                 is_group=link.get("isGroup", False),
                 is_external=link.get("isExternal", False),
                 href=link.get("href", ""),
-            )
-        )
-    return parsed_links
+            ) for link in links]
