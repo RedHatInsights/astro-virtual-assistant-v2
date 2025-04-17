@@ -33,6 +33,9 @@ chrome_service_url = config(
 notifications_gw_url = config(
     "ENDPOINT__NOTIFICATIONS_GW__SERVICE__URL", default=__platform_url
 )
+platform_notifications_url = config(
+    "ENDPOINT__NOTIFICATIONS_BACKEND__SERVICE__URL", default=__platform_url
+)
 
 # Platform requests
 platform_request = config(

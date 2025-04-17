@@ -26,6 +26,7 @@ from watson_extension.clients import (
     ContentSourcesURL,
     RhsmURL,
     NotificationsGWURL,
+    PlatformNotificationsURL,
 )
 from watson_extension.clients.insights.advisor import AdvisorClient, AdvisorClientHttp
 from watson_extension.clients.openshift.advisor import (
@@ -52,6 +53,10 @@ from watson_extension.clients.insights.notifications import (
     NotificationsClient,
     NotificationsClientHttp,
     NotificationClientNoOp,
+)
+from watson_extension.clients.platform.notifications import (
+    PlatformNotificationsClient,
+    PlatformNotificationsClientHttp,
 )
 
 
@@ -203,6 +208,11 @@ def injector_from_config(binder: injector.Binder) -> None:
     binder.bind(
         NotificationsGWURL, to=config.notifications_gw_url, scope=injector.singleton
     )
+    binder.bind(
+        PlatformNotificationsURL,
+        to=config.platform_notifications_url,
+        scope=injector.singleton,
+    )
 
 
 def injector_defaults(binder: injector.Binder) -> None:
@@ -225,6 +235,10 @@ def injector_defaults(binder: injector.Binder) -> None:
     binder.bind(
         ChromeServiceClient,
         ChromeServiceClientHttp,
+    )
+    binder.bind(
+        PlatformNotificationsClient,
+        PlatformNotificationsClientHttp,
         scope=quart_injector.RequestScope,
     )
 
@@ -240,6 +254,7 @@ def wire_routes(app: Quart) -> None:
     public_root.register_blueprint(platform.blueprint)
     public_root.register_blueprint(insights.blueprint)
     public_root.register_blueprint(openshift.blueprint)
+    public_root.register_blueprint(platform.blueprint)
 
     @public_root.before_request
     async def authentication_check(authentication: injector.Inject[Authentication]):

@@ -1,0 +1,7 @@
+{%- if response_type == "success" -%}
+I have muted notifications for the {{ event }} event.
+{%- elif response_type == "error" -%}
+I was unable to mute this event. Please try again later.
+{%- else -%}
+You don't have any behavior groups attached to the {{ event }} event yet.
+{%- endif -%}
