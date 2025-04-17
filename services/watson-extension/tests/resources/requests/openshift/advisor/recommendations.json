@@ -38,6 +38,32 @@
       "tags": ["service_availability"],
       "disabled": false,
       "impacted_clusters_count": 0
+    },
+    {
+      "rule_id": "ccx_rules_ocp.external.rules.okd_cluster_unsupported|OKD_CLUSTER_UNSUPPORTED",
+      "description": "GSS does not provide enterprise-level support for an OKD cluster",
+      "generic": "Red Hat Global Support Services does not provide enterprise-level support for an OKD cluster.",
+      "publish_date": "2021-07-22T12:00:00Z",
+      "total_risk": 2,
+      "resolution_risk": 1,
+      "impact": 1,
+      "likelihood": 4,
+      "tags": ["service_availability"],
+      "disabled": false,
+      "impacted_clusters_count": 0
+    },
+    {
+      "rule_id": "ccx_rules_ocp.external.rules.okd_cluster_unsupported|OKD_CLUSTER_UNSUPPORTED",
+      "description": "GSS does not provide enterprise-level support for an OKD cluster",
+      "generic": "Red Hat Global Support Services does not provide enterprise-level support for an OKD cluster.",
+      "publish_date": "2021-07-22T12:00:00Z",
+      "total_risk": 2,
+      "resolution_risk": 1,
+      "impact": 1,
+      "likelihood": 4,
+      "tags": ["service_availability"],
+      "disabled": false,
+      "impacted_clusters_count": 0
     }
   ],
   "status": "ok"

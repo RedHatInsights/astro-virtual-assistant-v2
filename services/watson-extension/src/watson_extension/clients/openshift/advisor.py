@@ -79,7 +79,7 @@ class AdvisorClientHttp(AdvisorClient):
             reverse=True,
         )
 
-        return clusters
+        return clusters[:3]
 
     async def get_workloads(self) -> List[Workload]:
         response = await self.platform_request.get(
@@ -110,7 +110,7 @@ class AdvisorClientHttp(AdvisorClient):
             reverse=True,
         )
 
-        return workloads
+        return workloads[:3]
 
     async def get_recommendations(self) -> List[Recommendation]:
         response = await self.platform_request.get(
@@ -132,4 +132,4 @@ class AdvisorClientHttp(AdvisorClient):
         ]
         rules.sort(key=lambda r: r.total_risk, reverse=True)
 
-        return rules
+        return rules[:3]

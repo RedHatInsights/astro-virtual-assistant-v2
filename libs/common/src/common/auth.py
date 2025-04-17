@@ -50,3 +50,8 @@ def assistant_user_id(identity):
         raise ValueError(f"Invalid identity_type identity: {identity_type}")
 
     return f"{org_id}/{user_id}"
+
+
+def decoded_identity_header(identity):
+    decoded_identity = base64.b64decode(identity).decode("utf8")
+    return json.loads(decoded_identity)

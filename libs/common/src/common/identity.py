@@ -52,7 +52,8 @@ class FixedUserIdentityProvider(AbstractUserIdentityProvider):
                  "is_org_admin":true,
                  "is_internal": true,
                  "user_id":"1234567890",
-                 "username":"astro"
+                 "username":"astro",
+                 "email":"email@email.com"
               },
               "internal":{
                  "org_id":"org123"
@@ -61,4 +62,4 @@ class FixedUserIdentityProvider(AbstractUserIdentityProvider):
         }
         """
 
-        return "eyJpZGVudGl0eSI6eyJhY2NvdW50X251bWJlciI6ImFjY291bnQxMjMiLCJvcmdfaWQiOiJvcmcxMjMiLCJ0eXBlIjoiVXNlciIsInVzZXIiOnsiaXNfb3JnX2FkbWluIjp0cnVlLCJpc19pbnRlcm5hbCI6dHJ1ZSwidXNlcl9pZCI6IjEyMzQ1Njc4OTAiLCJ1c2VybmFtZSI6ImFzdHJvIn0sImludGVybmFsIjp7Im9yZ19pZCI6Im9yZzEyMyJ9fX0="
+        return "eyJpZGVudGl0eSI6eyJhY2NvdW50X251bWJlciI6ImFjY291bnQxMjMiLCJvcmdfaWQiOiJvcmcxMjMiLCJ0eXBlIjoiVXNlciIsInVzZXIiOnsiaXNfb3JnX2FkbWluIjp0cnVlLCJpc19pbnRlcm5hbCI6dHJ1ZSwidXNlcl9pZCI6IjEyMzQ1Njc4OTAiLCJ1c2VybmFtZSI6ImFzdHJvIiwiZW1haWwiOiJlbWFpbEBlbWFpbC5jb20ifSwiaW50ZXJuYWwiOnsib3JnX2lkIjoib3JnMTIzIn19fQ=="

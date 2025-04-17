@@ -1,4 +1,5 @@
 import quart_injector
+import common.metrics.quart as quart_metrics
 from quart import Quart
 from quart_schema import (
     QuartSchema,
@@ -19,7 +20,12 @@ config.log_config()
 app = Quart(__name__)
 
 wire_routes(app)
+quart_injector.QuartModule(app)
 quart_injector.wire(app, injector_from_config)
+quart_metrics.register_app(app)
+quart_metrics.register_http_metrics(
+    app, config.name, lambda r: r.path.startswith("/api")
+)
 
 
 @app.errorhandler(RequestSchemaValidationError)

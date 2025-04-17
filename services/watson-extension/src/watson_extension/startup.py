@@ -25,6 +25,7 @@ from watson_extension.clients import (
     VulnerabilityURL,
     ContentSourcesURL,
     RhsmURL,
+    NotificationsGWURL,
 )
 from watson_extension.clients.insights.advisor import AdvisorClient, AdvisorClientHttp
 from watson_extension.clients.openshift.advisor import (
@@ -47,6 +48,13 @@ from watson_extension.clients.platform.chrome import (
     ChromeServiceClient,
     ChromeServiceClientHttp,
 )
+from watson_extension.clients.insights.notifications import (
+    NotificationsClient,
+    NotificationsClientHttp,
+    NotificationClientNoOp,
+)
+
+
 from common.platform_request import (
     AbstractPlatformRequest,
 )
@@ -114,6 +122,7 @@ def injector_from_config(binder: injector.Binder) -> None:
             to=make_dev_platform_request_provider(
                 refresh_token=config.dev_platform_request_offline_token,
                 refresh_token_url=config.dev_platform_request_refresh_url,
+                app_name=config.name,
             ),
             scope=injector.singleton,
         )
@@ -124,13 +133,14 @@ def injector_from_config(binder: injector.Binder) -> None:
                 token_url=config.sa_platform_request_token_url,
                 sa_id=config.sa_platform_request_id,
                 sa_secret=config.sa_platform_request_secret,
+                app_name=config.name,
             ),
             scope=injector.singleton,
         )
     elif config.platform_request == "platform":
         binder.bind(
             AbstractPlatformRequest,
-            to=make_platform_request_provider(),
+            to=make_platform_request_provider(app_name=config.name),
             scope=injector.singleton,
         )
     else:
@@ -144,11 +154,21 @@ def injector_from_config(binder: injector.Binder) -> None:
             FixedUserIdentityProvider,
             scope=injector.singleton,
         )
+        binder.bind(
+            NotificationsClient,
+            NotificationClientNoOp,
+            scope=quart_injector.RequestScope,
+        )
     else:
         # This injector is per request - as we should extract the data for each request.
         binder.bind(
             AbstractUserIdentityProvider,
             quart_user_identity_provider,
+            scope=quart_injector.RequestScope,
+        )
+        binder.bind(
+            NotificationsClient,
+            NotificationsClientHttp,
             scope=quart_injector.RequestScope,
         )
 
@@ -179,6 +199,9 @@ def injector_from_config(binder: injector.Binder) -> None:
     )
     binder.bind(
         ChromeServiceURL, to=config.chrome_service_url, scope=injector.singleton
+    )
+    binder.bind(
+        NotificationsGWURL, to=config.notifications_gw_url, scope=injector.singleton
     )
 
 

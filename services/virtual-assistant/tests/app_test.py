@@ -7,6 +7,7 @@ import aiohttp
 from unittest import mock
 from unittest.mock import MagicMock
 from aioresponses import aioresponses
+from openapi_spec_validator import validate
 
 from virtual_assistant.assistant import ResponseType
 from virtual_assistant.assistant.response_processor.rhel_lightspeed import (
@@ -123,6 +124,13 @@ async def test_app_injection(default_app):
         for param in bindings.values():
             if injector_container.get(param) is None:
                 assert injector_container.create_object(param) is not None
+
+
+async def test_openapi(default_app):
+    test_client = default_app.test_client()
+    response = await test_client.get("/api/virtual-assistant/v2/openapi.json")
+    assert response.status == "200 OK"
+    validate(await response.get_json())
 
 
 async def test_app(default_app, aiohttp_mock):
