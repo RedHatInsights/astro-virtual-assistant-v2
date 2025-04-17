@@ -130,6 +130,15 @@ async def test_client(chrome_client) -> TestClientProtocol:
     return app_with_blueprint(blueprint, injector_binder).test_client()
 
 
+@pytest.mark.asyncio
+async def test_favoriting_modify_favorite_service_exception(chrome_client: MagicMock):
+    chrome_client.modify_favorite_service.side_effect = Exception("Mocked network error")
+
+    with pytest.raises(Exception) as excinfo:
+        await chrome_client.modify_favorite_service()
+    assert "Mocked network error" in str(excinfo.value)
+
+
 async def test_favoriting_add_favorite(test_client, chrome_client) -> None:
     response = await test_client.post(
         "/chrome/favorites", query_string={"favoriting": True, "title": "bar1"}
