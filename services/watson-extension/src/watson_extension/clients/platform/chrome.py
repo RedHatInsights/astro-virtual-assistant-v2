@@ -33,7 +33,7 @@ class Link:
     id: Optional[str]
     title: str
     alt_title: Optional[List[str]]
-    links: Optional["Link"]
+    links: Optional[List["Link"]]
     app_id: Optional[str] = None
     is_group: bool = False
     is_external: bool = False
