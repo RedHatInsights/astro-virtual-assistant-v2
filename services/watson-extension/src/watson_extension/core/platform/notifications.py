@@ -74,6 +74,9 @@ class PlatformNotificationsCore:
         self, bundle: NotificationsBundle
     ) -> List[NotificationEventInfo]:
         validated_bundle = await self.validate_notifications_bundle(bundle.value)
+        if not validated_bundle:
+            return []
+
         result = (
             await self.platform_notifications_client.get_available_events_by_bundle(
                 validated_bundle.id
