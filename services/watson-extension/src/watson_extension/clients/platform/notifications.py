@@ -66,8 +66,7 @@ class PlatformNotificationsClientHttp(PlatformNotificationsClient):
     async def get_behavior_groups(self, bundleId: str) -> List:
         response = await self.platform_request.get(
             self.platform_notifications_url,
-            "/api/notifications/v1.0/notifications/bundles/%s/behaviorGroups"
-            % bundleId,
+            f"/api/notifications/v1.0/notifications/bundles/{bundleId}/behaviorGroups",
         )
 
         response.raise_for_status()
@@ -79,8 +78,7 @@ class PlatformNotificationsClientHttp(PlatformNotificationsClient):
 
         return await self.platform_request.put(
             self.platform_notifications_url,
-            "/api/notifications/v1.0/notifications/eventTypes/%s/behaviorGroups"
-            % eventId,
+            f"/api/notifications/v1.0/notifications/eventTypes/{eventId}/behaviorGroups",
             "put",
             json=[],
             headers=headers,
