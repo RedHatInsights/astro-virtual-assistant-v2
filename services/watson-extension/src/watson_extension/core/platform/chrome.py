@@ -19,16 +19,14 @@ class ChromeServiceCore:
 
     async def get_user(self):
         return await self.chrome_service_client.get_user()
-
+    
     async def _get_service_by_title(self, title):
-        # get all services, find the href
-        service = None
+        def is_synonym(service):
+            return title.lower() in (t.lower() for t in service["synonyms"])
+        
         options = await self.get_service_options()
-        for s in options:
-            if title.lower() in (t.lower() for t in s["synonyms"]):
-                service = s
-                break
-
+        service = next((s for s in options if is_synonym(s)), None)
+        
         return service["data"] if service else None
 
     async def _is_favorited(self, href):
