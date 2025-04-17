@@ -1,3 +1,4 @@
+from typing import List
 import injector
 
 from watson_extension.clients.platform.chrome import ChromeServiceClient
@@ -6,6 +7,38 @@ from watson_extension.clients.platform.chrome import ChromeServiceClient
 class ChromeServiceCore:
     def __init__(self, chrome_service_client: injector.Inject[ChromeServiceClient]):
         self.chrome_service_client = chrome_service_client
+    
+    async def get_favorite_options(self, favoriting=True):
+        user = await self.chrome_service_client.get_user()
+        services = await self.chrome_service_client.get_generated_services()
+        
+        #if a user is requesting to remove a service, return info on the services they have favorited
+        # if they are requesting to add one, return the opposite
+        if not user.favorite_pages:
+            return self._get_all_service_info(services)
+        
+        return (
+            self._get_non_favorited_services_info(self, services, user.favorite_pages) if favoriting
+            else self._get_favorited_services_info(self, services, user.favorite_pages)
+        )
+    
+    def _get_all_service_info(self, services) -> List[dict]:
+        return [{
+                "title": service.title,
+                "href": service.href,
+            } for service in services]
+    
+    def _get_non_favorited_services_info(self, services, favorite_pages) -> List[dict]:
+        return [{
+            "title": service.title,
+            "href": service.href,
+        } for service in services if service.href not in {fav.pathname for fav in favorite_pages}]
+
+    def _get_favorited_services_info(self, services, favorite_pages) -> List[dict]:
+        return  [{
+            "title": self._get_service_by_title(fav.pathname),
+            "href": fav.pathname,
+        } for fav in favorite_pages]
 
     async def get_service_options(self):
         services = await self.chrome_service_client.get_generated_services()

@@ -22,23 +22,13 @@ class FavoritesResponse(BaseModel):
     response: str
 
 
-class ServiceResponseItem(BaseModel):
-    data: dict
-    synonyms: List[str]
+class FavoritesOptionsResponseItem(BaseModel):
+    title: str
+    href: str
 
 
-class ServicesResponse(BaseModel):
-    response: List[ServiceResponseItem]
-
-
-@blueprint.get("/services")
-@validate_response(ServicesResponse)
-@document_headers(RHSessionIdHeader)
-async def services(
-    chrome_service: injector.Inject[ChromeServiceCore],
-) -> ServicesResponse:
-    options = await chrome_service.get_service_options()
-    return ServicesResponse(response=options)
+class FavoritesOptionsResponse(BaseModel):
+    response: List[FavoritesOptionsResponseItem]
 
 
 @blueprint.post("/favorites")
@@ -86,3 +76,12 @@ async def favorites(
                 **service_data,
             )
         )
+
+@blueprint.get("/favorites/options")
+@validate_response(FavoritesOptionsResponse)
+@document_headers(RHSessionIdHeader)
+async def favorte_options(
+    chrome_service: injector.Inject[ChromeServiceCore],
+) -> FavoritesOptionsResponse:
+    options = await chrome_service.get_favorite_options()
+    return FavoritesOptionsResponse(response=options)
