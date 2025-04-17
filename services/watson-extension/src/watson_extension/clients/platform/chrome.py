@@ -59,7 +59,7 @@ class ChromeServiceClient(abc.ABC):
     @abc.abstractmethod
     async def modify_favorite_service(
         self, service, favorite=True
-    ) -> List[Favorite]: ...
+    ) -> str: ...
 
 
 class ChromeServiceClientHttp(ChromeServiceClient):
