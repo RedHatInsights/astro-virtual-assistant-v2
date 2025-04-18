@@ -30,6 +30,7 @@ advisor_openshift_url = config(
 chrome_service_url = config(
     "ENDPOINT__CHROME_SERVICE__API__URL", default=__platform_url
 )
+sources_url = config("ENDPOINT__SOURCES_API__SVC__URL", default=__platform_url)
 notifications_gw_url = config(
     "ENDPOINT__NOTIFICATIONS_GW__SERVICE__URL", default=__platform_url
 )
