@@ -21,6 +21,7 @@ from watson_extension.auth.service_account_authentication import (
 from watson_extension.clients import (
     AdvisorURL,
     AdvisorOpenshiftURL,
+    ChromeServiceURL,
     VulnerabilityURL,
     ContentSourcesURL,
     RhsmURL,
@@ -43,11 +44,16 @@ from watson_extension.clients.insights.rhsm import (
     RhsmClient,
     RhsmClientHttp,
 )
+from watson_extension.clients.platform.chrome import (
+    ChromeServiceClient,
+    ChromeServiceClientHttp,
+)
 from watson_extension.clients.insights.notifications import (
     NotificationsClient,
     NotificationsClientHttp,
     NotificationClientNoOp,
 )
+
 
 from common.platform_request import (
     AbstractPlatformRequest,
@@ -55,6 +61,7 @@ from common.platform_request import (
 from watson_extension.routes import health
 from watson_extension.routes import insights
 from watson_extension.routes import openshift
+from watson_extension.routes import platform
 
 import watson_extension.config as config
 
@@ -191,6 +198,9 @@ def injector_from_config(binder: injector.Binder) -> None:
         AdvisorOpenshiftURL, to=config.advisor_openshift_url, scope=injector.singleton
     )
     binder.bind(
+        ChromeServiceURL, to=config.chrome_service_url, scope=injector.singleton
+    )
+    binder.bind(
         NotificationsGWURL, to=config.notifications_gw_url, scope=injector.singleton
     )
 
@@ -212,6 +222,11 @@ def injector_defaults(binder: injector.Binder) -> None:
         AdvisorOpenshiftClientHttp,
         scope=quart_injector.RequestScope,
     )
+    binder.bind(
+        ChromeServiceClient,
+        ChromeServiceClientHttp,
+        scope=quart_injector.RequestScope,
+    )
 
 
 def wire_routes(app: Quart) -> None:
@@ -222,6 +237,7 @@ def wire_routes(app: Quart) -> None:
     private_root.register_blueprint(health.blueprint)
 
     # Connect public routes ({config.base_url})
+    public_root.register_blueprint(platform.blueprint)
     public_root.register_blueprint(insights.blueprint)
     public_root.register_blueprint(openshift.blueprint)
 
