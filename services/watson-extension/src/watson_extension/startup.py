@@ -254,7 +254,6 @@ def wire_routes(app: Quart) -> None:
     public_root.register_blueprint(platform.blueprint)
     public_root.register_blueprint(insights.blueprint)
     public_root.register_blueprint(openshift.blueprint)
-    public_root.register_blueprint(platform.blueprint)
 
     @public_root.before_request
     async def authentication_check(authentication: injector.Inject[Authentication]):
