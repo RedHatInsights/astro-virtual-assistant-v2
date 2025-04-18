@@ -17,6 +17,7 @@ objects:
       - content-sources-backend # content_sources_url
       - ccx-smart-proxy # advisor_openshift_url
       - chrome-service # chrome_service_url
+      - sources-api # sources_api_url
       - notifications-gw # notifications_gw_url
     inMemoryDb: true
     deployments:
