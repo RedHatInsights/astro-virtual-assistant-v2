@@ -25,6 +25,7 @@ from watson_extension.clients import (
     VulnerabilityURL,
     ContentSourcesURL,
     RhsmURL,
+    SourcesURL,
     NotificationsGWURL,
     PlatformNotificationsURL,
 )
@@ -48,6 +49,10 @@ from watson_extension.clients.insights.rhsm import (
 from watson_extension.clients.platform.chrome import (
     ChromeServiceClient,
     ChromeServiceClientHttp,
+)
+from watson_extension.clients.platform.sources import (
+    SourcesClient,
+    SourcesClientHttp,
 )
 from watson_extension.clients.insights.notifications import (
     NotificationsClient,
@@ -205,6 +210,7 @@ def injector_from_config(binder: injector.Binder) -> None:
     binder.bind(
         ChromeServiceURL, to=config.chrome_service_url, scope=injector.singleton
     )
+    binder.bind(SourcesURL, to=config.sources_url, scope=injector.singleton)
     binder.bind(
         NotificationsGWURL, to=config.notifications_gw_url, scope=injector.singleton
     )
@@ -232,6 +238,7 @@ def injector_defaults(binder: injector.Binder) -> None:
         AdvisorOpenshiftClientHttp,
         scope=quart_injector.RequestScope,
     )
+    binder.bind(SourcesClient, SourcesClientHttp, scope=quart_injector.RequestScope)
     binder.bind(
         ChromeServiceClient,
         ChromeServiceClientHttp,
