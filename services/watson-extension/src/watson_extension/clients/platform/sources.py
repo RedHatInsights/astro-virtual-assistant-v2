@@ -94,10 +94,7 @@ class SourcesClientHttp(SourcesClient):
             self.sources_url, request, json=request_json
         )
 
-        if response.ok:
-            return True
-
-        return False
+        return bool(response.ok)
 
     async def sources_pause_integration(self, integration_id: str) -> ClientResponse:
         request = f"/api/sources/v3.1/sources/{integration_id}/pause"
