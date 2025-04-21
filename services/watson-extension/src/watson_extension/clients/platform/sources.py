@@ -1,11 +1,12 @@
 import abc
 import injector
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional, List
 from aiohttp import ClientResponse
 
 from watson_extension.clients import SourcesURL
 from watson_extension.clients.identity import AbstractUserIdentityProvider
 from watson_extension.clients.platform_request import AbstractPlatformRequest
+from watson_extension.clients.platform import IntegrationInfo
 
 
 class SourcesClient(abc.ABC):
@@ -47,7 +48,9 @@ class SourcesClientHttp(SourcesClient):
         self.user_identity_provider = user_identity_provider
         self.platform_request = platform_request
 
-    async def get_sources(self, params: Dict) -> Tuple[bool, Dict]:
+    async def get_sources(
+        self, params: Dict
+    ) -> Tuple[bool, Optional[List[IntegrationInfo]]]:
         request = "/api/sources/v3.1/sources"
         response = await self.platform_request.get(
             self.sources_url, request, params=params
@@ -55,9 +58,27 @@ class SourcesClientHttp(SourcesClient):
 
         if response.ok:
             content = await response.json()
-            return False, content
 
-        return True, {}
+            sources_integrations = []
+            for integration in content["data"]:
+                integration_enabled = (
+                    True
+                    if "paused_at" not in integration
+                    or integration["paused_at"] is None
+                    else False
+                )
+                sources_integrations.append(
+                    IntegrationInfo(
+                        name=integration["name"],
+                        enabled=integration_enabled,
+                        type="red_hat",
+                        group="red_hat",
+                        id=integration["id"],
+                    )
+                )
+            return False, sources_integrations
+
+        return True, None
 
     async def bulk_create(
         self,
