@@ -14,7 +14,6 @@ RHEL_LIGHTSPEED_PARAM = "rhel"
 
 
 class RhelLightspeedData(BaseModel):
-    model_id: str
     text: str
     # There is also sources - lets explore that by separate
 
