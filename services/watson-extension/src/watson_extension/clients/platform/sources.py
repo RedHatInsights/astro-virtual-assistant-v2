@@ -14,6 +14,9 @@ class SourcesClient(abc.ABC):
     async def get_sources(self, params: Dict) -> Tuple[bool, Dict]: ...
 
     @abc.abstractmethod
+    async def is_source_name_valid(self, integration_setup_name: str) -> bool: ...
+
+    @abc.abstractmethod
     async def bulk_create(
         self,
         integration_setup_name: str,
@@ -80,18 +83,38 @@ class SourcesClientHttp(SourcesClient):
 
         return True, None
 
+    async def is_source_name_valid(self, integration_setup_name: str) -> bool:
+        request = "/api/sources/v3.1/graphql"
+        response = await self.platform_request.post(
+            self.sources_url,
+            request,
+            json={
+                "query": f'{{ sources(filter: {{name: "name", value: "{integration_setup_name}"}}){{ id, name }}}}'
+            },
+        )
+
+        if response.ok:
+            content = await response.json()
+            if len(content.get("data").get("sources")) == 0:
+                return True
+
+        return False
+
     async def bulk_create(
         self,
         integration_setup_name: str,
         integration_setup_redhat_cluster_identifier: str,
     ) -> bool:
         request = "/api/sources/v3.1/bulk_create"
+        validated_integration_setup_name = self.is_source_name_valid(
+            integration_setup_name
+        )
         request_json = {
             "applications": [
                 {
                     "application_type_id": "2",
                     "extra": {"hcs": False},
-                    "source_name": integration_setup_name,
+                    "source_name": validated_integration_setup_name,
                 }
             ],
             "authentications": [
@@ -104,7 +127,7 @@ class SourcesClientHttp(SourcesClient):
             "endpoints": [],
             "sources": [
                 {
-                    "name": integration_setup_name,
+                    "name": validated_integration_setup_name,
                     "source_ref": integration_setup_redhat_cluster_identifier,
                     "source_type_name": "openshift",
                 }

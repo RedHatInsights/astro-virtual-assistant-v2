@@ -63,6 +63,10 @@ from watson_extension.clients.platform.notifications import (
     PlatformNotificationsClient,
     PlatformNotificationsClientHttp,
 )
+from watson_extension.clients.platform.integrations import (
+    IntegrationsClient,
+    IntegrationsClientHttp,
+)
 
 
 from common.platform_request import (
@@ -247,6 +251,9 @@ def injector_defaults(binder: injector.Binder) -> None:
         PlatformNotificationsClient,
         PlatformNotificationsClientHttp,
         scope=quart_injector.RequestScope,
+    )
+    binder.bind(
+        IntegrationsClient, IntegrationsClientHttp, scope=quart_injector.RequestScope
     )
 
 
