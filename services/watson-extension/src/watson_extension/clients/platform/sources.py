@@ -106,7 +106,7 @@ class SourcesClientHttp(SourcesClient):
         integration_setup_redhat_cluster_identifier: str,
     ) -> bool:
         request = "/api/sources/v3.1/bulk_create"
-        validated_integration_setup_name = self.is_source_name_valid(
+        validated_integration_setup_name = await self.is_source_name_valid(
             integration_setup_name
         )
         request_json = {

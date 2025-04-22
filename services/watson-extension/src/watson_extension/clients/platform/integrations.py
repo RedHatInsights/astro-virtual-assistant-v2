@@ -61,7 +61,7 @@ class IntegrationsClient(abc.ABC):
         secret_token: str,
         setup_type: str,
         setup_sub_type: Optional[str] = None,
-    ) -> Tuple[bool, CreateEndpointResponseType]: ...
+    ) -> bool: ...
 
     @abc.abstractmethod
     async def fetch_integrations(
@@ -69,7 +69,7 @@ class IntegrationsClient(abc.ABC):
     ) -> Tuple[bool, Optional[List[IntegrationInfo]]]: ...
 
     @abc.abstractmethod
-    async def integration_unpause(self, integration_id: str) -> ClientResponse: ...
+    async def integration_resume(self, integration_id: str) -> ClientResponse: ...
 
     @abc.abstractmethod
     async def integration_pause(self, integration_id: str) -> ClientResponse: ...
@@ -107,7 +107,7 @@ class IntegrationsClientHttp(IntegrationsClient):
         secret_token: str,
         setup_type: str,
         setup_sub_type: Optional[str] = None,
-    ) -> Tuple[bool, CreateEndpointResponseType]:
+    ) -> bool:
         request = "/api/integrations/v1.0/endpoints"
         response = await self.platform_request.post(
             self.platform_notifications_url,
@@ -174,7 +174,7 @@ class IntegrationsClientHttp(IntegrationsClient):
 
         return True, None
 
-    async def integration_unpause(self, integration_id: str) -> ClientResponse:
+    async def integration_resume(self, integration_id: str) -> ClientResponse:
         request = f"/api/integrations/v1.0/endpoints/{integration_id}/enable"
         return await self.platform_request.put(self.platform_notifications_url, request)
 
