@@ -2,9 +2,14 @@ from typing import Any, Dict, List, Tuple
 import injector
 from aiohttp import ClientResponse
 
-from watson_extension.clients.platform.rbac import RBACClient, Roles, TAMRequestAccessPayload
+from watson_extension.clients.platform.rbac import (
+    RBACClient,
+    Roles,
+    TAMRequestAccessPayload,
+)
 
 _DURATIONS = ["3 days", "1 week", "2 weeks"]
+
 
 class RBACCore:
     def __init__(self, rbac_client: injector.Inject[RBACClient]):
@@ -12,8 +17,10 @@ class RBACCore:
 
     async def get_roles_for_tam(self) -> List[Dict[str, Any]]:
         return await self.rbac_client.get_roles_for_tam()
-    
-    async def send_rbac_tam_request(self, account_id, org_id, start_date, end_date, roles) -> ClientResponse:
+
+    async def send_rbac_tam_request(
+        self, account_id, org_id, start_date, end_date, roles
+    ) -> ClientResponse:
         return await self.rbac_client.send_rbac_tam_request(
             TAMRequestAccessPayload(
                 account_id=account_id,
@@ -28,14 +35,12 @@ class RBACCore:
         from datetime import date, timedelta
 
         start_date = date.today()
-        end_date = start_date
-
-        if duration == "3 days":
-            end_date += timedelta(days=3)
-        elif duration == "1 week":
-            end_date += timedelta(weeks=1)
-        elif duration == "2 weeks":
-            end_date += timedelta(weeks=2)
+        duration_map = {
+            "3 days": timedelta(days=3),
+            "1 week": timedelta(weeks=1),
+            "2 weeks": timedelta(weeks=2),
+        }
+        end_date = start_date + duration_map.get(duration, timedelta(0))
 
         return start_date.strftime("%m/%d/%Y"), end_date.strftime("%m/%d/%Y")
 

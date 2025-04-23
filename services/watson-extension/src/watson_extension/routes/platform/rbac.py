@@ -1,4 +1,3 @@
-from typing import List
 import injector
 from pydantic import BaseModel
 
@@ -18,6 +17,7 @@ class TamAccessRequestQuery(BaseModel):
     org_id: str
     duration: str
 
+
 class TamAccessRequestResponse(BaseModel):
     response: str
 
@@ -30,15 +30,19 @@ async def send_tam_access(
     query_args: TamAccessRequestQuery,
     rbac_core: injector.Inject[RBACCore],
 ) -> TamAccessRequestResponse:
-    start_date, end_date = rbac_core.get_start_end_date_from_duration(query_args.duration)
+    start_date, end_date = rbac_core.get_start_end_date_from_duration(
+        query_args.duration
+    )
     roles = await rbac_core.get_roles_for_tam()
-    response = await rbac_core.send_rbac_tam_request(query_args.account_id, query_args.org_id, start_date, end_date, roles)
+    response = await rbac_core.send_rbac_tam_request(
+        query_args.account_id, query_args.org_id, start_date, end_date, roles
+    )
 
     # TODO check if they are internal, need a helper?
     return TamAccessRequestResponse(
         response=await render_template(
             "platform/rbac/tam_access_request.txt.jinja",
             ok=response.ok,
-            account_id=query_args.account_id
+            account_id=query_args.account_id,
         )
     )

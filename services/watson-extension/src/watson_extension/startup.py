@@ -69,8 +69,6 @@ from watson_extension.clients.platform.integrations import (
 )
 from watson_extension.clients.platform.rbac import (
     RbacURL,
-    RBACClient,
-    RBACClientHttp,
 )
 
 
@@ -228,9 +226,7 @@ def injector_from_config(binder: injector.Binder) -> None:
         to=config.platform_notifications_url,
         scope=injector.singleton,
     )
-    binder.bind(
-        RbacURL, to=config.rbac_url, scope=injector.singleton
-    )
+    binder.bind(RbacURL, to=config.rbac_url, scope=injector.singleton)
 
 
 def injector_defaults(binder: injector.Binder) -> None:

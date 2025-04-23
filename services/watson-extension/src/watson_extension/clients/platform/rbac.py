@@ -1,5 +1,4 @@
 import abc
-import json
 import injector
 import logging
 from dataclasses import dataclass
@@ -32,6 +31,7 @@ class Roles:
     external_role_id: str = None
     external_tenant: str = None
 
+
 @dataclass
 class TAMRequestAccessPayload:
     account_id: str
@@ -39,6 +39,7 @@ class TAMRequestAccessPayload:
     start_date: str
     end_date: str
     roles: List[str]
+
 
 class RBACClient(abc.ABC):
     @abc.abstractmethod
@@ -58,7 +59,7 @@ class RBACClientHttp(RBACClient):
         self.rbac_url = rbac_url
         self.user_identity_provider = user_identity_provider
         self.platform_request = platform_request
-    
+
     async def get_roles_for_tam(self) -> List[Roles]:
         """Get roles for TAM"""
         response = await self.platform_request.get(
@@ -84,16 +85,14 @@ class RBACClientHttp(RBACClient):
                 admin_default=role["admin_default"],
                 external_role_id=role.get("external_role_id"),
                 external_tenant=role.get("external_tenant"),
-            ) for role in response.json()
+            )
+            for role in response.json()
         ]
-
 
     async def send_rbac_tam_request(self, body: TAMRequestAccessPayload):
         if is_running_locally:
             logger.info(
-                "Called send_rbac_tam_request in local environment with body: {}".format(
-                    body
-                )
+                f"Called send_rbac_tam_request in local environment with body: {body}"
             )
 
             from unittest.mock import Mock

@@ -26,18 +26,16 @@ async def rbac_client() -> MagicMock:
                     display_name="Automation Analytics viewer",
                     description="Perform read operations on Automation Analytics resources.",
                     created="2021-06-14T13:53:00.990946Z",
-                    modified= "2024-09-19T20:07:20.563863Z",
-                    policyCount= 1562,
-                    groups_in_count= 3,
-                    accessCount= 1,
-                    applications= [
-                        "automation-analytics"
-                    ],
+                    modified="2024-09-19T20:07:20.563863Z",
+                    policyCount=1562,
+                    groups_in_count=3,
+                    accessCount=1,
+                    applications=["automation-analytics"],
                     system=True,
                     platform_default=False,
                     admin_default=False,
                     external_role_id=None,
-                    external_tenant=None
+                    external_tenant=None,
                 ),
                 Roles(
                     uuid="1002",
@@ -45,18 +43,16 @@ async def rbac_client() -> MagicMock:
                     display_name="Foo bariest",
                     description="Perform read operations on kung foo resources.",
                     created="2021-06-14T13:53:00.990946Z",
-                    modified= "2024-09-19T20:07:20.563863Z",
-                    policyCount= 1562,
-                    groups_in_count= 3,
-                    accessCount= 1,
-                    applications= [
-                        "foo-bar"
-                    ],
+                    modified="2024-09-19T20:07:20.563863Z",
+                    policyCount=1562,
+                    groups_in_count=3,
+                    accessCount=1,
+                    applications=["foo-bar"],
                     system=True,
                     platform_default=False,
                     admin_default=False,
                     external_role_id=None,
-                    external_tenant=None
+                    external_tenant=None,
                 ),
             ]
         )
@@ -74,9 +70,7 @@ async def test_client(rbac_client) -> TestClientProtocol:
 
 @pytest.mark.asyncio
 async def test_tam_request_network_error(test_client, rbac_client: MagicMock):
-    rbac_client.get_roles_for_tam.side_effect = Exception(
-        "Mocked network error"
-    )
+    rbac_client.get_roles_for_tam.side_effect = Exception("Mocked network error")
 
     with pytest.raises(Exception) as excinfo:
         await rbac_client.get_roles_for_tam()
@@ -85,8 +79,11 @@ async def test_tam_request_network_error(test_client, rbac_client: MagicMock):
 
 async def test_tam_request_access(test_client, rbac_client) -> None:
     response = await test_client.post(
-        "/rbac/tam-access", query_string={"account_id": "12345", "org_id": "foo", "duration": "3 days"}
+        "/rbac/tam-access",
+        query_string={"account_id": "12345", "org_id": "foo", "duration": "3 days"},
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template("platform/rbac/submit_tam_access_request.txt")
+    assert data["response"] == get_test_template(
+        "platform/rbac/submit_tam_access_request.txt"
+    )
