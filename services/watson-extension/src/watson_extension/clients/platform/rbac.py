@@ -7,7 +7,6 @@ from typing import Any, Dict, List
 from common.identity import AbstractUserIdentityProvider
 from common.platform_request import AbstractPlatformRequest
 from watson_extension.clients import RbacURL
-from watson_extension.config import is_running_locally
 
 
 logger = logging.getLogger(__name__)
