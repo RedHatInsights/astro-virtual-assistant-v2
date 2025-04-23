@@ -34,7 +34,7 @@ async def send_tam_access(
         query_args.duration
     )
     roles = await rbac_core.get_roles_for_tam()
-    response = await rbac_core.send_rbac_tam_request(
+    ok = await rbac_core.send_rbac_tam_request(
         query_args.account_id, query_args.org_id, start_date, end_date, roles
     )
 
@@ -42,7 +42,7 @@ async def send_tam_access(
     return TamAccessRequestResponse(
         response=await render_template(
             "platform/rbac/tam_access_request.txt.jinja",
-            ok=response.ok,
+            ok=ok,
             account_id=query_args.account_id,
         )
     )

@@ -1,6 +1,5 @@
 from typing import Any, Dict, List, Tuple
 import injector
-from aiohttp import ClientResponse
 
 from watson_extension.clients.platform.rbac import (
     RBACClient,
@@ -20,7 +19,7 @@ class RBACCore:
 
     async def send_rbac_tam_request(
         self, account_id, org_id, start_date, end_date, roles
-    ) -> ClientResponse:
+    ) -> bool:
         return await self.rbac_client.send_rbac_tam_request(
             TAMRequestAccessPayload(
                 account_id=account_id,

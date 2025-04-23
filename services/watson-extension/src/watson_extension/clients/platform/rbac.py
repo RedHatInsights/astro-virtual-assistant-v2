@@ -45,7 +45,7 @@ class RBACClient(abc.ABC):
     @abc.abstractmethod
     async def get_roles_for_tam(self) -> List[Roles]: ...
 
-    async def send_rbac_tam_request(self, body: Dict[str, Any]): ...
+    async def send_rbac_tam_request(self, body: Dict[str, Any]) -> bool: ...
 
 
 class RBACClientHttp(RBACClient):
@@ -89,18 +89,13 @@ class RBACClientHttp(RBACClient):
             for role in response.json()
         ]
 
-    async def send_rbac_tam_request(self, body: TAMRequestAccessPayload):
+    async def send_rbac_tam_request(self, body: TAMRequestAccessPayload) -> bool:
         if is_running_locally:
             logger.info(
                 f"Called send_rbac_tam_request in local environment with body: {body}"
             )
 
-            from unittest.mock import Mock
-
-            mock_response = Mock()
-            mock_response.ok = True
-
-            return mock_response
+            return True
 
         # POST https://console.stage.redhat.com/api/rbac/v1/cross-account-requests/
         return await self.platform_request.post(
@@ -109,3 +104,12 @@ class RBACClientHttp(RBACClient):
             user_identity=await self.user_identity_provider.get_user_identity(),
             json=body,
         )
+
+
+class RBACClientNoOp(RBACClientHttp):
+    async def send_rbac_tam_request(self, body: TAMRequestAccessPayload) -> bool:
+        logger.info(
+            f"Called send_rbac_tam_request in local environment with body: {body}"
+        )
+
+        return True

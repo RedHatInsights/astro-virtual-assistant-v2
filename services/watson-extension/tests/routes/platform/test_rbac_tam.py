@@ -91,11 +91,7 @@ async def test_tam_request_access(test_client, rbac_client) -> None:
     )
 
 async def test_tam_request_non_200(test_client, rbac_client: MagicMock):
-    rbac_client.send_rbac_tam_request.return_value = MagicMock(
-        ok=False,
-        status=400,
-        text=async_value("Bad Request"),
-    )
+    rbac_client.send_rbac_tam_request.return_value = False
     response = await test_client.post(
         "/rbac/tam-access",
         query_string={"account_id": "12345", "org_id": "foo", "duration": "3 days"},
@@ -115,7 +111,7 @@ async def test_tam_request_body(test_client, rbac_client: MagicMock):
         assert payload.start_date == date.today().strftime("%m/%d/%Y")
         assert payload.end_date == (date.today() + timedelta(days=3)).strftime("%m/%d/%Y")
         assert payload.roles == ["Automation Analytics viewer", "Foo bariest"]
-        return MagicMock(ok=True, status=200, text=async_value("Success"))
+        return True
 
     rbac_client.send_rbac_tam_request.side_effect = mock_send_rbac_tam_request
 
