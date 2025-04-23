@@ -1,3 +1,4 @@
+from datetime import date, timedelta
 from unittest.mock import MagicMock
 
 import injector
@@ -8,8 +9,9 @@ from watson_extension.clients.platform.rbac import (
     RBACClient,
     Roles,
 )
-from ..common import app_with_blueprint
+from watson_extension.core.platform.rbac import RBACCore
 
+from ..common import app_with_blueprint
 from watson_extension.routes.platform.rbac import blueprint
 from ... import async_value, get_test_template
 
@@ -87,3 +89,58 @@ async def test_tam_request_access(test_client, rbac_client) -> None:
     assert data["response"] == get_test_template(
         "platform/rbac/submit_tam_access_request.txt"
     )
+
+async def test_tam_request_non_200(test_client, rbac_client: MagicMock):
+    rbac_client.send_rbac_tam_request.return_value = MagicMock(
+        ok=False,
+        status=400,
+        text=async_value("Bad Request"),
+    )
+    response = await test_client.post(
+        "/rbac/tam-access",
+        query_string={"account_id": "12345", "org_id": "foo", "duration": "3 days"},
+    )
+
+    assert response.status_code == 200 # ignores that
+    data = await response.get_json()
+    assert data["response"] == get_test_template(
+        "platform/rbac/error_tam_access_request.txt"
+    )
+
+@pytest.mark.asyncio
+async def test_tam_request_body(test_client, rbac_client: MagicMock):
+    async def mock_send_rbac_tam_request(payload):
+        assert payload.account_id == "12345"
+        assert payload.org_id == "foo"
+        assert payload.start_date == date.today().strftime("%m/%d/%Y")
+        assert payload.end_date == (date.today() + timedelta(days=3)).strftime("%m/%d/%Y")
+        assert payload.roles == ["Automation Analytics viewer", "Foo bariest"]
+        return MagicMock(ok=True, status=200, text=async_value("Success"))
+
+    rbac_client.send_rbac_tam_request.side_effect = mock_send_rbac_tam_request
+
+    response = await test_client.post(
+        "/rbac/tam-access",
+        query_string={"account_id": "12345", "org_id": "foo", "duration": "3 days"},
+    )
+
+    assert response.status == "200 OK"
+
+    data = await response.get_json()
+    assert data["response"] == get_test_template(
+        "platform/rbac/submit_tam_access_request.txt"
+    )
+
+@pytest.mark.parametrize(
+    "duration, expected_end_date",
+    [
+        ("3 days", date.today() + timedelta(days=3)),
+        ("1 week", date.today() + timedelta(weeks=1)),
+        ("2 weeks", date.today() + timedelta(weeks=2)),
+        ("invalid_duration", date.today()),
+    ],
+)
+def test_get_start_end_date_from_duration(test_client, rbac_client: MagicMock, duration, expected_end_date):
+    start_date, end_date = RBACCore(rbac_client=rbac_client).get_start_end_date_from_duration(duration)
+    assert start_date == date.today().strftime("%m/%d/%Y")
+    assert end_date == expected_end_date.strftime("%m/%d/%Y")
