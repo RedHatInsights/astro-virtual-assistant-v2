@@ -91,7 +91,7 @@ class RBACClientHttp(RBACClient):
     async def send_rbac_tam_request(self, body: TAMRequestAccessPayload):
         if is_running_locally:
             logger.info(
-                "Called send_rbac_tam_request in local envionment with body: {}".format(
+                "Called send_rbac_tam_request in local environment with body: {}".format(
                     body
                 )
             )
