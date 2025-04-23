@@ -37,6 +37,7 @@ notifications_gw_url = config(
 platform_notifications_url = config(
     "ENDPOINT__NOTIFICATIONS_BACKEND__SERVICE__URL", default=__platform_url
 )
+rbac_url = config("ENDPOINT__RBAC__SERVICE__URL", default=__platform_url)
 
 # Platform requests
 platform_request = config(

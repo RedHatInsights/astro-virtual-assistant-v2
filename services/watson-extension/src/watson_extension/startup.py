@@ -63,6 +63,11 @@ from watson_extension.clients.platform.notifications import (
     PlatformNotificationsClient,
     PlatformNotificationsClientHttp,
 )
+from watson_extension.clients.platform.rbac import (
+    RbacURL,
+    RBACClient,
+    RBACClientHttp,
+)
 
 
 from common.platform_request import (
@@ -218,6 +223,9 @@ def injector_from_config(binder: injector.Binder) -> None:
         PlatformNotificationsURL,
         to=config.platform_notifications_url,
         scope=injector.singleton,
+    )
+    binder.bind(
+        RbacURL, to=config.rbac_url, scope=injector.singleton
     )
 
 
