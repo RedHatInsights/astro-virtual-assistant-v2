@@ -89,13 +89,6 @@ class RBACClientHttp(RBACClient):
         ]
 
     async def send_rbac_tam_request(self, body: TAMRequestAccessPayload) -> bool:
-        if is_running_locally:
-            logger.info(
-                f"Called send_rbac_tam_request in local environment with body: {body}"
-            )
-
-            return True
-
         # POST https://console.stage.redhat.com/api/rbac/v1/cross-account-requests/
         return await self.platform_request.post(
             self.rbac_url,

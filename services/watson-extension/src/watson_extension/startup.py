@@ -67,12 +67,7 @@ from watson_extension.clients.platform.integrations import (
     IntegrationsClient,
     IntegrationsClientHttp,
 )
-from watson_extension.clients.platform.rbac import (
-    RbacURL,
-    RBACClient,
-    RBACClientHttp,
-    RBACClientNoOp
-)
+from watson_extension.clients.platform.rbac import RbacURL, RBACClient, RBACClientNoOp
 
 
 from common.platform_request import (
