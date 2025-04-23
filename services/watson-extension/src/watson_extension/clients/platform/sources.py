@@ -14,6 +14,9 @@ class SourcesClient(abc.ABC):
     async def get_sources(self, params: Dict) -> Tuple[bool, Dict]: ...
 
     @abc.abstractmethod
+    async def is_source_name_valid(self, integration_setup_name: str) -> bool: ...
+
+    @abc.abstractmethod
     async def bulk_create(
         self,
         integration_setup_name: str,
@@ -79,6 +82,23 @@ class SourcesClientHttp(SourcesClient):
             return False, sources_integrations
 
         return True, None
+
+    async def is_source_name_valid(self, integration_setup_name: str) -> bool:
+        request = "/api/sources/v3.1/graphql"
+        response = await self.platform_request.post(
+            self.sources_url,
+            request,
+            json={
+                "query": f'{{ sources(filter: {{name: "name", value: "{integration_setup_name}"}}){{ id, name }}}}'
+            },
+        )
+
+        if response.ok:
+            content = await response.json()
+            if len(content.get("data").get("sources")) == 0:
+                return True
+
+        return False
 
     async def bulk_create(
         self,
