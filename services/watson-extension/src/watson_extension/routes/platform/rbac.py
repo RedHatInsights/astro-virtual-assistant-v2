@@ -32,9 +32,9 @@ async def send_tam_access(
     user_identity_provider: injector.Inject[AbstractUserIdentityProvider],
     rbac_core: injector.Inject[RBACCore],
 ) -> TamAccessRequestResponse:
-    if not user_identity_provider.is_internal():
+    if not await user_identity_provider.is_internal():
         return TamAccessRequestResponse(
-            response="This endpoint is not available for internal users."
+            response="This endpoint is not available for customers."
         )
 
     start_date, end_date = rbac_core.get_start_end_date_from_duration(
