@@ -5,16 +5,17 @@ from werkzeug.exceptions import BadRequest
 
 import injector
 from common.session_storage import SessionStorage
+from common.auth import decoded_identity_header
 
 
 class AbstractUserIdentityProvider(abc.ABC):
     async def get_user_identity(self) -> str: ...
 
     async def is_internal(self) -> bool:
-        try:
-            return self.get_user_identity().get("user", {}).get("is_internal", False)
-        except Exception:
-            return False
+        identity = decoded_identity_header(
+            await self.user_identity_provider.get_user_identity()
+        )
+        return identity['user']['is_internal']
 
 
 class QuartWatsonExtensionUserIdentityProvider(AbstractUserIdentityProvider):
