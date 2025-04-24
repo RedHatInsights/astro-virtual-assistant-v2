@@ -32,7 +32,7 @@ async def send_tam_access(
     user_identity_provider: injector.Inject[AbstractUserIdentityProvider],
     rbac_core: injector.Inject[RBACCore],
 ) -> TamAccessRequestResponse:
-    if user_identity_provider.is_internal():
+    if not user_identity_provider.is_internal():
         return TamAccessRequestResponse(
             response="This endpoint is not available for internal users."
         )
