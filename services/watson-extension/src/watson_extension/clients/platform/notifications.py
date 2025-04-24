@@ -13,7 +13,18 @@ logger = logging.getLogger(__name__)
 
 class PlatformNotificationsClient(abc.ABC):
     @abc.abstractmethod
-    async def get_available_bundles(self): ...
+    async def get_available_bundles(self) -> Dict: ...
+
+    @abc.abstractmethod
+    async def get_available_events_by_bundle(
+        self, bundleId: str, exclude_muted_types: Optional[bool] = False
+    ) -> Dict: ...
+
+    @abc.abstractmethod
+    async def get_behavior_groups(self, bundleId: str) -> List: ...
+
+    @abc.abstractmethod
+    async def mute_event(self, eventId: str) -> ClientResponse: ...
 
 
 class PlatformNotificationsClientHttp(PlatformNotificationsClient):
@@ -37,11 +48,12 @@ class PlatformNotificationsClientHttp(PlatformNotificationsClient):
             self.platform_notifications_url,
             "/api/notifications/v1.0/notifications/facets/bundles",
             params=params,
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
         response.raise_for_status()
 
-        return response.json()
+        return await response.json()
 
     async def get_available_events_by_bundle(
         self, bundleId: str, exclude_muted_types: Optional[bool] = False
@@ -57,21 +69,23 @@ class PlatformNotificationsClientHttp(PlatformNotificationsClient):
             self.platform_notifications_url,
             "/api/notifications/v1.0/notifications/eventTypes",
             params=params,
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
         response.raise_for_status()
 
-        return response.json()
+        return await response.json()
 
     async def get_behavior_groups(self, bundleId: str) -> List:
         response = await self.platform_request.get(
             self.platform_notifications_url,
             f"/api/notifications/v1.0/notifications/bundles/{bundleId}/behaviorGroups",
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
         response.raise_for_status()
 
-        return response.json()
+        return await response.json()
 
     async def mute_event(self, eventId: str) -> ClientResponse:
         headers = {"Content-Type": "application/json"}
