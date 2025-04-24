@@ -104,14 +104,15 @@ class IntegrationsClientHttp(IntegrationsClient):
         self,
         setup_name: str,
         setup_url: str,
-        secret_token: str,
         setup_type: str,
         setup_sub_type: Optional[str] = None,
+        secret_token: Optional[str] = None,
     ) -> bool:
         request = "/api/integrations/v1.0/endpoints"
         response = await self.platform_request.post(
             self.platform_notifications_url,
             request,
+            user_identity=await self.user_identity_provider.get_user_identity(),
             json={
                 "enabled": True,
                 "description": "Endpoint created by Virtual assistant",
@@ -152,7 +153,10 @@ class IntegrationsClientHttp(IntegrationsClient):
 
         request = "/api/integrations/v1.0/endpoints"
         response = await self.platform_request.get(
-            self.platform_notifications_url, request, params=params
+            self.platform_notifications_url,
+            request,
+            params=params,
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
         if response.ok:
@@ -176,28 +180,43 @@ class IntegrationsClientHttp(IntegrationsClient):
 
     async def integration_resume(self, integration_id: str) -> ClientResponse:
         request = f"/api/integrations/v1.0/endpoints/{integration_id}/enable"
-        return await self.platform_request.put(self.platform_notifications_url, request)
+        return await self.platform_request.put(
+            self.platform_notifications_url,
+            request,
+            user_identity=await self.user_identity_provider.get_user_identity(),
+        )
 
     async def integration_pause(self, integration_id: str) -> ClientResponse:
         request = f"/api/integrations/v1.0/endpoints/{integration_id}/enable"
         return await self.platform_request.delete(
-            self.platform_notifications_url, request
+            self.platform_notifications_url,
+            request,
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
     async def delete_integration(self, integration_id: str) -> ClientResponse:
         request = f"/api/integrations/v1.0/endpoints/{integration_id}"
         return await self.platform_request.delete(
-            self.platform_notifications_url, request
+            self.platform_notifications_url,
+            request,
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
     async def retrieve_notification_endpoint(self, endpoint_id: str) -> ClientResponse:
         request = f"/api/integrations/v1.0/endpoints/{endpoint_id}"
-        return await self.platform_request.get(self.platform_notifications_url, request)
+        return await self.platform_request.get(
+            self.platform_notifications_url,
+            request,
+            user_identity=await self.user_identity_provider.get_user_identity(),
+        )
 
     async def update_integration(
         self, integration_id: str, integration_data: Dict
     ) -> ClientResponse:
         request = f"/api/integrations/v1.0/endpoints/{integration_id}"
         return await self.platform_request.put(
-            self.platform_notifications_url, request, json=integration_data
+            self.platform_notifications_url,
+            request,
+            json=integration_data,
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )

@@ -56,7 +56,10 @@ class SourcesClientHttp(SourcesClient):
     ) -> Tuple[bool, Optional[List[IntegrationInfo]]]:
         request = "/api/sources/v3.1/sources"
         response = await self.platform_request.get(
-            self.sources_url, request, params=params
+            self.sources_url,
+            request,
+            params=params,
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
         if response.ok:
@@ -91,6 +94,7 @@ class SourcesClientHttp(SourcesClient):
             json={
                 "query": f'{{ sources(filter: {{name: "name", value: "{integration_setup_name}"}}){{ id, name }}}}'
             },
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
         if response.ok:
@@ -132,7 +136,10 @@ class SourcesClientHttp(SourcesClient):
         }
 
         response = await self.platform_request.post(
-            self.sources_url, request, json=request_json
+            self.sources_url,
+            request,
+            json=request_json,
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
         return bool(response.ok)
@@ -140,14 +147,26 @@ class SourcesClientHttp(SourcesClient):
     async def sources_pause_integration(self, integration_id: str) -> ClientResponse:
         request = f"/api/sources/v3.1/sources/{integration_id}/pause"
 
-        return await self.platform_request.post(self.sources_url, request)
+        return await self.platform_request.post(
+            self.sources_url,
+            request,
+            user_identity=await self.user_identity_provider.get_user_identity(),
+        )
 
     async def sources_unpause_integration(self, integration_id: str) -> ClientResponse:
         request = f"/api/sources/v3.1/sources/{integration_id}/unpause"
 
-        return await self.platform_request.post(self.sources_url, request)
+        return await self.platform_request.post(
+            self.sources_url,
+            request,
+            user_identity=await self.user_identity_provider.get_user_identity(),
+        )
 
     async def sources_delete_integration(self, integration_id: str) -> ClientResponse:
         request = f"/api/sources/v3.1/sources/{integration_id}"
 
-        return await self.platform_request.delete(self.sources_url, request)
+        return await self.platform_request.delete(
+            self.sources_url,
+            request,
+            user_identity=await self.user_identity_provider.get_user_identity(),
+        )
