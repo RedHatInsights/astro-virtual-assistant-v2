@@ -15,7 +15,7 @@ class AbstractUserIdentityProvider(abc.ABC):
         identity = decoded_identity_header(
             await self.user_identity_provider.get_user_identity()
         )
-        return identity['user']['is_internal']
+        return identity["user"]["is_internal"]
 
 
 class QuartWatsonExtensionUserIdentityProvider(AbstractUserIdentityProvider):
