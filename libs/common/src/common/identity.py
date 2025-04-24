@@ -10,6 +10,12 @@ from common.session_storage import SessionStorage
 class AbstractUserIdentityProvider(abc.ABC):
     async def get_user_identity(self) -> str: ...
 
+    async def is_internal(self) -> bool:
+        try:
+            return self.get_user_identity().get("user", {}).get("is_internal", False)
+        except Exception:
+            return False
+
 
 class QuartWatsonExtensionUserIdentityProvider(AbstractUserIdentityProvider):
     def __init__(
@@ -63,3 +69,6 @@ class FixedUserIdentityProvider(AbstractUserIdentityProvider):
         """
 
         return "eyJpZGVudGl0eSI6eyJhY2NvdW50X251bWJlciI6ImFjY291bnQxMjMiLCJvcmdfaWQiOiJvcmcxMjMiLCJ0eXBlIjoiVXNlciIsInVzZXIiOnsiaXNfb3JnX2FkbWluIjp0cnVlLCJpc19pbnRlcm5hbCI6dHJ1ZSwidXNlcl9pZCI6IjEyMzQ1Njc4OTAiLCJ1c2VybmFtZSI6ImFzdHJvIiwiZW1haWwiOiJlbWFpbEBlbWFpbC5jb20ifSwiaW50ZXJuYWwiOnsib3JnX2lkIjoib3JnMTIzIn19fQ=="
+
+    async def is_internal(self) -> bool:
+        return True
