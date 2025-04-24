@@ -8,6 +8,7 @@ from watson_extension.core.platform.rbac import (
     RBACCore,
 )
 from watson_extension.routes import RHSessionIdHeader
+from watson_extension.clients.identity import AbstractUserIdentityProvider
 
 blueprint = Blueprint("rbac", __name__, url_prefix="/rbac")
 
@@ -28,8 +29,14 @@ class TamAccessRequestResponse(BaseModel):
 @document_headers(RHSessionIdHeader)
 async def send_tam_access(
     query_args: TamAccessRequestQuery,
+    user_identity_provider: injector.Inject[AbstractUserIdentityProvider],
     rbac_core: injector.Inject[RBACCore],
 ) -> TamAccessRequestResponse:
+    if not await user_identity_provider.is_internal():
+        return TamAccessRequestResponse(
+            response="This endpoint is not available for customers."
+        )
+
     start_date, end_date = rbac_core.get_start_end_date_from_duration(
         query_args.duration
     )
@@ -38,7 +45,6 @@ async def send_tam_access(
         query_args.account_id, query_args.org_id, start_date, end_date, roles
     )
 
-    # TODO check if they are internal, need a helper?
     return TamAccessRequestResponse(
         response=await render_template(
             "platform/rbac/tam_access_request.txt.jinja",
