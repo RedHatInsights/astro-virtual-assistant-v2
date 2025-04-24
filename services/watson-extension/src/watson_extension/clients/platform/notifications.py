@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class PlatformNotificationsClient(abc.ABC):
     @abc.abstractmethod
-    async def get_available_bundles(self) -> Dict: ...
+    async def get_available_bundles(self) -> List[Dict]: ...
 
     @abc.abstractmethod
     async def get_available_events_by_bundle(
@@ -39,7 +39,7 @@ class PlatformNotificationsClientHttp(PlatformNotificationsClient):
         self.user_identity_provider = user_identity_provider
         self.platform_request = platform_request
 
-    async def get_available_bundles(self) -> Dict:
+    async def get_available_bundles(self) -> List[Dict]:
         params = {
             "includeApplications": "false",
         }
