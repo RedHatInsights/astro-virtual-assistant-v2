@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 reporting_types = ["ansible"]
 communications_camel_subtypes = ["google_chat", "teams", "slack"]
 reporting_camel_subtypes = ["servicenow", "splunk"]
-MAX_NUMBER_OF_INTEGRATIONS = 5
 
 
 class CreateEndpointResponseType(enum.Enum):
@@ -65,7 +64,10 @@ class IntegrationsClient(abc.ABC):
 
     @abc.abstractmethod
     async def fetch_integrations(
-        self, search: Optional[str] = None, enabled: Optional[bool] = None
+        self,
+        search: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        max_integration_num: int = 5,
     ) -> Tuple[bool, Optional[List[IntegrationInfo]]]: ...
 
     @abc.abstractmethod
@@ -79,7 +81,7 @@ class IntegrationsClient(abc.ABC):
 
     @abc.abstractmethod
     async def retrieve_notification_endpoint(
-        self, endpoint_id: str
+        self, integration_id: str
     ) -> ClientResponse: ...
 
     @abc.abstractmethod
@@ -131,8 +133,11 @@ class IntegrationsClientHttp(IntegrationsClient):
         return bool(response.ok)
 
     async def fetch_integrations(
-        self, search: Optional[str] = None, enabled: Optional[bool] = None
-    ) -> Tuple[bool, Optional[List[IntegrationInfo]]]:
+        self,
+        search: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        max_integration_num: int = 5,
+    ) -> Tuple[bool, List[IntegrationInfo]]:
         integration_search = search or ""
 
         prepend_camel = lambda s: f"camel:{s}"  # noqa: E731
@@ -145,7 +150,7 @@ class IntegrationsClientHttp(IntegrationsClient):
                 *map(prepend_camel, reporting_camel_subtypes),
                 *map(prepend_camel, communications_camel_subtypes),
             ],
-            "limit": MAX_NUMBER_OF_INTEGRATIONS,
+            "limit": max_integration_num,
         }
 
         if enabled is not None:
@@ -176,7 +181,7 @@ class IntegrationsClientHttp(IntegrationsClient):
 
             return False, integrations
 
-        return True, None
+        return True, []
 
     async def integration_resume(self, integration_id: str) -> ClientResponse:
         request = f"/api/integrations/v1.0/endpoints/{integration_id}/enable"
@@ -202,8 +207,10 @@ class IntegrationsClientHttp(IntegrationsClient):
             user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
-    async def retrieve_notification_endpoint(self, endpoint_id: str) -> ClientResponse:
-        request = f"/api/integrations/v1.0/endpoints/{endpoint_id}"
+    async def retrieve_notification_endpoint(
+        self, integration_id: str
+    ) -> ClientResponse:
+        request = f"/api/integrations/v1.0/endpoints/{integration_id}"
         return await self.platform_request.get(
             self.platform_notifications_url,
             request,
