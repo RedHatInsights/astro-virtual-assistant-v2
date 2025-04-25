@@ -14,7 +14,7 @@ class EchoAssistant(Assistant):
     async def create_session(self, user_id: str) -> str:
         return uuid.uuid4().__str__()
 
-    async def send_message(self, message: AssistantInput) -> AssistantOutput:
+    async def send_message(self, message: AssistantInput, context: dict = {}) -> AssistantOutput:
         if message.query.text.startswith("options"):
             return AssistantOutput(
                 session_id=message.session_id,
