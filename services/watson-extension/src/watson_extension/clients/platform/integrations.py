@@ -179,9 +179,9 @@ class IntegrationsClientHttp(IntegrationsClient):
                     )
                 )
 
-            return False, integrations
+            return True, integrations
 
-        return True, []
+        return False, []
 
     async def integration_resume(self, integration_id: str) -> ClientResponse:
         request = f"/api/integrations/v1.0/endpoints/{integration_id}/enable"

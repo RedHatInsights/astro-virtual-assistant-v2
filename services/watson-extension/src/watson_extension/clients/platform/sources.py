@@ -67,8 +67,10 @@ class SourcesClientHttp(SourcesClient):
         enabled: Optional[bool] = None,
         max_integration_num: int = 5,
     ) -> Tuple[bool, List[IntegrationInfo]]:
+        sources_search = search or ""
+
         params = {
-            "filter[name][contains_i]": search,
+            "filter[name][contains_i]": sources_search,
             "limit": max_integration_num,
         }
 
@@ -106,9 +108,9 @@ class SourcesClientHttp(SourcesClient):
                         id=integration["id"],
                     )
                 )
-            return False, sources_integrations
+            return True, sources_integrations
 
-        return True, []
+        return False, []
 
     async def is_source_name_valid(self, integration_setup_name: str) -> bool:
         request = "/api/sources/v3.1/graphql"
