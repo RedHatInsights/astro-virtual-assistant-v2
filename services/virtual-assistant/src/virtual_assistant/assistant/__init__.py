@@ -1,3 +1,4 @@
+import dataclasses
 import enum
 from abc import ABC, abstractmethod
 from typing import Optional, List, Union, Any, Literal
@@ -151,9 +152,15 @@ class AssistantOutput(BaseModel):
     """Include debug option if requested"""
 
 
+@dataclasses.dataclass
+class AssistantContext:
+    is_internal: bool
+    is_org_admin: bool
+
+
 class Assistant(ABC):
     @abstractmethod
     async def create_session(self, user_id: str) -> str: ...
 
     @abstractmethod
-    async def send_message(self, message: AssistantInput) -> AssistantOutput: ...
+    async def send_message(self, message: AssistantInput, context: AssistantContext) -> AssistantOutput: ...

@@ -16,14 +16,11 @@ from common.auth import (
     decoded_identity_header,
 )
 from common.types.errors import ValidationError
-from virtual_assistant.assistant import Assistant, Response, AssistantInput, Query
+from virtual_assistant.assistant import Assistant, AssistantContext, Response, AssistantInput, Query
 from virtual_assistant.assistant.response_processor.response_processor import (
     ResponseProcessor,
 )
-from virtual_assistant.assistant.skill import (
-    _WATSON_IS_INTERNAL_ENVIRONMENT_VARIABLE,
-    _WATSON_IS_ORG_ADMIN_ENVIRONMENT_VARIABLE,
-)
+
 
 blueprint = Blueprint("talk", __name__, url_prefix="/talk")
 
@@ -113,14 +110,10 @@ async def talk(
                 query=query,
                 include_debug=data.include_debug,
             ),
-            context={
-                _WATSON_IS_INTERNAL_ENVIRONMENT_VARIABLE: identity_json.get(
-                    "user", {}
-                ).get("is_internal", False),
-                _WATSON_IS_ORG_ADMIN_ENVIRONMENT_VARIABLE: identity_json.get(
-                    "user", {}
-                ).get("is_org_admin", False),
-            },
+            context=AssistantContext(
+                is_internal=identity_json.get("user", {}).get("is_internal", False),
+                is_org_admin=identity_json.get("user", {}).get("is_org_admin", False),
+            ),
         )
 
         if data.include_debug:

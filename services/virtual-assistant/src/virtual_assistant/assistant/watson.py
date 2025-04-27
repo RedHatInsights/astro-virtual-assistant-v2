@@ -6,6 +6,7 @@ from typing import List, Any
 
 from . import (
     Assistant,
+    AssistantContext,
     AssistantInput,
     AssistantOutput,
     Response as AssistantResponse,
@@ -26,9 +27,9 @@ from ibm_watson.assistant_v2 import (
 )
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
-from virtual_assistant.assistant.skill import (
-    _WATSON_DRAFT_ENVIRONMENT_VARIABLE,
-)
+_WATSON_DRAFT_ENVIRONMENT_VARIABLE = "Draft"
+_WATSON_IS_INTERNAL_ENVIRONMENT_VARIABLE = "IsInternal"
+_WATSON_IS_ORG_ADMIN_ENVIRONMENT_VARIABLE = "IsOrgAdmin"
 
 
 def build_assistant(api_key: str, env_version: str, api_url: str) -> AssistantV2:
@@ -163,7 +164,7 @@ class WatsonAssistant(Assistant):
         return response.get_result()["session_id"]
 
     async def send_message(
-        self, message: AssistantInput, context: dict = {}
+        self, message: AssistantInput, context: AssistantContext
     ) -> AssistantOutput:
         sanitized_text = re.sub("\s+", " ", message.query.text).strip()
         message_input = MessageInput(message_type="text", text=sanitized_text)
@@ -186,7 +187,8 @@ class WatsonAssistant(Assistant):
                     actions_skill=MessageContextActionSkill(
                         skill_variables={
                             _WATSON_DRAFT_ENVIRONMENT_VARIABLE: self.variables.draft,
-                            **context,
+                            _WATSON_IS_INTERNAL_ENVIRONMENT_VARIABLE: context.is_internal,
+                            _WATSON_IS_ORG_ADMIN_ENVIRONMENT_VARIABLE: context.is_org_admin,
                         }
                     )
                 )
