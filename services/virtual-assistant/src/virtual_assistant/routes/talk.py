@@ -16,7 +16,13 @@ from common.auth import (
     decoded_identity_header,
 )
 from common.types.errors import ValidationError
-from virtual_assistant.assistant import Assistant, AssistantContext, Response, AssistantInput, Query
+from virtual_assistant.assistant import (
+    Assistant,
+    AssistantContext,
+    Response,
+    AssistantInput,
+    Query,
+)
 from virtual_assistant.assistant.response_processor.response_processor import (
     ResponseProcessor,
 )

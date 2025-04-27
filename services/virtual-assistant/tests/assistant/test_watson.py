@@ -5,7 +5,13 @@ from .. import get_resource_contents
 
 import pytest
 
-from virtual_assistant.assistant import AssistantInput, AssistantContext, Query, ResponseType, OptionsType
+from virtual_assistant.assistant import (
+    AssistantInput,
+    AssistantContext,
+    Query,
+    ResponseType,
+    OptionsType,
+)
 from virtual_assistant.assistant.watson import (
     WatsonAssistant,
     build_assistant,
@@ -65,9 +71,7 @@ async def test_send_watson_message(watson, assistant_v2, assistant_id, environme
         message=AssistantInput(
             session_id="1234", user_id="1234", query=Query(text="hello world")
         ),
-        context=AssistantContext(
-            is_internal=False, is_org_admin=False
-        ),
+        context=AssistantContext(is_internal=False, is_org_admin=False),
     )
     assistant_v2.message.assert_called_once()
     assistant_v2.message.assert_called_with(
@@ -102,18 +106,14 @@ async def test_send_draft_variable(
         message=AssistantInput(
             session_id="1234", user_id="1234", query=Query(text="hello world")
         ),
-        context=AssistantContext(
-            is_internal=False, is_org_admin=False
-        ),
+        context=AssistantContext(is_internal=False, is_org_admin=False),
     )
     context = assistant_v2.message.call_args.kwargs["context"]
     assert context.skills.actions_skill.skill_variables["Draft"] is draft_value
 
 
 @given(st.booleans(), st.booleans())
-@settings(
-    suppress_health_check=[HealthCheck.function_scoped_fixture]
-)
+@settings(suppress_health_check=[HealthCheck.function_scoped_fixture])
 async def test_send_assistant_context(
     watson, assistant_v2, assistant_id, environment_id, is_internal, is_org_admin
 ):
@@ -122,9 +122,7 @@ async def test_send_assistant_context(
         message=AssistantInput(
             session_id="1234", user_id="1234", query=Query(text="hello world")
         ),
-        context=AssistantContext(
-            is_internal=is_internal, is_org_admin=is_org_admin
-        ),
+        context=AssistantContext(is_internal=is_internal, is_org_admin=is_org_admin),
     )
     context = assistant_v2.message.call_args.kwargs["context"]
     assert context.skills.actions_skill.skill_variables["IsInternal"] is is_internal
