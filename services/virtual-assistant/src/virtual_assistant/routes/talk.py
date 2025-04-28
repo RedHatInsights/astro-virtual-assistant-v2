@@ -10,12 +10,23 @@ from quart_schema import validate_request, validate_response
 from pydantic import BaseModel
 
 
-from common.auth import assistant_user_id, require_identity_header
+from common.auth import (
+    assistant_user_id,
+    require_identity_header,
+    decoded_identity_header,
+)
 from common.types.errors import ValidationError
-from virtual_assistant.assistant import Assistant, Response, AssistantInput, Query
+from virtual_assistant.assistant import (
+    Assistant,
+    AssistantContext,
+    Response,
+    AssistantInput,
+    Query,
+)
 from virtual_assistant.assistant.response_processor.response_processor import (
     ResponseProcessor,
 )
+
 
 blueprint = Blueprint("talk", __name__, url_prefix="/talk")
 
@@ -97,12 +108,17 @@ async def talk(
             option_id=data.input.option_id,
         )
 
+        identity_json = decoded_identity_header(identity)["identity"]
         assistant_response = await assistant.send_message(
             message=AssistantInput(
                 session_id=session_id,
                 user_id=user_id,
                 query=query,
                 include_debug=data.include_debug,
+            ),
+            context=AssistantContext(
+                is_internal=identity_json.get("user", {}).get("is_internal", False),
+                is_org_admin=identity_json.get("user", {}).get("is_org_admin", False),
             ),
         )
 
