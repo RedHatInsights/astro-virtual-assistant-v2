@@ -5,10 +5,17 @@ from werkzeug.exceptions import BadRequest
 
 import injector
 from common.session_storage import SessionStorage
+from common.auth import decoded_identity_header
 
 
 class AbstractUserIdentityProvider(abc.ABC):
     async def get_user_identity(self) -> str: ...
+
+    async def is_internal(self) -> bool:
+        identity = decoded_identity_header(
+            await self.user_identity_provider.get_user_identity()
+        )
+        return identity["user"]["is_internal"]
 
 
 class QuartWatsonExtensionUserIdentityProvider(AbstractUserIdentityProvider):
@@ -63,3 +70,6 @@ class FixedUserIdentityProvider(AbstractUserIdentityProvider):
         """
 
         return "eyJpZGVudGl0eSI6eyJhY2NvdW50X251bWJlciI6ImFjY291bnQxMjMiLCJvcmdfaWQiOiJvcmcxMjMiLCJ0eXBlIjoiVXNlciIsInVzZXIiOnsiaXNfb3JnX2FkbWluIjp0cnVlLCJpc19pbnRlcm5hbCI6dHJ1ZSwidXNlcl9pZCI6IjEyMzQ1Njc4OTAiLCJ1c2VybmFtZSI6ImFzdHJvIiwiZW1haWwiOiJlbWFpbEBlbWFpbC5jb20ifSwiaW50ZXJuYWwiOnsib3JnX2lkIjoib3JnMTIzIn19fQ=="
+
+    async def is_internal(self) -> bool:
+        return True

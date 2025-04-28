@@ -67,6 +67,7 @@ from watson_extension.clients.platform.integrations import (
     IntegrationsClient,
     IntegrationsClientHttp,
 )
+from watson_extension.clients.platform.rbac import RbacURL, RBACClient, RBACClientNoOp
 
 
 from common.platform_request import (
@@ -173,6 +174,11 @@ def injector_from_config(binder: injector.Binder) -> None:
             NotificationClientNoOp,
             scope=quart_injector.RequestScope,
         )
+        binder.bind(
+            RBACClient,
+            RBACClientNoOp,
+            scope=quart_injector.RequestScope,
+        )
     else:
         # This injector is per request - as we should extract the data for each request.
         binder.bind(
@@ -223,6 +229,7 @@ def injector_from_config(binder: injector.Binder) -> None:
         to=config.platform_notifications_url,
         scope=injector.singleton,
     )
+    binder.bind(RbacURL, to=config.rbac_url, scope=injector.singleton)
 
 
 def injector_defaults(binder: injector.Binder) -> None:

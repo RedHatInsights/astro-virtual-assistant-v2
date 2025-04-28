@@ -20,6 +20,7 @@ objects:
       - sources-api # sources_api_url
       - notifications-gw # notifications_gw_url
       - notifications-backend # platform_notifications_backend_url
+      - rbac # rbac_url
     inMemoryDb: true
     deployments:
     - name: api

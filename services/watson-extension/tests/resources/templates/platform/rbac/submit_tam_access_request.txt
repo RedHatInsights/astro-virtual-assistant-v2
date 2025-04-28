@@ -1,0 +1,3 @@
+Your request for access to customer account 12345 has been submitted. The customer will be notified shortly.
+
+Future requests can also be made using the form [here](/internal/access-requests).
