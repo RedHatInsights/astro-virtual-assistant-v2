@@ -46,6 +46,9 @@ class IntegrationsCore:
         setup_use_secret: bool,
         setup_type: Optional[str] = None,
     ) -> bool:
+        if setup_type not in ["slack", "teams", "google_chat"]:
+            return False
+
         return await self.integrations_client.create_endpoint(
             setup_name=setup_name,
             setup_url=setup_url,
@@ -62,12 +65,24 @@ class IntegrationsCore:
         setup_use_secret: bool,
         setup_type: Optional[str] = None,
     ) -> bool:
+        if setup_type not in ["ansible", "servicenow", "splunk"]:
+            return False
+
+        integration_setup_type = setup_type
+        integration_setup_sub_type = setup_type
+
+        if integration_setup_type != "ansible":
+            integration_setup_type = "camel"
+
+        if integration_setup_sub_type == "ansible":
+            integration_setup_sub_type = None
+
         return await self.integrations_client.create_endpoint(
             setup_name=setup_name,
             setup_url=setup_url,
             secret_token=setup_secret if setup_use_secret is True else None,
-            setup_type=setup_type,
-            setup_sub_type=setup_type,
+            setup_type=integration_setup_type,
+            setup_sub_type=integration_setup_sub_type,
         )
 
     async def webhook_integrations_setup(
@@ -123,11 +138,11 @@ class IntegrationsCore:
     ) -> bool:
         response = None
 
-        if integration_type.value == IntegrationType.REDHAT:
+        if integration_type == IntegrationType.REDHAT:
             response = await self.sources_client.sources_unpause_integration(
                 integration_id
             )
-        elif integration_type.value == IntegrationType.NOTIFICATIONS:
+        elif integration_type == IntegrationType.NOTIFICATIONS:
             response = await self.integrations_client.integration_resume(integration_id)
 
         if response is not None and response.ok:
@@ -142,11 +157,11 @@ class IntegrationsCore:
     ) -> bool:
         response = None
 
-        if integration_type.value == IntegrationType.REDHAT:
+        if integration_type == IntegrationType.REDHAT:
             response = await self.sources_client.sources_pause_integration(
                 integration_id
             )
-        elif integration_type.value == IntegrationType.NOTIFICATIONS:
+        elif integration_type == IntegrationType.NOTIFICATIONS:
             response = await self.integrations_client.integration_pause(integration_id)
 
         if response is not None and response.ok:
@@ -161,11 +176,11 @@ class IntegrationsCore:
     ) -> bool:
         response = None
 
-        if integration_type.value == IntegrationType.REDHAT:
+        if integration_type == IntegrationType.REDHAT:
             response = await self.sources_client.sources_delete_integration(
                 integration_id
             )
-        elif integration_type.value == IntegrationType.NOTIFICATIONS:
+        elif integration_type == IntegrationType.NOTIFICATIONS:
             response = await self.integrations_client.delete_integration(integration_id)
 
         if response is not None and response.ok:
@@ -181,13 +196,13 @@ class IntegrationsCore:
     ) -> bool:
         response = None
 
-        if integration_type.value == IntegrationType.REDHAT:
+        if integration_type == IntegrationType.REDHAT:
             response = await self.sources_client.sources_update_integration(
                 integration_id=integration_id,
                 integration_data={"name": new_integration_name},
             )
-        elif integration_type.value == IntegrationType.NOTIFICATIONS:
-            response = self.integrations_client.retrieve_notification_endpoint(
+        elif integration_type == IntegrationType.NOTIFICATIONS:
+            response = await self.integrations_client.retrieve_notification_endpoint(
                 integration_id
             )
 
@@ -212,8 +227,8 @@ class IntegrationsCore:
     ) -> bool:
         response = None
 
-        if integration_type.value == IntegrationType.NOTIFICATIONS:
-            response = self.integrations_client.retrieve_notification_endpoint(
+        if integration_type == IntegrationType.NOTIFICATIONS:
+            response = await self.integrations_client.retrieve_notification_endpoint(
                 integration_id
             )
 
@@ -238,8 +253,8 @@ class IntegrationsCore:
     ) -> bool:
         response = None
 
-        if integration_type.value == IntegrationType.NOTIFICATIONS:
-            response = self.integrations_client.retrieve_notification_endpoint(
+        if integration_type == IntegrationType.NOTIFICATIONS:
+            response = await self.integrations_client.retrieve_notification_endpoint(
                 integration_id
             )
 

@@ -157,7 +157,7 @@ async def integrations_setup(
     query_args: IntegrationsSetupRequestQuery,
     integrations_service: injector.Inject[IntegrationsCore],
 ) -> IntegrationsSetupResponse:
-    if query_args.integration_type.value == IntegrationTypes.COMMUNICATIONS:
+    if query_args.integration_type == IntegrationTypes.COMMUNICATIONS:
         if await integrations_service.communications_integrations_setup(
             setup_name=query_args.setup_name,
             setup_url=query_args.setup_url,
@@ -172,7 +172,7 @@ async def integrations_setup(
                 )
             )
 
-    if query_args.integration_type.value == IntegrationTypes.REPORTING:
+    if query_args.integration_type == IntegrationTypes.REPORTING:
         if await integrations_service.reporting_integrations_setup(
             setup_name=query_args.setup_name,
             setup_url=query_args.setup_url,
@@ -187,7 +187,7 @@ async def integrations_setup(
                 )
             )
 
-    if query_args.integration_type.value == IntegrationTypes.WEBHOOK:
+    if query_args.integration_type == IntegrationTypes.WEBHOOK:
         if await integrations_service.webhook_integrations_setup(
             setup_name=query_args.setup_name,
             setup_url=query_args.setup_url,
@@ -228,13 +228,13 @@ async def fetch_integrations_options(
 @validate_response(IntegrationActionsResponse)
 @document_headers(RHSessionIdHeader)
 async def integration_actions(
-    query_string: IntegrationActionsRequestQuery,
+    query_args: IntegrationActionsRequestQuery,
     integrations_service: injector.Inject[IntegrationsCore],
 ) -> IntegrationActionsResponse:
-    if query_string.action_type.value == IntegrationActionTypes.RESUME:
+    if query_args.action_type == IntegrationActionTypes.RESUME:
         if await integrations_service.integration_enable(
-            integration_type=query_string.integration_type,
-            integration_id=query_string.integration_id,
+            integration_type=query_args.integration_type,
+            integration_id=query_args.integration_id,
         ):
             return IntegrationActionsResponse(
                 response=await render_template(
@@ -242,10 +242,10 @@ async def integration_actions(
                 )
             )
 
-    if query_string.action_type.value == IntegrationActionTypes.PAUSE:
+    if query_args.action_type == IntegrationActionTypes.PAUSE:
         if await integrations_service.integration_disable(
-            integration_type=query_string.integration_type,
-            integration_id=query_string.integration_id,
+            integration_type=query_args.integration_type,
+            integration_id=query_args.integration_id,
         ):
             return IntegrationActionsResponse(
                 response=await render_template(
@@ -253,10 +253,10 @@ async def integration_actions(
                 )
             )
 
-    if query_string.action_type.value == IntegrationActionTypes.DELETE:
+    if query_args.action_type == IntegrationActionTypes.DELETE:
         if await integrations_service.integration_delete(
-            integration_type=query_string.integration_type,
-            integration_id=query_string.integration_id,
+            integration_type=query_args.integration_type,
+            integration_id=query_args.integration_id,
         ):
             return IntegrationActionsResponse(
                 response=await render_template(
@@ -276,14 +276,14 @@ async def integration_actions(
 @validate_response(IntegrationUpdateResponse)
 @document_headers(RHSessionIdHeader)
 async def integration_update(
-    query_string: IntegrationUpdateRequestQuery,
+    query_args: IntegrationUpdateRequestQuery,
     integrations_service: injector.Inject[IntegrationsCore],
 ) -> IntegrationUpdateResponse:
-    if query_string.update_type.value == IntegrationUpdateTypes.NAME:
+    if query_args.update_type == IntegrationUpdateTypes.NAME:
         if await integrations_service.integration_update_name(
-            integration_type=query_string.integration_type,
-            integration_id=query_string.integration_id,
-            new_integration_name=query_string.new_value,
+            integration_type=query_args.integration_type,
+            integration_id=query_args.integration_id,
+            new_integration_name=query_args.new_value,
         ):
             return IntegrationUpdateResponse(
                 response=await render_template(
@@ -291,11 +291,11 @@ async def integration_update(
                 )
             )
 
-    if query_string.update_type.value == IntegrationUpdateTypes.URL:
+    if query_args.update_type == IntegrationUpdateTypes.URL:
         if await integrations_service.integration_update_url(
-            integration_type=query_string.integration_type,
-            integration_id=query_string.integration_id,
-            new_integration_url=query_string.new_value,
+            integration_type=query_args.integration_type,
+            integration_id=query_args.integration_id,
+            new_integration_url=query_args.new_value,
         ):
             return IntegrationUpdateResponse(
                 response=await render_template(
@@ -303,11 +303,11 @@ async def integration_update(
                 )
             )
 
-    if query_string.update_type.value == IntegrationUpdateTypes.SECRET:
+    if query_args.update_type == IntegrationUpdateTypes.SECRET:
         if await integrations_service.integration_update_secret(
-            integration_type=query_string.integration_type,
-            integration_id=query_string.integration_id,
-            new_integration_secret=query_string.new_value,
+            integration_type=query_args.integration_type,
+            integration_id=query_args.integration_id,
+            new_integration_secret=query_args.new_value,
         ):
             return IntegrationUpdateResponse(
                 response=await render_template(
