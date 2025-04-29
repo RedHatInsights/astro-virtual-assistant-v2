@@ -1,0 +1,16 @@
+# serializer version: 1
+# name: test_check_subscriptions_all
+  '''
+  You have:
+  
+  * 200 active subscriptions
+  * 25 subscriptions that are expiring soon
+  * 30 that have already expired
+  '''
+# ---
+# name: test_check_subscriptions_none
+  "You don't have any subscriptions"
+# ---
+# name: test_check_subscriptions_one
+  'You have 10 expiring subscriptions'
+# ---

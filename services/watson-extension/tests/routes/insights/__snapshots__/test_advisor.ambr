@@ -1,0 +1,13 @@
+# serializer version: 1
+# name: test_recommendations
+  '''
+  Here are your top performance recommendations from Advisor.
+  
+   1. [I am a rule](I am link)
+  
+  You can see additional recommendations on the [Advisor dashboard](i-am-not-zelda).
+  '''
+# ---
+# name: test_recommendations_none
+  "You don't have any performance recommendations right now."
+# ---

@@ -1,0 +1,35 @@
+# serializer version: 1
+# name: test_clusters
+  '''
+  Here are your most recent clusters from OpenShift for Advisor.
+  
+   1. [Bond](/openshift/insights/advisor/clusters/007)
+   2. [Johnny](/openshift/insights/advisor/clusters/one)
+  
+  You can see additional clusters on the [OpenShift for Advisor dashboard](/openshift/insights/advisor/clusters).
+  '''
+# ---
+# name: test_recommendations
+  '''
+  Here are your most recent recommendations from OpenShift for Advisor.
+  
+   1. [recommendation 1](/openshift/insights/advisor/recommendations/my-id)
+   2. [recommendation 2](/openshift/insights/advisor/recommendations/my-id-2)
+  
+  You can see additional recommendations on the [OpenShift for Advisor dashboard](/openshift/insights/advisor/recommendations).
+  '''
+# ---
+# name: test_recommendations_none
+  "You don't have any recommendations right now."
+# ---
+# name: test_workloads
+  '''
+  Here are your most recent workloads from OpenShift for Advisor.
+  
+   1. [My cluster1](/openshift/insights/advisor/workloads/cluster-001/my-namespace)
+   2. [My cluster5](/openshift/insights/advisor/workloads/cluster-001/somewhere)
+   3. [My cluster10](/openshift/insights/advisor/workloads/cluster-003/etc)
+  
+  You can see additional workloads on the [OpenShift for Advisor dashboard](/openshift/insights/advisor/workloads).
+  '''
+# ---

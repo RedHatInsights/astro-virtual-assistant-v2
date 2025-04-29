@@ -8,7 +8,7 @@ from watson_extension.clients.insights.rhsm import SubscriptionInfo, RhsmClient
 from ..common import app_with_blueprint
 
 from watson_extension.routes.insights.rhsm import blueprint
-from ... import async_value, get_test_template
+from ... import async_value
 
 
 @pytest.fixture
@@ -24,7 +24,7 @@ async def test_client(rhsm_client) -> TestClientProtocol:
     return app_with_blueprint(blueprint, injector_binder).test_client()
 
 
-async def test_check_subscriptions_all(test_client, rhsm_client) -> None:
+async def test_check_subscriptions_all(test_client, rhsm_client, snapshot) -> None:
     rhsm_client.check_subscriptions = MagicMock(
         return_value=async_value(
             [
@@ -49,12 +49,10 @@ async def test_check_subscriptions_all(test_client, rhsm_client) -> None:
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template(
-        "insights/rhsm/check_subscriptions_all.txt"
-    )
+    assert data["response"] == snapshot
 
 
-async def test_check_subscriptions_one(test_client, rhsm_client) -> None:
+async def test_check_subscriptions_one(test_client, rhsm_client, snapshot) -> None:
     rhsm_client.check_subscriptions = MagicMock(
         return_value=async_value(
             [
@@ -71,12 +69,10 @@ async def test_check_subscriptions_one(test_client, rhsm_client) -> None:
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template(
-        "insights/rhsm/check_subscriptions_one.txt"
-    )
+    assert data["response"] == snapshot
 
 
-async def test_check_subscriptions_none(test_client, rhsm_client) -> None:
+async def test_check_subscriptions_none(test_client, rhsm_client, snapshot) -> None:
     rhsm_client.check_subscriptions = MagicMock(return_value=async_value([]))
 
     response = await test_client.get(
@@ -84,6 +80,4 @@ async def test_check_subscriptions_none(test_client, rhsm_client) -> None:
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template(
-        "insights/rhsm/check_subscriptions_none.txt"
-    )
+    assert data["response"] == snapshot

@@ -8,7 +8,7 @@ from watson_extension.clients.insights.vulnerability import CVEInfo, Vulnerabili
 from ..common import app_with_blueprint
 
 from watson_extension.routes.insights.vulnerability import blueprint
-from ... import async_value, get_test_template
+from ... import async_value
 
 
 @pytest.fixture
@@ -24,7 +24,7 @@ async def test_client(vulnerability_client) -> TestClientProtocol:
     return app_with_blueprint(blueprint, injector_binder).test_client()
 
 
-async def test_cves(test_client, vulnerability_client) -> None:
+async def test_cves(test_client, vulnerability_client, snapshot) -> None:
     vulnerability_client.find_cves = MagicMock(
         return_value=async_value(
             [
@@ -43,12 +43,10 @@ async def test_cves(test_client, vulnerability_client) -> None:
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template(
-        "insights/vulnerability/vulnerability.txt"
-    )
+    assert data["response"] == snapshot
 
 
-async def test_cves_none(test_client, vulnerability_client) -> None:
+async def test_cves_none(test_client, vulnerability_client, snapshot) -> None:
     vulnerability_client.find_cves = MagicMock(return_value=async_value([]))
 
     response = await test_client.get(
@@ -56,6 +54,4 @@ async def test_cves_none(test_client, vulnerability_client) -> None:
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template(
-        "insights/vulnerability/vulnerability-not-found.txt"
-    )
+    assert data["response"] == snapshot

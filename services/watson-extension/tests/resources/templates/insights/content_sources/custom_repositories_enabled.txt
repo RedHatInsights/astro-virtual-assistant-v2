@@ -1,1 +1,0 @@
-The EPEL 8 repository has been enabled and can now be used when building images with Image Builder.

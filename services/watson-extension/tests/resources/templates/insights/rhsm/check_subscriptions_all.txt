@@ -1,5 +1,0 @@
-You have:
-
-* 200 active subscriptions
-* 25 subscriptions that are expiring soon
-* 30 that have already expired
