@@ -73,7 +73,7 @@ async def test_fetch_integrations(
     )
 
     response = await test_client.get(
-        "/integrations/fetch_integrations/options?integration_search_query=test&integration_enabled=true"
+        "/integrations/options?integration_search_query=test&integration_enabled=true"
     )
 
     assert response.status == "200 OK"
@@ -129,7 +129,7 @@ async def test_fetch_integrations_error(
 
     sources_client.get_sources = MagicMock(return_value=async_value(([False, []])))
 
-    response = await test_client.get("/integrations/fetch_integrations/options")
+    response = await test_client.get("/integrations/options")
 
     assert response.status == "200 OK"
 
@@ -156,8 +156,8 @@ async def test_integration_actions(test_client, integrations_client) -> None:
         return_value=async_value(integration_pause_response)
     )
 
-    response = await test_client.get(
-        "/integrations/integration_actions?action_type=pause&integration_type=notifications&integration_id=1234"
+    response = await test_client.post(
+        "/integrations/actions?action_type=pause&integration_type=notifications&integration_id=1234"
     )
 
     assert response.status == "200 OK"
@@ -180,8 +180,8 @@ async def test_integration_actions_sources(test_client, sources_client) -> None:
         return_value=async_value(integration_delete_response)
     )
 
-    response = await test_client.get(
-        "/integrations/integration_actions?action_type=delete&integration_type=red_hat&integration_id=5678"
+    response = await test_client.post(
+        "/integrations/actions?action_type=delete&integration_type=red_hat&integration_id=5678"
     )
 
     assert response.status == "200 OK"
@@ -201,8 +201,8 @@ async def test_integration_actions_error(test_client, integrations_client) -> No
         return_value=async_value(integration_pause_response)
     )
 
-    response = await test_client.get(
-        "/integrations/integration_actions?action_type=pause&integration_type=notifications&integration_id=1234"
+    response = await test_client.post(
+        "/integrations/actions?action_type=pause&integration_type=notifications&integration_id=1234"
     )
 
     assert response.status == "200 OK"
@@ -230,20 +230,23 @@ async def test_integration_update(test_client, integrations_client) -> None:
         return_value=async_value(integration_update_response)
     )
 
-    response = await test_client.get(
-        "/integrations/integration_update?update_type=name&integration_type=notifications&integration_id=1234&new_value=new_val"
+    response = await test_client.post(
+        "/integrations/update?update_type=name&integration_type=notifications&integration_id=1234&new_value=new_test_name"
     )
 
     assert response.status == "200 OK"
 
     integrations_client.retrieve_notification_endpoint.assert_called_once_with("1234")
     integrations_client.update_integration.assert_called_once_with(
-        integration_id="1234", integration_data={"name": "new_val"}
+        integration_id="1234", integration_data={"name": "new_test_name"}
     )
 
     data = await response.get_json()
 
-    assert data["response"] == "The name of your integration was successfully updated."
+    assert (
+        data["response"]
+        == "The name of your integration was successfully updated to new_test_name."
+    )
 
 
 async def test_integration_update_error(test_client, sources_client) -> None:
@@ -253,8 +256,8 @@ async def test_integration_update_error(test_client, sources_client) -> None:
         return_value=async_value(integration_update_response)
     )
 
-    response = await test_client.get(
-        "/integrations/integration_update?update_type=name&integration_type=red_hat&integration_id=5678&new_value=new_redhat_val"
+    response = await test_client.post(
+        "/integrations/update?update_type=name&integration_type=red_hat&integration_id=5678&new_value=new_redhat_val"
     )
 
     assert response.status == "200 OK"
@@ -273,8 +276,8 @@ async def test_integration_update_error(test_client, sources_client) -> None:
 async def test_integration_create(test_client, integrations_client) -> None:
     integrations_client.create_endpoint = MagicMock(return_value=async_value(True))
 
-    response = await test_client.get(
-        "/integrations/integrations_setup?integration_type=reporting&setup_name=test&setup_url=https://example.com&setup_secret=shhh&setup_use_secret=true&setup_type=ansible"
+    response = await test_client.post(
+        "/integrations/setup?integration_type=reporting&setup_name=test&setup_url=https://example.com&setup_secret=shhh&setup_use_secret=true&setup_type=ansible"
     )
 
     assert response.status == "200 OK"
@@ -300,8 +303,8 @@ async def test_integration_create_invalid_setup_type(
 ) -> None:
     integrations_client.create_endpoint = MagicMock(return_value=async_value(True))
 
-    response = await test_client.get(
-        "/integrations/integrations_setup?integration_type=communications&setup_name=test&setup_url=https://example.com&setup_secret=shhh&setup_use_secret=true&setup_type=idk"
+    response = await test_client.post(
+        "/integrations/setup?integration_type=communications&setup_name=test&setup_url=https://example.com&setup_secret=shhh&setup_use_secret=true&setup_type=idk"
     )
 
     assert response.status == "200 OK"
@@ -317,7 +320,7 @@ async def test_integration_redhat_name_valid(test_client, sources_client) -> Non
     sources_client.is_source_name_valid = MagicMock(return_value=async_value(True))
 
     response = await test_client.get(
-        "/integrations/redhat/integrations_name_valid?integrations_setup_name=test name"
+        "/integrations/redhat/check_name_valid?integrations_setup_name=test name"
     )
 
     assert response.status == "200 OK"
@@ -332,8 +335,8 @@ async def test_integration_redhat_name_valid(test_client, sources_client) -> Non
 async def test_integration_redhat_setup(test_client, sources_client) -> None:
     sources_client.bulk_create = MagicMock(return_value=async_value(True))
 
-    response = await test_client.get(
-        "/integrations/redhat/integrations_setup?integrations_setup_name=test&redhat_cluster_identifier=abcdef"
+    response = await test_client.post(
+        "/integrations/redhat/setup?integrations_setup_name=test&redhat_cluster_identifier=abcdef"
     )
 
     assert response.status == "200 OK"
@@ -351,8 +354,8 @@ async def test_integration_redhat_setup(test_client, sources_client) -> None:
 async def test_integration_redhat_setup_error(test_client, sources_client) -> None:
     sources_client.bulk_create = MagicMock(return_value=async_value(False))
 
-    response = await test_client.get(
-        "/integrations/redhat/integrations_setup?integrations_setup_name=test&redhat_cluster_identifier=abcdef"
+    response = await test_client.post(
+        "/integrations/redhat/setup?integrations_setup_name=test&redhat_cluster_identifier=abcdef"
     )
 
     assert response.status == "200 OK"

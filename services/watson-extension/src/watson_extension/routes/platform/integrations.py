@@ -108,7 +108,7 @@ class IntegrationUpdateResponse(BaseModel):
     response: str
 
 
-@blueprint.get("/redhat/integrations_name_valid")
+@blueprint.get("/redhat/check_name_valid")
 @validate_querystring(RedhatIntegrationsValidateNameRequestQuery)
 @validate_response(RedhatIntegrationsValidateNameResponse)
 @document_headers(RHSessionIdHeader)
@@ -123,7 +123,7 @@ async def redhat_integrations_name_valid(
     )
 
 
-@blueprint.get("/redhat/integrations_setup")
+@blueprint.post("/redhat/setup")
 @validate_querystring(RedhatIntegrationsSetupRequestQuery)
 @validate_response(RedhatIntegrationsSetupResponse)
 @document_headers(RHSessionIdHeader)
@@ -149,7 +149,7 @@ async def redhat_integrations_setup(
     )
 
 
-@blueprint.get("/integrations_setup")
+@blueprint.post("/setup")
 @validate_querystring(IntegrationsSetupRequestQuery)
 @validate_response(IntegrationsSetupResponse)
 @document_headers(RHSessionIdHeader)
@@ -207,7 +207,7 @@ async def integrations_setup(
     )
 
 
-@blueprint.get("/fetch_integrations/options")
+@blueprint.get("/options")
 @validate_querystring(FetchIntegrationsRequestQuery)
 @validate_response(FetchIntegrationsResponse)
 @document_headers(RHSessionIdHeader)
@@ -223,7 +223,7 @@ async def fetch_integrations_options(
     return FetchIntegrationsResponse(has_errors=has_errors, integrations=integrations)
 
 
-@blueprint.get("/integration_actions")
+@blueprint.post("/actions")
 @validate_querystring(IntegrationActionsRequestQuery)
 @validate_response(IntegrationActionsResponse)
 @document_headers(RHSessionIdHeader)
@@ -271,7 +271,7 @@ async def integration_actions(
     )
 
 
-@blueprint.get("/integration_update")
+@blueprint.post("/update")
 @validate_querystring(IntegrationUpdateRequestQuery)
 @validate_response(IntegrationUpdateResponse)
 @document_headers(RHSessionIdHeader)
@@ -288,6 +288,7 @@ async def integration_update(
             return IntegrationUpdateResponse(
                 response=await render_template(
                     "platform/integrations/integration_update_name_success.txt.jinja",
+                    new_name=query_args.new_value,
                 )
             )
 
@@ -300,6 +301,7 @@ async def integration_update(
             return IntegrationUpdateResponse(
                 response=await render_template(
                     "platform/integrations/integration_update_url_success.txt.jinja",
+                    new_url=query_args.new_value,
                 )
             )
 
