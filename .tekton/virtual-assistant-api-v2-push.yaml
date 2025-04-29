@@ -597,7 +597,8 @@ spec:
       optional: true
     - name: netrc
       optional: true
-  taskRunTemplate: {}
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-virtual-assistant-api-v2
   workspaces:
   - name: workspace
     volumeClaimTemplate:
