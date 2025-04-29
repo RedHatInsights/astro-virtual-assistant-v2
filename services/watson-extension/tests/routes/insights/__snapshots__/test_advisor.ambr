@@ -8,3 +8,6 @@
   You can see additional recommendations on the [Advisor dashboard](i-am-not-zelda).
   '''
 # ---
+# name: test_recommendations_none
+  "You don't have any performance recommendations right now."
+# ---

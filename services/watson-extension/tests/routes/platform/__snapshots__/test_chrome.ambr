@@ -1,0 +1,19 @@
+# serializer version: 1
+# name: test_favoriting_add_favorite
+  'The [bar1](/insights/bar1/run-damnit) (barGroup) service is now in your Favorites!'
+# ---
+# name: test_favoriting_already_favorited
+  'Service [bar3](/insights/bar3/run-damnit) is already favorited.'
+# ---
+# name: test_favoriting_external_service
+  "Service bar2 wasn't found."
+# ---
+# name: test_favoriting_not_found
+  "Service not-found wasn't found."
+# ---
+# name: test_favoriting_remove_favorite
+  'The [bar3](/insights/bar3/run-damnit) (barGroup) service is no longer favorited.'
+# ---
+# name: test_favoriting_remove_service_not_favorited
+  "The bar1 wasn't in your Favorites."
+# ---

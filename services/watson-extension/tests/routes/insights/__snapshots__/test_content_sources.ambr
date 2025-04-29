@@ -1,0 +1,10 @@
+# serializer version: 1
+# name: test_custom_repositories_already_enabled
+  'Looks like you already have the EPEL 9 repository enabled.'
+# ---
+# name: test_custom_repositories_enabled
+  'The EPEL 8 repository has been enabled and can now be used when building images with Image Builder.'
+# ---
+# name: test_custom_repositories_error
+  'I am sorry, I am having trouble viewing your repositories. Try visiting your repositories [here](/insights/content).'
+# ---

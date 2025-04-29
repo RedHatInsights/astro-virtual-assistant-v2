@@ -1,7 +1,0 @@
-Here are your most recent workloads from OpenShift for Advisor.
-
- 1. [My cluster1](/openshift/insights/advisor/workloads/cluster-001/my-namespace)
- 2. [My cluster5](/openshift/insights/advisor/workloads/cluster-001/somewhere)
- 3. [My cluster10](/openshift/insights/advisor/workloads/cluster-003/etc)
-
-You can see additional workloads on the [OpenShift for Advisor dashboard](/openshift/insights/advisor/workloads).

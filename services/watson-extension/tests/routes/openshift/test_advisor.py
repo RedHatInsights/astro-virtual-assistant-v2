@@ -13,7 +13,7 @@ from watson_extension.clients.openshift.advisor import (
 from ..common import app_with_blueprint
 
 from watson_extension.routes.openshift.advisor import blueprint
-from ... import async_value, get_test_template
+from ... import async_value
 
 
 @pytest.fixture
@@ -29,7 +29,7 @@ async def test_client(advisor_client) -> TestClientProtocol:
     return app_with_blueprint(blueprint, injector_binder).test_client()
 
 
-async def test_recommendations(test_client, advisor_client) -> None:
+async def test_recommendations(test_client, advisor_client, snapshot) -> None:
     advisor_client.get_recommendations = MagicMock(
         return_value=async_value(
             [
@@ -48,12 +48,10 @@ async def test_recommendations(test_client, advisor_client) -> None:
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template(
-        "openshift/advisor/recommendations.txt"
-    )
+    assert data["response"] == snapshot
 
 
-async def test_workloads(test_client, advisor_client) -> None:
+async def test_workloads(test_client, advisor_client, snapshot) -> None:
     advisor_client.get_workloads = MagicMock(
         return_value=async_value(
             [
@@ -84,10 +82,10 @@ async def test_workloads(test_client, advisor_client) -> None:
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template("openshift/advisor/workload.txt")
+    assert data["response"] == snapshot
 
 
-async def test_clusters(test_client, advisor_client) -> None:
+async def test_clusters(test_client, advisor_client, snapshot) -> None:
     advisor_client.get_clusters = MagicMock(
         return_value=async_value(
             [
@@ -106,10 +104,10 @@ async def test_clusters(test_client, advisor_client) -> None:
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template("openshift/advisor/cluster.txt")
+    assert data["response"] == snapshot
 
 
-async def test_recommendations_none(test_client, advisor_client) -> None:
+async def test_recommendations_none(test_client, advisor_client, snapshot) -> None:
     advisor_client.get_recommendations = MagicMock(return_value=async_value([]))
 
     response = await test_client.get(
@@ -117,6 +115,4 @@ async def test_recommendations_none(test_client, advisor_client) -> None:
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template(
-        "openshift/advisor/no-recommendations.txt"
-    )
+    assert data["response"] == snapshot

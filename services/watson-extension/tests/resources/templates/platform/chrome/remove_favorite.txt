@@ -1,1 +1,0 @@
-The [bar3](/insights/bar3/run-damnit) (barGroup) service is no longer favorited.

@@ -13,7 +13,7 @@ from watson_extension.core.platform.rbac import RBACCore
 
 from ..common import app_with_blueprint
 from watson_extension.routes.platform.rbac import blueprint
-from ... import async_value, get_test_template
+from ... import async_value
 
 
 @pytest.fixture
@@ -79,19 +79,17 @@ async def test_tam_request_network_error(test_client, rbac_client: MagicMock):
     assert "Mocked network error" in str(excinfo.value)
 
 
-async def test_tam_request_access(test_client, rbac_client) -> None:
+async def test_tam_request_access(test_client, rbac_client, snapshot) -> None:
     response = await test_client.post(
         "/rbac/tam-access",
         query_string={"account_id": "12345", "org_id": "foo", "duration": "3 days"},
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template(
-        "platform/rbac/submit_tam_access_request.txt"
-    )
+    assert data["response"] == snapshot
 
 
-async def test_tam_request_non_200(test_client, rbac_client: MagicMock):
+async def test_tam_request_non_200(test_client, rbac_client: MagicMock, snapshot):
     rbac_client.send_rbac_tam_request.return_value = False
     response = await test_client.post(
         "/rbac/tam-access",
@@ -100,13 +98,11 @@ async def test_tam_request_non_200(test_client, rbac_client: MagicMock):
 
     assert response.status_code == 200  # ignores that
     data = await response.get_json()
-    assert data["response"] == get_test_template(
-        "platform/rbac/error_tam_access_request.txt"
-    )
+    assert data["response"] == snapshot
 
 
 @pytest.mark.asyncio
-async def test_tam_request_body(test_client, rbac_client: MagicMock):
+async def test_tam_request_body(test_client, rbac_client: MagicMock, snapshot):
     async def mock_send_rbac_tam_request(payload):
         assert payload.account_id == "12345"
         assert payload.org_id == "foo"
@@ -127,9 +123,7 @@ async def test_tam_request_body(test_client, rbac_client: MagicMock):
     assert response.status == "200 OK"
 
     data = await response.get_json()
-    assert data["response"] == get_test_template(
-        "platform/rbac/submit_tam_access_request.txt"
-    )
+    assert data["response"] == snapshot
 
 
 @pytest.mark.parametrize(

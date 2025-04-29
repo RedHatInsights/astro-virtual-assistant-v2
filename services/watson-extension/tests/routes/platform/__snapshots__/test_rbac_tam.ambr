@@ -1,0 +1,22 @@
+# serializer version: 1
+# name: test_tam_request_access
+  '''
+  Your request for access to customer account 12345 has been submitted. The customer will be notified shortly.
+  
+  Future requests can also be made using the form [here](/internal/access-requests).
+  '''
+# ---
+# name: test_tam_request_body
+  '''
+  Your request for access to customer account 12345 has been submitted. The customer will be notified shortly.
+  
+  Future requests can also be made using the form [here](/internal/access-requests).
+  '''
+# ---
+# name: test_tam_request_non_200
+  '''
+  There was an error processing your request. Please try again later.
+  
+  Future requests can also be made using the form [here](/internal/access-requests).
+  '''
+# ---

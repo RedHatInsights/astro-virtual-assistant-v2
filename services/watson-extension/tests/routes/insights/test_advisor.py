@@ -13,7 +13,7 @@ from watson_extension.clients.insights.advisor import (
 from ..common import app_with_blueprint
 
 from watson_extension.routes.insights.advisor import blueprint
-from ... import async_value, get_test_template
+from ... import async_value
 
 
 @pytest.fixture
@@ -56,7 +56,7 @@ async def test_recommendations(test_client, advisor_client, snapshot) -> None:
     assert data["response"] == snapshot
 
 
-async def test_recommendations_none(test_client, advisor_client) -> None:
+async def test_recommendations_none(test_client, advisor_client, snapshot) -> None:
     advisor_client.find_rule_category_by_name = MagicMock(
         return_value=async_value(RuleCategory(id="4", name="performance"))
     )
@@ -69,6 +69,4 @@ async def test_recommendations_none(test_client, advisor_client) -> None:
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template(
-        "insights/advisor/recommendations-not-found.txt"
-    )
+    assert data["response"] == snapshot
