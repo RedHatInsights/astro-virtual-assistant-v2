@@ -4,12 +4,17 @@
 
 include scripts/make/Makefile.variables.mk
 
+PYTEST_FLAGS =
+
 test: test-python
 
+test-python-update-snapshot: PYTEST_FLAGS+= --snapshot-update
+test-python-update-snapshot: test-python
+
 test-python:
-	uv run --directory libs/common pytest
-	uv run --directory services/virtual-assistant pytest
-	uv run --directory services/watson-extension pytest
+	uv run --directory libs/common pytest $(PYTEST_FLAGS)
+	uv run --directory services/virtual-assistant pytest $(PYTEST_FLAGS)
+	uv run --directory services/watson-extension pytest $(PYTEST_FLAGS)
 
 test-python-coverage:
 	uv run --directory libs/common coverage run -m pytest --junitxml=junit.xml -o junit_family=legacy && uv run --directory libs/common coverage report

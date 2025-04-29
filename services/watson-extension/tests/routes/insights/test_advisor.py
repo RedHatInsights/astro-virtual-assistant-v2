@@ -29,7 +29,7 @@ async def test_client(advisor_client) -> TestClientProtocol:
     return app_with_blueprint(blueprint, injector_binder).test_client()
 
 
-async def test_recommendations(test_client, advisor_client) -> None:
+async def test_recommendations(test_client, advisor_client, snapshot) -> None:
     advisor_client.find_rule_category_by_name = MagicMock(
         return_value=async_value(RuleCategory(id="4", name="performance"))
     )
@@ -53,7 +53,7 @@ async def test_recommendations(test_client, advisor_client) -> None:
     )
     assert response.status == "200 OK"
     data = await response.get_json()
-    assert data["response"] == get_test_template("insights/advisor/recommendations.txt")
+    assert data["response"] == snapshot
 
 
 async def test_recommendations_none(test_client, advisor_client) -> None:
