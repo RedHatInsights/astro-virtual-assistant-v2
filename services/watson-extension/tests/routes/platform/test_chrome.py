@@ -150,7 +150,9 @@ async def test_favoriting_add_favorite(test_client, chrome_client, snapshot) -> 
     assert data["response"] == snapshot
 
 
-async def test_favoriting_external_service(test_client, chrome_client, snapshot) -> None:
+async def test_favoriting_external_service(
+    test_client, chrome_client, snapshot
+) -> None:
     response = await test_client.post(
         "/chrome/favorites", query_string={"favoriting": True, "title": "bar2"}
     )
@@ -158,7 +160,10 @@ async def test_favoriting_external_service(test_client, chrome_client, snapshot)
     data = await response.get_json()
     assert data["response"] == snapshot
 
-async def test_favoriting_already_favorited(test_client, chrome_client, snapshot) -> None:
+
+async def test_favoriting_already_favorited(
+    test_client, chrome_client, snapshot
+) -> None:
     response = await test_client.post(
         "/chrome/favorites", query_string={"favoriting": True, "title": "bar3"}
     )
