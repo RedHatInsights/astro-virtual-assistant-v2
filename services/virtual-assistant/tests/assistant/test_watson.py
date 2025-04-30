@@ -16,6 +16,7 @@ from virtual_assistant.assistant.watson import (
     WatsonAssistant,
     build_assistant,
     format_response,
+    get_feedback_command_params,
     WatsonAssistantVariables,
 )
 from ibm_watson import AssistantV2
@@ -71,7 +72,9 @@ async def test_send_watson_message(watson, assistant_v2, assistant_id, environme
         message=AssistantInput(
             session_id="1234", user_id="1234", query=Query(text="hello world")
         ),
-        context=AssistantContext(is_internal=False, is_org_admin=False),
+        context=AssistantContext(
+            is_internal=False, is_org_admin=False, user_email="user@example.com"
+        ),
     )
     assistant_v2.message.assert_called_once()
     assistant_v2.message.assert_called_with(
@@ -106,7 +109,9 @@ async def test_send_draft_variable(
         message=AssistantInput(
             session_id="1234", user_id="1234", query=Query(text="hello world")
         ),
-        context=AssistantContext(is_internal=False, is_org_admin=False),
+        context=AssistantContext(
+            is_internal=False, is_org_admin=False, user_email="user@example.com"
+        ),
     )
     context = assistant_v2.message.call_args.kwargs["context"]
     assert context.skills.actions_skill.skill_variables["Draft"] is draft_value
@@ -122,15 +127,45 @@ async def test_send_assistant_context(
         message=AssistantInput(
             session_id="1234", user_id="1234", query=Query(text="hello world")
         ),
-        context=AssistantContext(is_internal=is_internal, is_org_admin=is_org_admin),
+        context=AssistantContext(
+            is_internal=is_internal,
+            is_org_admin=is_org_admin,
+            user_email="user@example.com",
+        ),
     )
     context = assistant_v2.message.call_args.kwargs["context"]
     assert context.skills.actions_skill.skill_variables["IsInternal"] is is_internal
     assert context.skills.actions_skill.skill_variables["IsOrgAdmin"] is is_org_admin
 
 
+async def test_get_feedback_command_params():
+    watson_message = """/feedback <|start_feedback_type|>bug<|end_feedback_type|>
+    <|start_feedback_response|>Whoa! Just found this bug!<|end_feedback_response|>
+    <|start_usability_study|>true<|end_usability_study|>
+    """
+
+    extracted_args = get_feedback_command_params(watson_message, "user@example.com")
+    summary = extracted_args[0]
+    description = extracted_args[1]
+    labels = extracted_args[2]
+
+    expected_description = """
+    Feedback type: bug
+    Feedback: Whoa! Just found this bug!
+
+    The user wants to participate in a usability study. Email: user@example.com
+    """
+
+    assert summary == "Platform feedback from the assistant"
+    assert description == expected_description
+    assert labels[0] == "virtual-assistant"
+    assert labels[1] == "bug-feedback"
+
+
 async def test_format_response():
-    formatted = format_response(json.loads(get_resource_contents("watson_format.json")))
+    formatted = format_response(
+        json.loads(get_resource_contents("watson_format.json")), "user@example.com"
+    )
     assert len(formatted) == 7
 
     assert formatted[0].type == ResponseType.COMMAND
