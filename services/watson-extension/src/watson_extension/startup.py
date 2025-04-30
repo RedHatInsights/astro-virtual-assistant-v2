@@ -67,7 +67,12 @@ from watson_extension.clients.platform.integrations import (
     IntegrationsClient,
     IntegrationsClientHttp,
 )
-from watson_extension.clients.platform.rbac import RbacURL, RBACClient, RBACClientNoOp
+from watson_extension.clients.platform.rbac import (
+    RbacURL,
+    RBACClient,
+    RBACClientHttp,
+    RBACClientNoOp,
+)
 
 
 from common.platform_request import (
@@ -189,6 +194,11 @@ def injector_from_config(binder: injector.Binder) -> None:
         binder.bind(
             NotificationsClient,
             NotificationsClientHttp,
+            scope=quart_injector.RequestScope,
+        )
+        binder.bind(
+            RBACClient,
+            RBACClientHttp,
             scope=quart_injector.RequestScope,
         )
 
