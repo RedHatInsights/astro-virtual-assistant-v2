@@ -159,8 +159,7 @@ async def test_get_feedback_command_params():
 
     assert summary == "Platform feedback from the assistant"
     assert description == expected_description
-    assert labels[0] == "virtual-assistant"
-    assert labels[1] == "bug-feedback"
+    assert labels == "virtual-assistant,bug-feedback"
 
 
 async def test_format_response():

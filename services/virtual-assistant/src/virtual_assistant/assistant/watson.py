@@ -51,7 +51,7 @@ def get_debug_output(response: dict) -> dict[str, Any]:
 
 def get_feedback_command_params(
     watson_msg: str, user_email: str
-) -> Tuple[str, str, List[str]]:
+) -> Tuple[str, str, str]:
     """
     Extracts the params from the message of the feedback command.
 
@@ -102,7 +102,7 @@ def get_feedback_command_params(
 
     {feedback_usability_study}
     """)
-    labels = ["virtual-assistant", feedback_type_label]
+    labels = f"virtual-assistant,{feedback_type_label}"
 
     return [summary, description, labels]
 
