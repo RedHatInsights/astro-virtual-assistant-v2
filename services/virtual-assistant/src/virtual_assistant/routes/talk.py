@@ -119,6 +119,7 @@ async def talk(
             context=AssistantContext(
                 is_internal=identity_json.get("user", {}).get("is_internal", False),
                 is_org_admin=identity_json.get("user", {}).get("is_org_admin", False),
+                user_email=identity_json.get("user", {}).get("email", "no_user_email"),
             ),
         )
 

@@ -156,6 +156,7 @@ class AssistantOutput(BaseModel):
 class AssistantContext:
     is_internal: bool
     is_org_admin: bool
+    user_email: str
 
 
 class Assistant(ABC):

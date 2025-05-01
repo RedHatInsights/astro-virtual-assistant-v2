@@ -2,7 +2,8 @@ import asyncio
 import dataclasses
 import json
 import re
-from typing import List, Any
+import textwrap
+from typing import List, Any, Tuple
 
 from . import (
     Assistant,
@@ -48,7 +49,65 @@ def get_debug_output(response: dict) -> dict[str, Any]:
     }
 
 
-def format_response(response: dict) -> List[AssistantResponse]:
+def get_feedback_command_params(
+    watson_msg: str, user_email: str
+) -> Tuple[str, str, List[str]]:
+    """
+    Extracts the params from the message of the feedback command.
+
+    Example feedback command and params:
+    /feedback <|start_feedback_type|>bug<|end_feedback_type|>
+    <|start_feedback_response|>This is a user feedback<|end_feedback_response|>
+    <|start_usability_study|>false<|end_usability_study|>
+    """
+
+    feedback_type_pattern = r"<\|start_feedback_type\|>(.*?)<\|end_feedback_type\|>"
+    feedback_response_pattern = (
+        r"<\|start_feedback_response\|>(.*?)<\|end_feedback_response\|>"
+    )
+    usability_study_pattern = (
+        r"<\|start_usability_study\|>(.*?)<\|end_usability_study\|>"
+    )
+
+    feedback_type_match = re.search(feedback_type_pattern, watson_msg)
+    feedback_type = feedback_type_match.group(1) if feedback_type_match else "general"
+
+    feedback_response_match = re.search(
+        feedback_response_pattern, watson_msg, re.DOTALL
+    )
+    feedback_response = (
+        feedback_response_match.group(1) if feedback_response_match else ""
+    )  # re.DOTALL handles multiline user feedback response
+
+    usability_study = False
+    usability_study_match = re.search(usability_study_pattern, watson_msg)
+
+    if usability_study_match:
+        usability_study = usability_study_match.group(1) == "true"
+
+    feedback_type_label = f"{feedback_type}-feedback"
+
+    feedback_usability_study = (
+        "The user DOES NOT want to participate in our usability studies."
+    )
+    if usability_study:
+        feedback_usability_study = (
+            f"The user wants to participate in a usability study. Email: {user_email}"
+        )
+
+    summary = "Platform feedback from the assistant"
+    description = textwrap.dedent(f"""
+    Feedback type: {feedback_type}
+    Feedback: {feedback_response}
+
+    {feedback_usability_study}
+    """)
+    labels = ["virtual-assistant", feedback_type_label]
+
+    return [summary, description, labels]
+
+
+def format_response(response: dict, user_email: str) -> List[AssistantResponse]:
     """Formats the message response from watson and maps it to the VA API response for the user
 
     Parameters:
@@ -67,7 +126,14 @@ def format_response(response: dict) -> List[AssistantResponse]:
         if generic["response_type"] == "text":
             if generic["text"].startswith("/"):  # command message
                 params = generic["text"].split(" ")
-                entry = ResponseCommand(command=params[0].strip("/"), args=params[1:])
+                command = params[0].strip("/")
+                if command == "feedback":
+                    feedback_params = get_feedback_command_params(
+                        generic["text"], user_email
+                    )
+                    entry = ResponseCommand(command=command, args=feedback_params)
+                else:
+                    entry = ResponseCommand(command=command, args=params[1:])
             else:
                 entry = ResponseText(
                     text=generic["text"],
@@ -204,6 +270,6 @@ class WatsonAssistant(Assistant):
         return AssistantOutput(
             session_id=message.session_id,
             user_id=message.user_id,
-            response=format_response(response_result),
+            response=format_response(response_result, context.user_email),
             debug_output=debug_output,
         )
