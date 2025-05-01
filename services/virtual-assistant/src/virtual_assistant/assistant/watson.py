@@ -2,7 +2,8 @@ import asyncio
 import dataclasses
 import json
 import re
-from typing import List, Any
+import textwrap
+from typing import List, Any, Tuple
 
 from . import (
     Assistant,
@@ -48,7 +49,9 @@ def get_debug_output(response: dict) -> dict[str, Any]:
     }
 
 
-def get_feedback_command_params(watson_msg: str, user_email: str) -> List[Any]:
+def get_feedback_command_params(
+    watson_msg: str, user_email: str
+) -> Tuple[str, str, List[str]]:
     """
     Extracts the params from the message of the feedback command.
 
@@ -66,10 +69,15 @@ def get_feedback_command_params(watson_msg: str, user_email: str) -> List[Any]:
         r"<\|start_usability_study\|>(.*?)<\|end_usability_study\|>"
     )
 
-    feedback_type = re.search(feedback_type_pattern, watson_msg).group(1) or "general"
-    feedback_response = re.search(
+    feedback_type_match = re.search(feedback_type_pattern, watson_msg)
+    feedback_type = feedback_type_match.group(1) if feedback_type_match else "general"
+
+    feedback_response_match = re.search(
         feedback_response_pattern, watson_msg, re.DOTALL
-    ).group(1)  # re.DOTALL handles multiline user feedback response
+    )
+    feedback_response = (
+        feedback_response_match.group(1) if feedback_response_match else ""
+    )  # re.DOTALL handles multiline user feedback response
 
     usability_study = False
     usability_study_match = re.search(usability_study_pattern, watson_msg)
@@ -77,7 +85,7 @@ def get_feedback_command_params(watson_msg: str, user_email: str) -> List[Any]:
     if usability_study_match:
         usability_study = usability_study_match.group(1) == "true"
 
-    feedback_type_label = feedback_type + "-feedback"
+    feedback_type_label = f"{feedback_type}-feedback"
 
     feedback_usability_study = (
         "The user DOES NOT want to participate in our usability studies."
@@ -88,12 +96,12 @@ def get_feedback_command_params(watson_msg: str, user_email: str) -> List[Any]:
         )
 
     summary = "Platform feedback from the assistant"
-    description = f"""
+    description = textwrap.dedent(f"""
     Feedback type: {feedback_type}
     Feedback: {feedback_response}
 
     {feedback_usability_study}
-    """
+    """)
     labels = ["virtual-assistant", feedback_type_label]
 
     return [summary, description, labels]

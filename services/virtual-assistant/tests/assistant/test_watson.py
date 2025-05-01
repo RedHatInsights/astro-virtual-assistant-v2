@@ -1,4 +1,5 @@
 import json
+import textwrap
 from hypothesis import given, strategies as st, settings, HealthCheck
 from unittest.mock import MagicMock
 from .. import get_resource_contents
@@ -149,12 +150,12 @@ async def test_get_feedback_command_params():
     description = extracted_args[1]
     labels = extracted_args[2]
 
-    expected_description = """
+    expected_description = textwrap.dedent("""
     Feedback type: bug
     Feedback: Whoa! Just found this bug!
 
     The user wants to participate in a usability study. Email: user@example.com
-    """
+    """)
 
     assert summary == "Platform feedback from the assistant"
     assert description == expected_description
