@@ -165,9 +165,9 @@ async def test_get_feedback_command_params():
 
 async def test_get_service_account_command_params():
     watson_message = """/create_service_account
-    <|name|>test1<|name|>
-    <|description|>Now, provide a short description for your service account.<|description|>
-    <|environment|>stage<|environment|>
+    <|start_name|>test1<|end_name|>
+    <|start_description|>Now, provide a short description for your service account.<|end_description|>
+    <|start_environment|>stage<|end_environment|>
     """
 
     extracted_args = get_service_account_command_params(watson_message)
@@ -178,6 +178,16 @@ async def test_get_service_account_command_params():
     assert name == "test1"
     assert description == "Now, provide a short description for your service account."
     assert environment == "stage"
+
+
+async def test_get_service_account_command_params_missing_tag():
+    # Test when the <|name|> tag is missing.
+    watson_message_missing_name = """/create_service_account
+    <|start_description|>Now, provide a short description for your service account.<|end_description|>
+    <|start_environment|>stage<|end_environment|>
+    """
+    with pytest.raises(ValueError):
+        get_service_account_command_params(watson_message_missing_name)
 
 
 async def test_format_response():

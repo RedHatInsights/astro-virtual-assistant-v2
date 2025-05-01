@@ -49,21 +49,17 @@ def get_debug_output(response: dict) -> dict[str, Any]:
     }
 
 
-def search_for_field(tag: str, watson_msg: str) -> str:
-    """
-    Extracts the params from the message of the feedback command.
+def search_for_field(
+    tag: str, watson_msg: str, regex_flags: re.RegexFlag = 0, default: str = None
+) -> str:
+    pattern = rf"<\|start_{tag}\|>(.*?)<\|end_{tag}\|>"
+    match = re.search(pattern, watson_msg, regex_flags)
+    if match:
+        return match.group(1)
+    if default:
+        return default
 
-    Example feedback command and params:
-    /feedback <|start_feedback_type|>bug<|end_feedback_type|>
-    <|start_feedback_response|>This is a user feedback<|end_feedback_response|>
-    <|start_usability_study|>false<|end_usability_study|>
-    """
-
-    pattern = rf"<\|{tag}\|>(.*?)<\|{tag}\|>"
-    match = re.search(pattern, watson_msg)
-    if not match:
-        raise ValueError(f"Missing {tag} in the message: {watson_msg}")
-    return match.group(1)
+    raise ValueError(f"Missing {tag} in the message: {watson_msg}")
 
 
 def get_feedback_command_params(
@@ -78,29 +74,11 @@ def get_feedback_command_params(
     <|start_usability_study|>false<|end_usability_study|>
     """
 
-    feedback_type_pattern = r"<\|start_feedback_type\|>(.*?)<\|end_feedback_type\|>"
-    feedback_response_pattern = (
-        r"<\|start_feedback_response\|>(.*?)<\|end_feedback_response\|>"
+    feedback_type = search_for_field("feedback_type", watson_msg, default="general")
+    feedback_response = search_for_field(
+        "feedback_response", watson_msg, default="", regex_flags=re.DOTALL
     )
-    usability_study_pattern = (
-        r"<\|start_usability_study\|>(.*?)<\|end_usability_study\|>"
-    )
-
-    feedback_type_match = re.search(feedback_type_pattern, watson_msg)
-    feedback_type = feedback_type_match.group(1) if feedback_type_match else "general"
-
-    feedback_response_match = re.search(
-        feedback_response_pattern, watson_msg, re.DOTALL
-    )
-    feedback_response = (
-        feedback_response_match.group(1) if feedback_response_match else ""
-    )  # re.DOTALL handles multiline user feedback response
-
-    usability_study = False
-    usability_study_match = re.search(usability_study_pattern, watson_msg)
-
-    if usability_study_match:
-        usability_study = usability_study_match.group(1) == "true"
+    usability_study = search_for_field("usability_study", watson_msg, default="false")
 
     feedback_type_label = f"{feedback_type}-feedback"
 
