@@ -18,6 +18,7 @@ from virtual_assistant.assistant.watson import (
     build_assistant,
     format_response,
     get_feedback_command_params,
+    get_service_account_command_params,
     WatsonAssistantVariables,
 )
 from ibm_watson import AssistantV2
@@ -160,6 +161,33 @@ async def test_get_feedback_command_params():
     assert summary == "Platform feedback from the assistant"
     assert description == expected_description
     assert labels == "virtual-assistant,bug-feedback"
+
+
+async def test_get_service_account_command_params():
+    watson_message = """/create_service_account
+    <|start_name|>test1<|end_name|>
+    <|start_description|>Now, provide a short description for your service account.<|end_description|>
+    <|start_environment|>stage<|end_environment|>
+    """
+
+    extracted_args = get_service_account_command_params(watson_message)
+    name = extracted_args[0]
+    description = extracted_args[1]
+    environment = extracted_args[2]
+
+    assert name == "test1"
+    assert description == "Now, provide a short description for your service account."
+    assert environment == "stage"
+
+
+async def test_get_service_account_command_params_missing_tag():
+    # Test when the <|name|> tag is missing.
+    watson_message_missing_name = """/create_service_account
+    <|start_description|>Now, provide a short description for your service account.<|end_description|>
+    <|start_environment|>stage<|end_environment|>
+    """
+    with pytest.raises(ValueError):
+        get_service_account_command_params(watson_message_missing_name)
 
 
 async def test_format_response():

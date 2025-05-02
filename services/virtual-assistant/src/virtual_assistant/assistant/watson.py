@@ -49,6 +49,19 @@ def get_debug_output(response: dict) -> dict[str, Any]:
     }
 
 
+def search_for_field(
+    tag: str, watson_msg: str, regex_flags: re.RegexFlag = 0, default: str = None
+) -> str:
+    pattern = rf"<\|start_{tag}\|>(.*?)<\|end_{tag}\|>"
+    match = re.search(pattern, watson_msg, regex_flags)
+    if match:
+        return match.group(1)
+    if default:
+        return default
+
+    raise ValueError(f"Missing {tag} in the message: {watson_msg}")
+
+
 def get_feedback_command_params(
     watson_msg: str, user_email: str
 ) -> Tuple[str, str, str]:
@@ -61,29 +74,11 @@ def get_feedback_command_params(
     <|start_usability_study|>false<|end_usability_study|>
     """
 
-    feedback_type_pattern = r"<\|start_feedback_type\|>(.*?)<\|end_feedback_type\|>"
-    feedback_response_pattern = (
-        r"<\|start_feedback_response\|>(.*?)<\|end_feedback_response\|>"
+    feedback_type = search_for_field("feedback_type", watson_msg, default="general")
+    feedback_response = search_for_field(
+        "feedback_response", watson_msg, default="", regex_flags=re.DOTALL
     )
-    usability_study_pattern = (
-        r"<\|start_usability_study\|>(.*?)<\|end_usability_study\|>"
-    )
-
-    feedback_type_match = re.search(feedback_type_pattern, watson_msg)
-    feedback_type = feedback_type_match.group(1) if feedback_type_match else "general"
-
-    feedback_response_match = re.search(
-        feedback_response_pattern, watson_msg, re.DOTALL
-    )
-    feedback_response = (
-        feedback_response_match.group(1) if feedback_response_match else ""
-    )  # re.DOTALL handles multiline user feedback response
-
-    usability_study = False
-    usability_study_match = re.search(usability_study_pattern, watson_msg)
-
-    if usability_study_match:
-        usability_study = usability_study_match.group(1) == "true"
+    usability_study = search_for_field("usability_study", watson_msg, default="false")
 
     feedback_type_label = f"{feedback_type}-feedback"
 
@@ -105,6 +100,23 @@ def get_feedback_command_params(
     labels = f"virtual-assistant,{feedback_type_label}"
 
     return [summary, description, labels]
+
+
+def get_service_account_command_params(watson_msg: str) -> Tuple[str, str, str]:
+    """
+    Extracts the params from the message of the service account command.
+
+    Example feedback command and params:
+    /create_service_account
+    <|start_name|>test1<|end_name|>
+    <|start_description|>Now, provide a short description for your service account.<|end_description|>
+    <|start_environment|>stage<|end_environment|>
+    """
+    name = search_for_field("name", watson_msg)
+    description = search_for_field("description", watson_msg)
+    environment = search_for_field("environment", watson_msg)
+
+    return [name, description, environment]
 
 
 def format_response(response: dict, user_email: str) -> List[AssistantResponse]:
@@ -132,6 +144,13 @@ def format_response(response: dict, user_email: str) -> List[AssistantResponse]:
                         generic["text"], user_email
                     )
                     entry = ResponseCommand(command=command, args=feedback_params)
+                elif command == "create_service_account":
+                    service_account_params = get_service_account_command_params(
+                        generic["text"]
+                    )
+                    entry = ResponseCommand(
+                        command=command, args=service_account_params
+                    )
                 else:
                     entry = ResponseCommand(command=command, args=params[1:])
             else:
