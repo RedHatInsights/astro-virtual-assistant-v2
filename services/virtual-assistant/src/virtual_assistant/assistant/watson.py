@@ -108,9 +108,9 @@ def get_service_account_command_params(watson_msg: str) -> Tuple[str, str, str]:
 
     Example feedback command and params:
     /create_service_account
-    <|name|>test1<|name|>
-    <|description|>Now, provide a short description for your service account.<|description|>
-    <|environment|>stage<|environment|>
+    <|start_name|>test1<|end_name|>
+    <|start_description|>Now, provide a short description for your service account.<|end_description|>
+    <|start_environment|>stage<|end_environment|>
     """
     name = search_for_field("name", watson_msg)
     description = search_for_field("description", watson_msg)
