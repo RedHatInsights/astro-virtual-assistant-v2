@@ -9,6 +9,7 @@ from watson_extension.core.platform.rbac import (
 )
 from watson_extension.routes import RHSessionIdHeader
 from watson_extension.clients.identity import AbstractUserIdentityProvider
+from common.auth import decoded_identity_header
 
 blueprint = Blueprint("rbac", __name__, url_prefix="/rbac")
 
@@ -20,6 +21,10 @@ class TamAccessRequestQuery(BaseModel):
 
 
 class TamAccessRequestResponse(BaseModel):
+    response: str
+
+
+class OrgIdResponse(BaseModel):
     response: str
 
 
@@ -50,5 +55,22 @@ async def send_tam_access(
             "platform/rbac/tam_access_request.txt.jinja",
             ok=ok,
             account_id=query_args.account_id,
+        )
+    )
+
+
+@blueprint.get("/org-id")
+@validate_response(OrgIdResponse)
+@document_headers(RHSessionIdHeader)
+async def get_org_id(
+    user_identity_provider: injector.Inject[AbstractUserIdentityProvider],
+    rbac_core: injector.Inject[RBACCore],
+) -> OrgIdResponse:
+    user_identity = decoded_identity_header(await user_identity_provider.get_user_identity())
+
+    return OrgIdResponse(
+        response=await render_template(
+            "platform/rbac/what_is_my_org_id.txt.jinja",
+            org_id=user_identity["identity"]["org_id"],
         )
     )
