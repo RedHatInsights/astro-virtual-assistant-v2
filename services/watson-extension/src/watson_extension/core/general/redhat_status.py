@@ -34,14 +34,14 @@ class RedhatStatusCore:
             return ServicesOfflineResponseTypes.ERROR, [], "0"
 
         content = await result.json()
-
         incidents = content["incidents"]
-        count = str(len(incidents))
-        if incidents and count != "0":
+
+        if incidents:
             casted_incidents = [
                 IncidentType(name=incident["name"], status=incident["status"])
                 for incident in incidents
             ]
+            count = str(len(incidents))
             return ServicesOfflineResponseTypes.INCIDENT_EXISTS, casted_incidents, count
 
         return ServicesOfflineResponseTypes.NO_INCIDENTS, [], "0"
