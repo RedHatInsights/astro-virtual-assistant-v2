@@ -73,6 +73,10 @@ from watson_extension.clients.platform.rbac import (
     RBACClientHttp,
     RBACClientNoOp,
 )
+from watson_extension.clients.general.redhat_status import (
+    RedhatStatusClient,
+    RedhatStatusClientHttp,
+)
 
 
 from common.platform_request import (
@@ -82,6 +86,7 @@ from watson_extension.routes import health
 from watson_extension.routes import insights
 from watson_extension.routes import openshift
 from watson_extension.routes import platform
+from watson_extension.routes import general
 
 import watson_extension.config as config
 
@@ -272,6 +277,9 @@ def injector_defaults(binder: injector.Binder) -> None:
     binder.bind(
         IntegrationsClient, IntegrationsClientHttp, scope=quart_injector.RequestScope
     )
+    binder.bind(
+        RedhatStatusClient, RedhatStatusClientHttp, scope=quart_injector.RequestScope
+    )
 
 
 def wire_routes(app: Quart) -> None:
@@ -285,6 +293,7 @@ def wire_routes(app: Quart) -> None:
     public_root.register_blueprint(platform.blueprint)
     public_root.register_blueprint(insights.blueprint)
     public_root.register_blueprint(openshift.blueprint)
+    public_root.register_blueprint(general.blueprint)
 
     @public_root.before_request
     async def authentication_check(authentication: injector.Inject[Authentication]):
