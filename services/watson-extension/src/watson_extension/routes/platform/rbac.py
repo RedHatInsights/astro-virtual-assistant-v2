@@ -66,7 +66,9 @@ async def get_org_id(
     user_identity_provider: injector.Inject[AbstractUserIdentityProvider],
     rbac_core: injector.Inject[RBACCore],
 ) -> OrgIdResponse:
-    user_identity = decoded_identity_header(await user_identity_provider.get_user_identity())
+    user_identity = decoded_identity_header(
+        await user_identity_provider.get_user_identity()
+    )
 
     return OrgIdResponse(
         response=await render_template(
