@@ -33,5 +33,5 @@ async def check_services_offline(
     ) = await redhat_status_service.check_services_offline()
 
     return ServicesOfflineResponse(
-        response_type=response_type, incidents=incidents, count=count
+        response_type=response_type.value, incidents=incidents, count=count
     )
