@@ -14,10 +14,7 @@ class RedhatStatusClient(abc.ABC):
 
 
 class RedhatStatusClientHttp(RedhatStatusClient):
-    def __init__(
-        self,
-        session: injector.Inject[aiohttp.ClientSession]
-    ):
+    def __init__(self, session: injector.Inject[aiohttp.ClientSession]):
         super().__init__()
         self.session = session
 
