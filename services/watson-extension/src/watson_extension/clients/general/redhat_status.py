@@ -22,7 +22,7 @@ class RedhatStatusClientHttp(RedhatStatusClient):
         result = None
         try:
             async with self.session.get(
-                "https://status.redhat.com/api/v2/incidents/unresolved.json"
+                "https://status.redhat.com/api/v2/incidents/unresolved.json", ssl=False
             ) as status_response:
                 result = await status_response.json()
         except Exception as e:
