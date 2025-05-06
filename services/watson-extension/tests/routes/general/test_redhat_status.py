@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, AsyncMock
+from unittest.mock import MagicMock
 
 import injector
 import pytest
@@ -29,9 +29,7 @@ async def test_client(redhat_status_client) -> TestClientProtocol:
 async def test_check_services_offline_incident_exists(
     test_client, redhat_status_client
 ) -> None:
-    check_services_offline_response = AsyncMock()
-    check_services_offline_response.ok = True
-    check_services_offline_response.json = MagicMock(
+    redhat_status_client.check_services_offline = MagicMock(
         return_value=async_value(
             {
                 "incidents": [
@@ -43,10 +41,6 @@ async def test_check_services_offline_incident_exists(
                 ]
             }
         )
-    )
-
-    redhat_status_client.check_services_offline = MagicMock(
-        return_value=async_value(check_services_offline_response)
     )
 
     response = await test_client.get("/redhat_status/check_services_offline")
@@ -62,14 +56,8 @@ async def test_check_services_offline_incident_exists(
 async def test_check_services_offline_no_incidents(
     test_client, redhat_status_client
 ) -> None:
-    check_services_offline_response = AsyncMock()
-    check_services_offline_response.ok = True
-    check_services_offline_response.json = MagicMock(
-        return_value=async_value({"incidents": []})
-    )
-
     redhat_status_client.check_services_offline = MagicMock(
-        return_value=async_value(check_services_offline_response)
+        return_value=async_value({"incidents": []})
     )
 
     response = await test_client.get("/redhat_status/check_services_offline")
@@ -82,12 +70,8 @@ async def test_check_services_offline_no_incidents(
 
 
 async def test_check_services_offline_error(test_client, redhat_status_client) -> None:
-    check_services_offline_response = AsyncMock()
-    check_services_offline_response.ok = False
-    check_services_offline_response.json = MagicMock(return_value=async_value({}))
-
     redhat_status_client.check_services_offline = MagicMock(
-        return_value=async_value(check_services_offline_response)
+        return_value=async_value(None)
     )
 
     response = await test_client.get("/redhat_status/check_services_offline")

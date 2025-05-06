@@ -29,11 +29,11 @@ class RedhatStatusCore:
     async def check_services_offline(
         self,
     ) -> Tuple[ServicesOfflineResponseTypes, List[IncidentType], str]:
-        result = await self.redhat_status_client.check_services_offline()
-        if not result.ok:
+        content = await self.redhat_status_client.check_services_offline()
+
+        if not content:
             return ServicesOfflineResponseTypes.ERROR, [], "0"
 
-        content = await result.json()
         incidents = content["incidents"]
 
         if incidents:
