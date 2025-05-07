@@ -93,7 +93,7 @@ class PlatformNotificationsClientHttp(PlatformNotificationsClient):
         return await self.platform_request.put(
             self.platform_notifications_url,
             f"/api/notifications/v1.0/notifications/eventTypes/{eventId}/behaviorGroups",
-            "put",
             json=[],
             headers=headers,
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )
