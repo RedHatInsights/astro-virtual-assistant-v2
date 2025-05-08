@@ -28,7 +28,7 @@ class ResponseSendRbacRequestAdminEmail(BaseModel):
 @validate_querystring(RbacRequestAdminEmail)
 @validate_response(ResponseSendRbacRequestAdminEmail)
 @document_headers(RHSessionIdHeader)
-async def send_rbac_request_admi_email(
+async def send_rbac_request_admin_email(
     query_args: RbacRequestAdminEmail,
     user_identity_provider: injector.Inject[AbstractUserIdentityProvider],
     notifications_service: injector.Inject[NotificationsCore],

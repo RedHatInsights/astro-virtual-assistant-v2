@@ -11,7 +11,12 @@ from watson_extension.clients.platform import IntegrationInfo
 
 class SourcesClient(abc.ABC):
     @abc.abstractmethod
-    async def get_sources(self, params: Dict) -> Tuple[bool, Dict]: ...
+    async def get_sources(
+        self,
+        search: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        max_integration_num: int = 5,
+    ) -> Tuple[bool, Dict]: ...
 
     @abc.abstractmethod
     async def is_source_name_valid(self, integration_setup_name: str) -> bool: ...
@@ -38,6 +43,11 @@ class SourcesClient(abc.ABC):
         self, integration_id: str
     ) -> ClientResponse: ...
 
+    @abc.abstractmethod
+    async def sources_update_integration(
+        self, integration_id: str, integration_data: Dict
+    ) -> ClientResponse: ...
+
 
 class SourcesClientHttp(SourcesClient):
     def __init__(
@@ -52,8 +62,24 @@ class SourcesClientHttp(SourcesClient):
         self.platform_request = platform_request
 
     async def get_sources(
-        self, params: Dict
-    ) -> Tuple[bool, Optional[List[IntegrationInfo]]]:
+        self,
+        search: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        max_integration_num: int = 5,
+    ) -> Tuple[bool, List[IntegrationInfo]]:
+        sources_search = search or ""
+
+        params = {
+            "filter[name][contains_i]": sources_search,
+            "limit": max_integration_num,
+        }
+
+        if enabled is not None:
+            if enabled is True:
+                params["filter[paused_at][nil]"] = "1"
+            else:
+                params["filter[paused_at][not_nil]"] = "1"
+
         request = "/api/sources/v3.1/sources"
         response = await self.platform_request.get(
             self.sources_url,
@@ -82,9 +108,9 @@ class SourcesClientHttp(SourcesClient):
                         id=integration["id"],
                     )
                 )
-            return False, sources_integrations
+            return True, sources_integrations
 
-        return True, None
+        return False, []
 
     async def is_source_name_valid(self, integration_setup_name: str) -> bool:
         request = "/api/sources/v3.1/graphql"
@@ -169,4 +195,16 @@ class SourcesClientHttp(SourcesClient):
             self.sources_url,
             request,
             user_identity=await self.user_identity_provider.get_user_identity(),
+        )
+
+    async def sources_update_integration(
+        self, integration_id: str, integration_data: Dict
+    ) -> ClientResponse:
+        request = f"/api/sources/v3.1/sources/{integration_id}"
+
+        return await self.platform_request.patch(
+            self.sources_url,
+            request,
+            user_identity=await self.user_identity_provider.get_user_identity(),
+            json=integration_data,
         )
