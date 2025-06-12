@@ -5,6 +5,7 @@ from typing import Optional
 
 from . import Session, SessionStorage
 
+SESSION_TTL_20_MINUTES = 1200
 
 class RedisSessionStorage(SessionStorage):
     """
@@ -25,4 +26,4 @@ class RedisSessionStorage(SessionStorage):
 
     async def store(self, session: Session):
         """Write the session_id/identity header pair to Redis."""
-        await self.redis_client.set(session.key, json.dumps(vars(session)), ex=1200)
+        await self.redis_client.set(session.key, json.dumps(vars(session)), ex=SESSION_TTL_20_MINUTES)
