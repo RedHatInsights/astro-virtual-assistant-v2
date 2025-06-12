@@ -25,4 +25,4 @@ class RedisSessionStorage(SessionStorage):
 
     async def store(self, session: Session):
         """Write the session_id/identity header pair to Redis."""
-        await self.redis_client.set(session.key, json.dumps(vars(session)))
+        await self.redis_client.set(session.key, json.dumps(vars(session)), ex=1200)
