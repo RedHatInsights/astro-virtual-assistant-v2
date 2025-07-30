@@ -4,6 +4,7 @@ import json
 import base64
 import re
 import textwrap
+import logging
 from typing import List, Any, Tuple
 
 from . import (
@@ -33,6 +34,8 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 _WATSON_DRAFT_ENVIRONMENT_VARIABLE = "Draft"
 _WATSON_IS_INTERNAL_ENVIRONMENT_VARIABLE = "IsInternal"
 _WATSON_IS_ORG_ADMIN_ENVIRONMENT_VARIABLE = "IsOrgAdmin"
+
+logger = logging.getLogger(__name__)
 
 
 def build_assistant(api_key: str, env_version: str, api_url: str) -> AssistantV2:
@@ -143,8 +146,11 @@ def get_action_running(response: dict) -> bool:
 
         json_state = base64.b64decode(b64_state).decode("utf-8")
         state = json.loads(json_state)
-        return len(state["action_stack"]) > 0
+        return len(state.get("action_stack", [])) > 0
     except TypeError:
+        return False
+    except Exception as exception:
+        logger.error("while fetching is_action_running", exception)
         return False
 
 
