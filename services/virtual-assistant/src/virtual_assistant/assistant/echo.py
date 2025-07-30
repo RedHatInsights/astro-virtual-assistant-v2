@@ -58,5 +58,5 @@ class EchoAssistant(Assistant):
                 ),
             ],
             confidence=1.0,
-            is_action_running=False
+            is_action_running=False,
         )

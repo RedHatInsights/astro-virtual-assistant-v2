@@ -122,17 +122,30 @@ def get_service_account_command_params(watson_msg: str) -> Tuple[str, str, str]:
 
 
 def get_confidence(response: dict) -> float:
-    intents = response["output"]["intents"]
+    intents = response.get("output", {}).get("intents")
     if intents is not None and len(intents) > 0:
         return intents[0]["confidence"]
 
     return 1.0
 
+
 def get_action_running(response: dict) -> bool:
-    b64_state = response["context"]["skills"]["actions skill"]["system"]["state"]
-    json_state = base64.b64decode(b64_state).decode("utf-8")
-    state = json.loads(json_state)
-    return len(state["action_stack"]) > 0
+    try:
+        b64_state = (
+            response.get("context", {})
+            .get("skills", {})
+            .get("actions skill", {})
+            .get("system", {})
+            .get("state")
+        )
+        if b64_state is None:
+            return False
+
+        json_state = base64.b64decode(b64_state).decode("utf-8")
+        state = json.loads(json_state)
+        return len(state["action_stack"]) > 0
+    except TypeError:
+        return False
 
 
 def format_response(response: dict, user_email: str) -> List[AssistantResponse]:
@@ -268,9 +281,13 @@ class WatsonAssistant(Assistant):
         self, message: AssistantInput, context: AssistantContext
     ) -> AssistantOutput:
         sanitized_text = re.sub("\s+", " ", message.query.text).strip()
-        message_input = MessageInput(message_type="text", text=sanitized_text, options=MessageInputOptions(
-            export=True,
-        ))
+        message_input = MessageInput(
+            message_type="text",
+            text=sanitized_text,
+            options=MessageInputOptions(
+                export=True,
+            ),
+        )
         if message.query.option_id:
             intents_array = json.loads(message.query.option_id)
             message_input.intents = [
