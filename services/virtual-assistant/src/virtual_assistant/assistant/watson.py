@@ -1,6 +1,7 @@
 import asyncio
 import dataclasses
 import json
+import base64
 import re
 import textwrap
 from typing import List, Any, Tuple
@@ -22,6 +23,7 @@ from ibm_watson import AssistantV2
 from ibm_watson.assistant_v2 import RuntimeIntent
 from ibm_watson.assistant_v2 import (
     MessageInput,
+    MessageInputOptions,
     MessageContext,
     MessageContextSkills,
     MessageContextActionSkill,
@@ -117,6 +119,20 @@ def get_service_account_command_params(watson_msg: str) -> Tuple[str, str, str]:
     environment = search_for_field("environment", watson_msg)
 
     return [name, description, environment]
+
+
+def get_confidence(response: dict) -> float:
+    intents = response["output"]["intents"]
+    if intents is not None and len(intents) > 0:
+        return intents[0]["confidence"]
+
+    return 1.0
+
+def get_action_running(response: dict) -> bool:
+    b64_state = response["context"]["skills"]["actions skill"]["system"]["state"]
+    json_state = base64.b64decode(b64_state).decode("utf-8")
+    state = json.loads(json_state)
+    return len(state["action_stack"]) > 0
 
 
 def format_response(response: dict, user_email: str) -> List[AssistantResponse]:
@@ -252,7 +268,9 @@ class WatsonAssistant(Assistant):
         self, message: AssistantInput, context: AssistantContext
     ) -> AssistantOutput:
         sanitized_text = re.sub("\s+", " ", message.query.text).strip()
-        message_input = MessageInput(message_type="text", text=sanitized_text)
+        message_input = MessageInput(message_type="text", text=sanitized_text, options=MessageInputOptions(
+            export=True,
+        ))
         if message.query.option_id:
             intents_array = json.loads(message.query.option_id)
             message_input.intents = [
@@ -291,4 +309,6 @@ class WatsonAssistant(Assistant):
             user_id=message.user_id,
             response=format_response(response_result, context.user_email),
             debug_output=debug_output,
+            confidence=get_confidence(response_result),
+            is_action_running=get_action_running(response_result),
         )

@@ -57,4 +57,6 @@ class EchoAssistant(Assistant):
                     text=message.query.text,
                 ),
             ],
+            confidence=1.0,
+            is_action_running=False
         )
