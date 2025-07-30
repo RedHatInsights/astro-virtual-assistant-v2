@@ -63,6 +63,12 @@ class TalkResponse(BaseModel):
     response: List[Response]
     """List of responses given by the assistant"""
 
+    confidence: float
+    """Confidence in the response given the input. This value might be off if we are in the middle of a multi-step action"""
+
+    is_action_running: bool
+    """True if we are in the middle of a multi-step action"""
+
     debug_output: Optional[dict[str, Any]] = None
     """Debug output returned if specified - This will include details the assistant went on when fulfilling the request"""
 
@@ -139,5 +145,7 @@ async def talk(
     return TalkResponse(
         session_id=session_id,
         response=assistant_response.response,
+        confidence=assistant_response.confidence,
+        is_action_running=assistant_response.is_action_running,
         debug_output=debug_output,
     )
