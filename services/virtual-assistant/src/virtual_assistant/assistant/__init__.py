@@ -151,6 +151,12 @@ class AssistantOutput(BaseModel):
     debug_output: Optional[dict[str, Any]] = None
     """Include debug option if requested"""
 
+    confidence: float
+    """How confident is the given answer based on the input"""
+
+    is_action_running: bool
+    """True if we are in the middle of a multi-step action"""
+
 
 @dataclasses.dataclass
 class AssistantContext:

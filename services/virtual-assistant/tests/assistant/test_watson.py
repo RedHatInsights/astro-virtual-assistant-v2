@@ -24,6 +24,7 @@ from virtual_assistant.assistant.watson import (
 from ibm_watson import AssistantV2
 from ibm_watson.assistant_v2 import (
     MessageInput,
+    MessageInputOptions,
     MessageContext,
     MessageContextSkills,
     MessageContextActionSkill,
@@ -84,7 +85,13 @@ async def test_send_watson_message(watson, assistant_v2, assistant_id, environme
         environment_id=environment_id,
         session_id="1234",
         user_id="1234",
-        input=MessageInput(message_type="text", text="hello world"),
+        input=MessageInput(
+            message_type="text",
+            text="hello world",
+            options=MessageInputOptions(
+                export=True,
+            ),
+        ),
         context=MessageContext(
             skills=MessageContextSkills(
                 actions_skill=MessageContextActionSkill(

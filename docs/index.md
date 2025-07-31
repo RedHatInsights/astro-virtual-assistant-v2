@@ -16,7 +16,7 @@ If you would like to see the legacy code head over to the [astro-virtual-assista
 ### Setting up your environment
 
 Astro uses [uv](https://pypi.org/project/uv/) to manage its dependencies.
-Follow the [instructions on uv](https://pypi.org/project/uv/#installation) to install it.
+Follow the [instructions on uv](https://pypi.org/project/uv/#installation) to install version `0.7.22`.
 
 After installing, you are now ready to install the project development dependencies
 by running:
