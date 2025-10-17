@@ -13,7 +13,7 @@ redis_fixture = create_redis_fixture()
 
 @pytest.fixture(scope="session")
 def pmr_redis_config() -> RedisConfig:
-    return RedisConfig(image="docker.io/redis:5.0.7")
+    return RedisConfig(image="docker.io/valkey/valkey:7.2.11")
 
 
 @pytest.fixture
