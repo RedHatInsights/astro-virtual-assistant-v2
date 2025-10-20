@@ -27,4 +27,4 @@ run-watson-extension:
 	uv run --directory services/watson-extension src/run.py
 
 redis:
-	${CONTAINER_EXEC} run --name va-redis -d -p 6379:${REDIS_PORT} valkey/valkey:7.2.11
+	${CONTAINER_EXEC} run --name va-redis -d -p 6379:${REDIS_PORT} valkey/valkey:8.1.4
