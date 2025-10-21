@@ -46,7 +46,7 @@ async def aiohttp_mock():
 
 @pytest.fixture(scope="session")
 def pmr_redis_config() -> RedisConfig:
-    return RedisConfig(image="docker.io/valkey/valkey:7.2.11")
+    return RedisConfig(image="docker.io/valkey/valkey:8.1.4")
 
 
 @pytest.fixture
