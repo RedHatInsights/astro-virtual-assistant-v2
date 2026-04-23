@@ -16,8 +16,8 @@ Clients receive `AbstractPlatformRequest` via DI and call convenience methods:
 
 ```python
 response = await self.platform_request.get(
-    base_url=self.advisor_url,
-    api_path="/api/insights/v1/rule",
+    self.advisor_url,
+    "/api/insights/v1/rule",
     user_identity=await self.user_identity_provider.get_user_identity(),
     params={"limit": 3},
 )
@@ -69,9 +69,10 @@ class MyServiceClientHttp(MyServiceClient):
         self.platform_request = platform_request
 
     async def get_data(self) -> MyData:
-        identity = await self.user_identity_provider.get_user_identity()
         response = await self.platform_request.get(
-            self.base_url, "/api/my-service/v1/data", identity
+            self.base_url,
+            "/api/my-service/v1/data",
+            user_identity=await self.user_identity_provider.get_user_identity(),
         )
         # Parse and return
 ```
