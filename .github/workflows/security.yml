@@ -1,0 +1,37 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# This workflow checks out code, builds an image, performs a container image
+# vulnerability scan with Anchore's Grype tool, and generates an
+# SBOM via Anchore's Syft tool
+
+# For more information on Anchore's container image scanning tool Grype, see
+# https://github.com/anchore/grype
+
+# For more information about the Anchore SBOM tool, Syft, see
+# https://github.com/anchore/syft
+
+name: ConsoleDot Platform Security Scan
+
+on:
+  push:
+    branches: [ "main", "master", "security-compliance" ]
+  pull_request:
+    branches: [ "main", "master", "security-compliance" ]
+
+jobs:
+  PlatSec-Security-Workflow-Virtual-Assistant:
+    uses: RedHatInsights/platform-security-gh-workflow/.github/workflows/platsec-security-scan-reusable-workflow.yml@master
+    with:
+      dockerfile_path: './docker'
+      dockerfile_name: 'Dockerfile.virtual-assistant'
+      app_name: 'virtual-assistant'
+
+  PlatSec-Security-Workflow-Watson-Extension:
+    uses: RedHatInsights/platform-security-gh-workflow/.github/workflows/platsec-security-scan-reusable-workflow.yml@master
+    with:
+      dockerfile_path: './docker'
+      dockerfile_name: 'Dockerfile.watson-extension'
+      app_name: 'watson-extension'
