@@ -28,5 +28,10 @@ dev = [
     "syrupy>=4.9.1",
 ]
 
+[tool.uv]
+constraint-dependencies = [
+    "pyjwt>=2.12.0",
+]
+
 [tool.uv.workspace]
 members = ["libs/*", "services/*"]
