@@ -11,7 +11,7 @@ dependencies = [
     "logstash_formatter>=0.5.17",
     "aiohttp>=3.13.3",
     "aioprometheus[aiohttp]>=23.12.0",
-    "urllib3>=2.6.3",
+    "urllib3>=2.7.0",
 ]
 
 [dependency-groups]
@@ -26,6 +26,12 @@ dev = [
     "coverage>=7.6.12",
     "openapi-spec-validator>=0.7.1",
     "syrupy>=4.9.1",
+]
+
+[tool.uv]
+constraint-dependencies = [
+    "pyjwt>=2.12.0",
+    "orjson>=3.11.6",
 ]
 
 [tool.uv.workspace]
