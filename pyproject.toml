@@ -9,7 +9,7 @@ dependencies = [
     "quart-injector==0.0.0b1",
     "pydantic>=2.10.5",
     "logstash_formatter>=0.5.17",
-    "aiohttp>=3.13.3",
+    "aiohttp>=3.14.1",
     "aioprometheus[aiohttp]>=23.12.0",
     "urllib3>=2.7.0",
 ]
