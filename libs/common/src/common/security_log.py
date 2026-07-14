@@ -55,7 +55,7 @@ def get_principal_from_identity(identity_b64: str | None) -> dict[str, Any]:
             }
         else:
             return {"type": identity_type, "org_id": org_id, "user_id": "unknown"}
-    except Exception:
+    except (ValueError, TypeError, KeyError, AttributeError):
         return {"type": "invalid"}
 
 

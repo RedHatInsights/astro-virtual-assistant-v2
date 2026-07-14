@@ -1,12 +1,10 @@
-import signal
-
 import common.metrics.quart as quart_metrics
 import quart_injector
 import watson_extension.config as config
 from common.logging import build_logger
 from common.security_log import log_shutdown, log_startup, security_log
 from common.types.errors import ValidationError
-from quart import Quart
+from quart import Quart, request
 from quart_schema import (
     Info,
     QuartSchema,
@@ -25,17 +23,19 @@ build_logger(config.logger_type)
 app = Quart(__name__)
 config.log_config()
 
-log_startup(config.name)
+wire_routes(app)
 
 
-def _handle_shutdown_signal(signum, frame):
+@app.before_serving
+async def startup():
+    log_startup(config.name)
+
+
+@app.after_serving
+async def shutdown():
     log_shutdown(config.name)
 
 
-signal.signal(signal.SIGTERM, _handle_shutdown_signal)
-signal.signal(signal.SIGINT, _handle_shutdown_signal)
-
-wire_routes(app)
 quart_injector.QuartModule(app)
 quart_injector.wire(app, [injector_defaults, injector_from_config])
 quart_metrics.register_app(app, config.metrics_port)
@@ -51,15 +51,14 @@ async def handle_request_validation_error(error):
 
 @app.errorhandler(500)
 async def handle_internal_error(error):
-    from quart import request as req
-
+    actual_error = getattr(error, "original_exception", error)
     security_log(
         action="ERROR",
         resource_type="request",
-        resource_id=req.path,
+        resource_id=request.path,
         outcome="failure",
         principal={"type": "system"},
-        reason=str(error),
+        reason=str(actual_error),
         service=config.name,
     )
     return {"message": "Internal server error"}, 500
