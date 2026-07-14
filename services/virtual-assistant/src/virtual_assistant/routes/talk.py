@@ -7,6 +7,7 @@ from common.auth import (
     decoded_identity_header,
     require_identity_header,
 )
+from common.security_log import get_principal_from_identity, security_log
 from common.session_storage import Session, SessionStorage
 from common.types.errors import ValidationError
 from ibm_cloud_sdk_core.api_exception import ApiException
@@ -92,6 +93,7 @@ async def talk(
     identity = request.headers.get("x-rh-identity")
     user_id = assistant_user_id(identity)
     session_id = data.session_id
+    principal = get_principal_from_identity(identity)
 
     debug_output = None
     if data.include_debug:
@@ -103,6 +105,13 @@ async def talk(
             raise BadRequest(f"Invalid session {session_id}")
     else:
         session_id = await assistant.create_session(user_id)
+        security_log(
+            action="CREATE",
+            resource_type="conversation_session",
+            resource_id=session_id,
+            outcome="success",
+            principal=principal,
+        )
 
     await session_storage.put(
         Session(
@@ -143,7 +152,23 @@ async def talk(
                     assistant_response.response, query=query
                 )
 
+        security_log(
+            action="SEND_MESSAGE",
+            resource_type="conversation",
+            resource_id=session_id,
+            outcome="success",
+            principal=principal,
+        )
+
     except ApiException as e:
+        security_log(
+            action="SEND_MESSAGE",
+            resource_type="conversation",
+            resource_id=session_id,
+            outcome="failure",
+            principal=principal,
+            reason=str(e),
+        )
         # Todo: Should we just let raise this error and let the error handler wrap it into a validation error?
         return ValidationError(message=str(e)), 400
 

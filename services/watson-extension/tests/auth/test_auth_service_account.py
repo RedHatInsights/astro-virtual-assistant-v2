@@ -48,6 +48,7 @@ async def test_wrong_client_id(good_client_id, wrong_client_id):
     request = MagicMock(quart.Request)
     request.headers = MagicMock(Headers)
     request.headers.get = MagicMock(return_value=identity_header)
+    request.path = "/test/path"
     auth = ServiceAccountAuthentication(good_client_id)
 
     with pytest.raises(Unauthorized):
@@ -59,6 +60,7 @@ async def test_identity_header_not_found():
     request = MagicMock(quart.Request)
     request.headers = MagicMock(Headers)
     request.headers.get = MagicMock(return_value=None)
+    request.path = "/test/path"
     auth = ServiceAccountAuthentication("test")
 
     with pytest.raises(Unauthorized):
@@ -71,6 +73,7 @@ async def test_invalid_identity_header_not_b64():
     request = MagicMock(quart.Request)
     request.headers = MagicMock(Headers)
     request.headers.get = MagicMock(return_value="not base64")
+    request.path = "/test/path"
     auth = ServiceAccountAuthentication("test")
 
     with pytest.raises(Unauthorized):
@@ -84,6 +87,7 @@ async def test_invalid_identity_header_not_json():
     request.headers = MagicMock(Headers)
     # { not-a-json, }
     request.headers.get = MagicMock(return_value="eyBub3QtYS1qc29uLCB9")
+    request.path = "/test/path"
     auth = ServiceAccountAuthentication("test")
 
     with pytest.raises(Unauthorized):
@@ -100,6 +104,7 @@ async def test_not_identity_header():
     request = MagicMock(quart.Request)
     request.headers = MagicMock(Headers)
     request.headers.get = MagicMock(return_value=identity_header)
+    request.path = "/test/path"
     auth = ServiceAccountAuthentication("test")
 
     with pytest.raises(Unauthorized):
@@ -115,6 +120,7 @@ async def test_not_sa():
     request = MagicMock(quart.Request)
     request.headers = MagicMock(Headers)
     request.headers.get = MagicMock(return_value=identity_header)
+    request.path = "/test/path"
     auth = ServiceAccountAuthentication("test")
 
     with pytest.raises(Unauthorized):

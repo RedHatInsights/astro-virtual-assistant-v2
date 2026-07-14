@@ -31,6 +31,7 @@ async def test_wrong_key(good_api_key, wrong_api_key):
     assume(good_api_key != wrong_api_key)
     request = MagicMock(quart.Request)
     request.args.get = MagicMock(return_value=wrong_api_key)
+    request.path = "/test/path"
     auth = ApiKeyAuthentication([good_api_key])
     with pytest.raises(Unauthorized):
         await auth.check_auth(request)
