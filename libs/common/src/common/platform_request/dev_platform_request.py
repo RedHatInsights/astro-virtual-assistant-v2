@@ -1,9 +1,9 @@
 from typing import Optional
 
-from common.platform_request.abstract_platform_request import AbstractPlatformRequest
-
-from werkzeug.exceptions import InternalServerError
 from aiohttp import ClientResponse, ClientSession
+from werkzeug.exceptions import InternalServerError
+
+from common.platform_request.abstract_platform_request import AbstractPlatformRequest
 
 
 class DevPlatformRequest(AbstractPlatformRequest):
@@ -66,6 +66,4 @@ class DevPlatformRequest(AbstractPlatformRequest):
         if user_identity is not None:
             headers["Authorization"] = "Bearer " + self._dev_token
 
-        return await self.session.request(
-            method, f"{base_url}{api_path}", headers=headers, **kwargs
-        )
+        return await self.session.request(method, f"{base_url}{api_path}", headers=headers, **kwargs)

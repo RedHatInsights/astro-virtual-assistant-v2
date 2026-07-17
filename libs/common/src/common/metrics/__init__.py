@@ -18,9 +18,9 @@ def get_or_create_metric(
         metric = registry.get(name)
         if type(metric) is not collector:
             raise ValueError(
-                f"Metric {name} was requested with a different type that it was originally built. {type(metric).__name__} is not {collector.__name__}"
+                f"Metric {name} was requested with a different type that it was"
+                f" originally built. {type(metric).__name__} is not"
+                f" {collector.__name__}"
             )
         return metric
-    return collector(
-        name=name, doc=doc, const_labels=const_labels, registry=registry, **kwargs
-    )
+    return collector(name=name, doc=doc, const_labels=const_labels, registry=registry, **kwargs)

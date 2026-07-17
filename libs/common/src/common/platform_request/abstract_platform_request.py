@@ -1,15 +1,15 @@
 import abc
 from typing import Optional
-from aiohttp import ClientResponse
 
+from aiohttp import ClientResponse
 from aiohttp.hdrs import (
+    METH_DELETE,
     METH_GET,
-    METH_OPTIONS,
     METH_HEAD,
+    METH_OPTIONS,
+    METH_PATCH,
     METH_POST,
     METH_PUT,
-    METH_PATCH,
-    METH_DELETE,
 )
 
 
@@ -40,9 +40,7 @@ class AbstractPlatformRequest(abc.ABC):
         user_identity: Optional[str] = None,
         **kwargs,
     ) -> ClientResponse:
-        return await self.request(
-            METH_OPTIONS, base_url, api_path, user_identity, **kwargs
-        )
+        return await self.request(METH_OPTIONS, base_url, api_path, user_identity, **kwargs)
 
     async def head(
         self,
@@ -51,9 +49,7 @@ class AbstractPlatformRequest(abc.ABC):
         user_identity: Optional[str] = None,
         **kwargs,
     ) -> ClientResponse:
-        return await self.request(
-            METH_HEAD, base_url, api_path, user_identity, **kwargs
-        )
+        return await self.request(METH_HEAD, base_url, api_path, user_identity, **kwargs)
 
     async def post(
         self,
@@ -62,9 +58,7 @@ class AbstractPlatformRequest(abc.ABC):
         user_identity: Optional[str] = None,
         **kwargs,
     ) -> ClientResponse:
-        return await self.request(
-            METH_POST, base_url, api_path, user_identity, **kwargs
-        )
+        return await self.request(METH_POST, base_url, api_path, user_identity, **kwargs)
 
     async def put(
         self,
@@ -82,9 +76,7 @@ class AbstractPlatformRequest(abc.ABC):
         user_identity: Optional[str] = None,
         **kwargs,
     ) -> ClientResponse:
-        return await self.request(
-            METH_PATCH, base_url, api_path, user_identity, **kwargs
-        )
+        return await self.request(METH_PATCH, base_url, api_path, user_identity, **kwargs)
 
     async def delete(
         self,
@@ -93,6 +85,4 @@ class AbstractPlatformRequest(abc.ABC):
         user_identity: Optional[str] = None,
         **kwargs,
     ) -> ClientResponse:
-        return await self.request(
-            METH_DELETE, base_url, api_path, user_identity, **kwargs
-        )
+        return await self.request(METH_DELETE, base_url, api_path, user_identity, **kwargs)

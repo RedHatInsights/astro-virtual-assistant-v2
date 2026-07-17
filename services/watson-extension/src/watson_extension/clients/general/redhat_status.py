@@ -1,9 +1,9 @@
 import abc
 import logging
-from typing import Optional, Dict
-import injector
-import aiohttp
+from typing import Dict, Optional
 
+import aiohttp
+import injector
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +26,6 @@ class RedhatStatusClientHttp(RedhatStatusClient):
             ) as status_response:
                 result = await status_response.json()
         except Exception as e:
-            logger.error(
-                f"An Exception occured while handling response from status.redhat.com: {e}"
-            )
+            logger.error(f"An Exception occured while handling response from status.redhat.com: {e}")
             raise e
         return result

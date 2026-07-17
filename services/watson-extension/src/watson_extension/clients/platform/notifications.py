@@ -1,12 +1,13 @@
-from typing import Optional, Dict, List
 import abc
-import injector
 import logging
+from typing import Dict, List, Optional
+
+import injector
 from aiohttp import ClientResponse
+
 from watson_extension.clients import PlatformNotificationsURL
 from watson_extension.clients.identity import AbstractUserIdentityProvider
 from watson_extension.clients.platform_request import AbstractPlatformRequest
-
 
 logger = logging.getLogger(__name__)
 
@@ -55,9 +56,7 @@ class PlatformNotificationsClientHttp(PlatformNotificationsClient):
 
         return await response.json()
 
-    async def get_available_events_by_bundle(
-        self, bundleId: str, exclude_muted_types: Optional[bool] = False
-    ) -> Dict:
+    async def get_available_events_by_bundle(self, bundleId: str, exclude_muted_types: Optional[bool] = False) -> Dict:
         params = {
             "limit": 20,
             "offset": 0,

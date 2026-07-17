@@ -3,17 +3,16 @@ from unittest.mock import MagicMock
 import injector
 import pytest
 from quart.typing import TestClientProtocol
-
 from watson_extension.clients.openshift.advisor import (
     AdvisorClient,
+    Cluster,
     Recommendation,
     Workload,
-    Cluster,
 )
-from ..common import app_with_blueprint
-
 from watson_extension.routes.openshift.advisor import blueprint
+
 from ... import async_value
+from ..common import app_with_blueprint
 
 
 @pytest.fixture
@@ -33,19 +32,13 @@ async def test_recommendations(test_client, advisor_client, snapshot) -> None:
     advisor_client.get_recommendations = MagicMock(
         return_value=async_value(
             [
-                Recommendation(
-                    description="recommendation 1", total_risk=13, id="my-id"
-                ),
-                Recommendation(
-                    description="recommendation 2", total_risk=5, id="my-id-2"
-                ),
+                Recommendation(description="recommendation 1", total_risk=13, id="my-id"),
+                Recommendation(description="recommendation 2", total_risk=5, id="my-id-2"),
             ]
         )
     )
 
-    response = await test_client.get(
-        "/advisor/recommendations", query_string={"category": "recommendation"}
-    )
+    response = await test_client.get("/advisor/recommendations", query_string={"category": "recommendation"})
     assert response.status == "200 OK"
     data = await response.get_json()
     assert data["response"] == snapshot
@@ -77,9 +70,7 @@ async def test_workloads(test_client, advisor_client, snapshot) -> None:
         )
     )
 
-    response = await test_client.get(
-        "/advisor/recommendations", query_string={"category": "workload"}
-    )
+    response = await test_client.get("/advisor/recommendations", query_string={"category": "workload"})
     assert response.status == "200 OK"
     data = await response.get_json()
     assert data["response"] == snapshot
@@ -89,19 +80,13 @@ async def test_clusters(test_client, advisor_client, snapshot) -> None:
     advisor_client.get_clusters = MagicMock(
         return_value=async_value(
             [
-                Cluster(
-                    id="007", name="Bond", last_checked_at="2025-03-31T13:51:18+00:00"
-                ),
-                Cluster(
-                    id="one", name="Johnny", last_checked_at="2025-03-30T13:51:18+00:00"
-                ),
+                Cluster(id="007", name="Bond", last_checked_at="2025-03-31T13:51:18+00:00"),
+                Cluster(id="one", name="Johnny", last_checked_at="2025-03-30T13:51:18+00:00"),
             ]
         )
     )
 
-    response = await test_client.get(
-        "/advisor/recommendations", query_string={"category": "cluster"}
-    )
+    response = await test_client.get("/advisor/recommendations", query_string={"category": "cluster"})
     assert response.status == "200 OK"
     data = await response.get_json()
     assert data["response"] == snapshot
@@ -110,9 +95,7 @@ async def test_clusters(test_client, advisor_client, snapshot) -> None:
 async def test_recommendations_none(test_client, advisor_client, snapshot) -> None:
     advisor_client.get_recommendations = MagicMock(return_value=async_value([]))
 
-    response = await test_client.get(
-        "/advisor/recommendations", query_string={"category": "recommendation"}
-    )
+    response = await test_client.get("/advisor/recommendations", query_string={"category": "recommendation"})
     assert response.status == "200 OK"
     data = await response.get_json()
     assert data["response"] == snapshot

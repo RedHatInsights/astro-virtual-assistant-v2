@@ -1,8 +1,7 @@
 import injector
 from pydantic import BaseModel
-
 from quart import Blueprint, render_template
-from quart_schema import validate_response, validate_querystring, document_headers
+from quart_schema import document_headers, validate_querystring, validate_response
 
 from watson_extension.core.insights.inventory import (
     InventoryCore,
@@ -28,9 +27,7 @@ async def activation_keys(
     query_args: ActivationKeysRequestQuery,
     inventory_service: injector.Inject[InventoryCore],
 ) -> ActivationKeysResponse:
-    activation_key_response_response = await inventory_service.create_activation_keys(
-        query_args.name
-    )
+    activation_key_response_response = await inventory_service.create_activation_keys(query_args.name)
 
     return ActivationKeysResponse(
         response=await render_template(

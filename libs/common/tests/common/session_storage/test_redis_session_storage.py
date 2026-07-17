@@ -1,12 +1,10 @@
 import json
 
 import pytest
-from redis.asyncio import StrictRedis
-
-from pytest_mock_resources import create_redis_fixture, RedisConfig
-
 from common.session_storage import Session
 from common.session_storage.redis import RedisSessionStorage
+from pytest_mock_resources import RedisConfig, create_redis_fixture
+from redis.asyncio import StrictRedis
 
 redis_fixture = create_redis_fixture()
 
@@ -27,9 +25,7 @@ def session_storage(redis):
 
 
 async def test_redis_session_storage_store(session_storage, redis):
-    await session_storage.put(
-        Session(key="my-key", user_identity="my.identity", user_id="1234")
-    )
+    await session_storage.put(Session(key="my-key", user_identity="my.identity", user_id="1234"))
     raw = await redis.get("my-key")
     session = json.loads(raw)
     assert session["key"] == "my-key"

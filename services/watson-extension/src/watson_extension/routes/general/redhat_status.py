@@ -1,9 +1,9 @@
-import injector
-from pydantic import BaseModel
 from typing import List
 
+import injector
+from pydantic import BaseModel
 from quart import Blueprint
-from quart_schema import validate_response, document_headers
+from quart_schema import document_headers, validate_response
 
 from watson_extension.core.general.redhat_status import (
     IncidentType,
@@ -32,6 +32,4 @@ async def check_services_offline(
         count,
     ) = await redhat_status_service.check_services_offline()
 
-    return ServicesOfflineResponse(
-        response_type=response_type.value, incidents=incidents, count=count
-    )
+    return ServicesOfflineResponse(response_type=response_type.value, incidents=incidents, count=count)

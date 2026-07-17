@@ -1,7 +1,8 @@
 import dataclasses
 import enum
 from abc import ABC, abstractmethod
-from typing import Optional, List, Union, Any, Literal
+from typing import Any, List, Literal, Optional, Union
+
 from pydantic import BaseModel
 
 
@@ -170,6 +171,4 @@ class Assistant(ABC):
     async def create_session(self, user_id: str) -> str: ...
 
     @abstractmethod
-    async def send_message(
-        self, message: AssistantInput, context: AssistantContext
-    ) -> AssistantOutput: ...
+    async def send_message(self, message: AssistantInput, context: AssistantContext) -> AssistantOutput: ...

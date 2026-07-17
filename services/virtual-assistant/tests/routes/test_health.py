@@ -1,8 +1,8 @@
 import pytest
 from quart.typing import TestClientProtocol
-from tests.routes.common import app_with_blueprint
-
 from virtual_assistant.routes.health import blueprint
+
+from tests.routes.common import app_with_blueprint
 
 
 @pytest.fixture

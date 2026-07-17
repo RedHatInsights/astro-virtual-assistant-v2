@@ -1,15 +1,15 @@
 import aiohttp
 import pytest
 from aioresponses import aioresponses
-
-from ... import get_resource_contents
-from watson_extension.clients import AdvisorOpenshiftURL
 from common.identity import FixedUserIdentityProvider
+from common.platform_request import PlatformRequest
+from watson_extension.clients import AdvisorOpenshiftURL
 from watson_extension.clients.openshift.advisor import (
     AdvisorClient,
     AdvisorClientHttp,
 )
-from common.platform_request import PlatformRequest
+
+from ... import get_resource_contents
 
 
 @pytest.fixture
@@ -27,9 +27,7 @@ async def session():
 
 @pytest.fixture
 async def client(session) -> AdvisorClient:
-    return AdvisorClientHttp(
-        AdvisorOpenshiftURL(""), FixedUserIdentityProvider(), PlatformRequest(session)
-    )
+    return AdvisorClientHttp(AdvisorOpenshiftURL(""), FixedUserIdentityProvider(), PlatformRequest(session))
 
 
 async def test_recommendations(client, aiohttp_mock) -> None:
@@ -55,19 +53,12 @@ async def test_recommendations(client, aiohttp_mock) -> None:
         == "ccx_rules_ocp.external.rules.config_build_strategy_incorrect|CONFIG_BUILD_STRATEGY_INCORRECTLY"
     )
     assert (
-        recommendations[1].description
-        == "Configuring Build Strategy via admin or edit ClusterRoles is not recommended"
+        recommendations[1].description == "Configuring Build Strategy via admin or edit ClusterRoles is not recommended"
     )
     assert recommendations[1].total_risk == 3
 
-    assert (
-        recommendations[2].id
-        == "ccx_rules_ocp.external.rules.okd_cluster_unsupported|OKD_CLUSTER_UNSUPPORTED"
-    )
-    assert (
-        recommendations[2].description
-        == "GSS does not provide enterprise-level support for an OKD cluster"
-    )
+    assert recommendations[2].id == "ccx_rules_ocp.external.rules.okd_cluster_unsupported|OKD_CLUSTER_UNSUPPORTED"
+    assert recommendations[2].description == "GSS does not provide enterprise-level support for an OKD cluster"
     assert recommendations[2].total_risk == 2
 
 
@@ -81,23 +72,17 @@ async def test_workloads(client, aiohttp_mock) -> None:
     assert len(workloads) == 3
     assert workloads[0].cluster_id == "207b5151-9c8b-4fcc-9f18-e97c4cf7b512"
     assert workloads[0].namespace_id == "626bdc9c-7f49-4410-ad68-41888489c0ef"
-    assert (
-        workloads[0].cluster_display_name == "CCX test cluster for DVO recommendations"
-    )
+    assert workloads[0].cluster_display_name == "CCX test cluster for DVO recommendations"
     assert workloads[0].last_checked_at == "2025-03-31T13:18:25Z"
 
     assert workloads[1].cluster_id == "207b5151-9c8b-4fcc-9f18-e97c4cf7b512"
     assert workloads[1].namespace_id == "e94a4cc2-6b31-47d7-bdc5-eb14f7c5a4e5"
-    assert (
-        workloads[1].cluster_display_name == "CCX test cluster for DVO recommendations"
-    )
+    assert workloads[1].cluster_display_name == "CCX test cluster for DVO recommendations"
     assert workloads[1].last_checked_at == "2025-03-31T13:18:25Z"
 
     assert workloads[2].cluster_id == "207b5151-9c8b-4fcc-9f18-e97c4cf7b512"
     assert workloads[2].namespace_id == "fe39d0d3-ea0b-4d37-bc3e-6358ed32ea18"
-    assert (
-        workloads[2].cluster_display_name == "CCX test cluster for DVO recommendations"
-    )
+    assert workloads[2].cluster_display_name == "CCX test cluster for DVO recommendations"
     assert workloads[2].last_checked_at is None
 
 

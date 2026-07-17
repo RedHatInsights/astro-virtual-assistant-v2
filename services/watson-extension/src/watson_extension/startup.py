@@ -2,16 +2,26 @@ import aiohttp
 import injector
 import quart
 import quart_injector
-from quart import Quart, Blueprint
-
-from common.providers import (
-    make_redis_session_storage_provider,
-    make_file_session_storage_provider,
-    make_dev_platform_request_provider,
-    make_sa_platform_request_provider,
-    make_platform_request_provider,
-    make_client_session_provider,
+from common.identity import (
+    AbstractUserIdentityProvider,
+    FixedUserIdentityProvider,
+    QuartWatsonExtensionUserIdentityProvider,
 )
+from common.platform_request import (
+    AbstractPlatformRequest,
+)
+from common.providers import (
+    make_client_session_provider,
+    make_dev_platform_request_provider,
+    make_file_session_storage_provider,
+    make_platform_request_provider,
+    make_redis_session_storage_provider,
+    make_sa_platform_request_provider,
+)
+from common.session_storage import SessionStorage
+from quart import Blueprint, Quart
+
+import watson_extension.config as config
 from watson_extension.auth import Authentication
 from watson_extension.auth.api_key_authentication import ApiKeyAuthentication
 from watson_extension.auth.no_authentication import NoAuthentication
@@ -19,83 +29,67 @@ from watson_extension.auth.service_account_authentication import (
     ServiceAccountAuthentication,
 )
 from watson_extension.clients import (
-    AdvisorURL,
     AdvisorOpenshiftURL,
+    AdvisorURL,
     ChromeServiceURL,
-    VulnerabilityURL,
     ContentSourcesURL,
-    RhsmURL,
-    SourcesURL,
     NotificationsGWURL,
     PlatformNotificationsURL,
-)
-from watson_extension.clients.insights.advisor import AdvisorClient, AdvisorClientHttp
-from watson_extension.clients.openshift.advisor import (
-    AdvisorClient as AdvisorOpenshiftClient,
-    AdvisorClientHttp as AdvisorOpenshiftClientHttp,
-)
-from watson_extension.clients.insights.vulnerability import (
-    VulnerabilityClient,
-    VulnerabilityClientHttp,
-)
-from watson_extension.clients.insights.content_sources import (
-    ContentSourcesClient,
-    ContentSourcesClientHttp,
-)
-from watson_extension.clients.insights.rhsm import (
-    RhsmClient,
-    RhsmClientHttp,
-)
-from watson_extension.clients.platform.chrome import (
-    ChromeServiceClient,
-    ChromeServiceClientHttp,
-)
-from watson_extension.clients.platform.sources import (
-    SourcesClient,
-    SourcesClientHttp,
-)
-from watson_extension.clients.insights.notifications import (
-    NotificationsClient,
-    NotificationsClientHttp,
-    NotificationClientNoOp,
-)
-from watson_extension.clients.platform.notifications import (
-    PlatformNotificationsClient,
-    PlatformNotificationsClientHttp,
-)
-from watson_extension.clients.platform.integrations import (
-    IntegrationsClient,
-    IntegrationsClientHttp,
-)
-from watson_extension.clients.platform.rbac import (
-    RbacURL,
-    RBACClient,
-    RBACClientHttp,
-    RBACClientNoOp,
+    RhsmURL,
+    SourcesURL,
+    VulnerabilityURL,
 )
 from watson_extension.clients.general.redhat_status import (
     RedhatStatusClient,
     RedhatStatusClientHttp,
 )
-
-
-from common.platform_request import (
-    AbstractPlatformRequest,
+from watson_extension.clients.insights.advisor import AdvisorClient, AdvisorClientHttp
+from watson_extension.clients.insights.content_sources import (
+    ContentSourcesClient,
+    ContentSourcesClientHttp,
 )
-from watson_extension.routes import health
-from watson_extension.routes import insights
-from watson_extension.routes import openshift
-from watson_extension.routes import platform
-from watson_extension.routes import general
-
-import watson_extension.config as config
-
-from common.session_storage import SessionStorage
-from common.identity import (
-    QuartWatsonExtensionUserIdentityProvider,
-    AbstractUserIdentityProvider,
-    FixedUserIdentityProvider,
+from watson_extension.clients.insights.notifications import (
+    NotificationClientNoOp,
+    NotificationsClient,
+    NotificationsClientHttp,
 )
+from watson_extension.clients.insights.rhsm import (
+    RhsmClient,
+    RhsmClientHttp,
+)
+from watson_extension.clients.insights.vulnerability import (
+    VulnerabilityClient,
+    VulnerabilityClientHttp,
+)
+from watson_extension.clients.openshift.advisor import (
+    AdvisorClient as AdvisorOpenshiftClient,
+)
+from watson_extension.clients.openshift.advisor import (
+    AdvisorClientHttp as AdvisorOpenshiftClientHttp,
+)
+from watson_extension.clients.platform.chrome import (
+    ChromeServiceClient,
+    ChromeServiceClientHttp,
+)
+from watson_extension.clients.platform.integrations import (
+    IntegrationsClient,
+    IntegrationsClientHttp,
+)
+from watson_extension.clients.platform.notifications import (
+    PlatformNotificationsClient,
+    PlatformNotificationsClientHttp,
+)
+from watson_extension.clients.platform.rbac import (
+    RBACClient,
+    RBACClientHttp,
+    RBACClientNoOp,
+    RbacURL,
+)
+from watson_extension.clients.platform.sources import (
+    SourcesClient,
+    SourcesClientHttp,
+)
+from watson_extension.routes import general, health, insights, openshift, platform
 
 
 @injector.provider
@@ -169,9 +163,7 @@ def injector_from_config(binder: injector.Binder) -> None:
             scope=injector.singleton,
         )
     else:
-        raise RuntimeError(
-            f"Unexpected platform request configuration: {config.platform_request}"
-        )
+        raise RuntimeError(f"Unexpected platform request configuration: {config.platform_request}")
 
     if config.is_running_locally:
         binder.bind(
@@ -210,35 +202,21 @@ def injector_from_config(binder: injector.Binder) -> None:
     if config.authentication_type == "no-auth":
         binder.bind(Authentication, to=NoAuthentication, scope=injector.singleton)
     elif config.authentication_type == "api-key":
-        binder.bind(
-            Authentication, to=api_key_authentication_provider, scope=injector.singleton
-        )
+        binder.bind(Authentication, to=api_key_authentication_provider, scope=injector.singleton)
     elif config.authentication_type == "service-account":
-        binder.bind(
-            Authentication, to=sa_authentication_provider, scope=injector.singleton
-        )
+        binder.bind(Authentication, to=sa_authentication_provider, scope=injector.singleton)
     else:
-        raise RuntimeError(
-            f"Unexpected authentication type {config.authentication_type}"
-        )
+        raise RuntimeError(f"Unexpected authentication type {config.authentication_type}")
 
     # urls
     binder.bind(AdvisorURL, to=config.advisor_url, scope=injector.singleton)
     binder.bind(VulnerabilityURL, to=config.vulnerability_url, scope=injector.singleton)
-    binder.bind(
-        ContentSourcesURL, to=config.content_sources_url, scope=injector.singleton
-    )
+    binder.bind(ContentSourcesURL, to=config.content_sources_url, scope=injector.singleton)
     binder.bind(RhsmURL, to=config.rhsm_url, scope=injector.singleton)
-    binder.bind(
-        AdvisorOpenshiftURL, to=config.advisor_openshift_url, scope=injector.singleton
-    )
-    binder.bind(
-        ChromeServiceURL, to=config.chrome_service_url, scope=injector.singleton
-    )
+    binder.bind(AdvisorOpenshiftURL, to=config.advisor_openshift_url, scope=injector.singleton)
+    binder.bind(ChromeServiceURL, to=config.chrome_service_url, scope=injector.singleton)
     binder.bind(SourcesURL, to=config.sources_url, scope=injector.singleton)
-    binder.bind(
-        NotificationsGWURL, to=config.notifications_gw_url, scope=injector.singleton
-    )
+    binder.bind(NotificationsGWURL, to=config.notifications_gw_url, scope=injector.singleton)
     binder.bind(
         PlatformNotificationsURL,
         to=config.platform_notifications_url,
@@ -250,9 +228,7 @@ def injector_from_config(binder: injector.Binder) -> None:
 def injector_defaults(binder: injector.Binder) -> None:
     # clients
     binder.bind(AdvisorClient, AdvisorClientHttp, scope=quart_injector.RequestScope)
-    binder.bind(
-        VulnerabilityClient, VulnerabilityClientHttp, scope=quart_injector.RequestScope
-    )
+    binder.bind(VulnerabilityClient, VulnerabilityClientHttp, scope=quart_injector.RequestScope)
     binder.bind(
         ContentSourcesClient,
         ContentSourcesClientHttp,
@@ -274,12 +250,8 @@ def injector_defaults(binder: injector.Binder) -> None:
         PlatformNotificationsClientHttp,
         scope=quart_injector.RequestScope,
     )
-    binder.bind(
-        IntegrationsClient, IntegrationsClientHttp, scope=quart_injector.RequestScope
-    )
-    binder.bind(
-        RedhatStatusClient, RedhatStatusClientHttp, scope=quart_injector.RequestScope
-    )
+    binder.bind(IntegrationsClient, IntegrationsClientHttp, scope=quart_injector.RequestScope)
+    binder.bind(RedhatStatusClient, RedhatStatusClientHttp, scope=quart_injector.RequestScope)
 
 
 def wire_routes(app: Quart) -> None:

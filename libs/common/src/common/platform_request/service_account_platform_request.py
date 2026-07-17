@@ -6,9 +6,7 @@ from common.platform_request.abstract_platform_request import AbstractPlatformRe
 
 
 class ServiceAccountPlatformRequest(AbstractPlatformRequest):
-    def __init__(
-        self, session: ClientSession, token_url: str, sa_id: str, sa_secret: str
-    ):
+    def __init__(self, session: ClientSession, token_url: str, sa_id: str, sa_secret: str):
         super().__init__()
         self.session = session
         self._token_url = token_url
@@ -47,6 +45,4 @@ class ServiceAccountPlatformRequest(AbstractPlatformRequest):
         if user_identity is not None:
             headers["Authorization"] = "Bearer " + self._token
 
-        return await self.session.request(
-            method, f"{base_url}{api_path}", headers=headers, **kwargs
-        )
+        return await self.session.request(method, f"{base_url}{api_path}", headers=headers, **kwargs)

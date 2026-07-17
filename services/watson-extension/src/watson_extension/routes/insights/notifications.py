@@ -1,10 +1,8 @@
 import injector
-from pydantic import BaseModel
-
-from quart import Blueprint
-from quart_schema import validate_querystring, document_headers, validate_response
-
 from common.auth import decoded_identity_header
+from pydantic import BaseModel
+from quart import Blueprint
+from quart_schema import document_headers, validate_querystring, validate_response
 
 from watson_extension.clients.identity import AbstractUserIdentityProvider
 from watson_extension.core.insights.notifications import (
@@ -33,9 +31,7 @@ async def send_rbac_request_admin_email(
     user_identity_provider: injector.Inject[AbstractUserIdentityProvider],
     notifications_service: injector.Inject[NotificationsCore],
 ) -> ResponseSendRbacRequestAdminEmail:
-    user_identity = decoded_identity_header(
-        await user_identity_provider.get_user_identity()
-    )
+    user_identity = decoded_identity_header(await user_identity_provider.get_user_identity())
 
     org_id = user_identity["identity"]["org_id"]
     username = user_identity["identity"]["user"]["username"]

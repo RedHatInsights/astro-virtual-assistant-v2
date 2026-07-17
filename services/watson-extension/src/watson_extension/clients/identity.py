@@ -1,7 +1,7 @@
 from common.identity import (
-    QuartWatsonExtensionUserIdentityProvider,
     AbstractUserIdentityProvider,
     FixedUserIdentityProvider,
+    QuartWatsonExtensionUserIdentityProvider,
 )
 
 # Todo: Update imports once there are no other PRs and delete this file

@@ -1,11 +1,12 @@
 import os
-from unittest import mock
 import sys
+from unittest import mock
 from unittest.mock import MagicMock
 
-from .. import path_to_resource
 import pytest
 from decouple import UndefinedValueError
+
+from .. import path_to_resource
 
 __config_modules = [
     "app_common_python",
@@ -76,10 +77,7 @@ def test_clowdapp_public_endpoints_invalid():
 def test_clowdapp_private_endpoints():
     from common.config import config
 
-    assert (
-        config("PRIVATE_ENDPOINT__VIRTUAL_ASSISTANT__ACTIONS__URL")
-        == "http://my-virtual-assistant-actions:10000"
-    )
+    assert config("PRIVATE_ENDPOINT__VIRTUAL_ASSISTANT__ACTIONS__URL") == "http://my-virtual-assistant-actions:10000"
 
 
 @mock.patch.dict(
@@ -196,9 +194,7 @@ def test_openshift_namespace():
         from common.config import config
 
         assert config("NAMESPACE") == "my-cool-namespace"
-        mocked_open.assert_called_once_with(
-            "/var/run/secrets/kubernetes.io/serviceaccount/namespace", "r"
-        )
+        mocked_open.assert_called_once_with("/var/run/secrets/kubernetes.io/serviceaccount/namespace", "r")
 
 
 def test_openshift_namespace_has_cache():
@@ -211,9 +207,7 @@ def test_openshift_namespace_has_cache():
         assert config("NAMESPACE") == "my-cool-namespace"
         assert config("NAMESPACE") == "my-cool-namespace"
         assert config("NAMESPACE") == "my-cool-namespace"
-        mocked_open.assert_called_once_with(
-            "/var/run/secrets/kubernetes.io/serviceaccount/namespace", "r"
-        )
+        mocked_open.assert_called_once_with("/var/run/secrets/kubernetes.io/serviceaccount/namespace", "r")
 
 
 @mock.patch.dict(

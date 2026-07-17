@@ -37,9 +37,7 @@ class AdvisorCore:
             RecommendationCategory.AVAILABILITY,
             RecommendationCategory.PERFORMANCE,
         }:
-            category = await self.advisor_client.find_rule_category_by_name(
-                category_name
-            )
+            category = await self.advisor_client.find_rule_category_by_name(category_name)
             category_id = category.id
             sort = FindRuleSort.TotalRisk
         elif category_type is RecommendationCategory.NEW:

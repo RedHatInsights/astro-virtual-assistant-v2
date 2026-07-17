@@ -3,17 +3,16 @@ from unittest.mock import MagicMock
 import injector
 import pytest
 from quart.typing import TestClientProtocol
-
 from watson_extension.clients.insights.advisor import (
-    RuleCategory,
     AdvisorClient,
     FindRulesResponse,
     Rule,
+    RuleCategory,
 )
-from ..common import app_with_blueprint
-
 from watson_extension.routes.insights.advisor import blueprint
+
 from ... import async_value
+from ..common import app_with_blueprint
 
 
 @pytest.fixture
@@ -48,9 +47,7 @@ async def test_recommendations(test_client, advisor_client, snapshot) -> None:
         )
     )
 
-    response = await test_client.get(
-        "/advisor/recommendations", query_string={"category": "performance"}
-    )
+    response = await test_client.get("/advisor/recommendations", query_string={"category": "performance"})
     assert response.status == "200 OK"
     data = await response.get_json()
     assert data["response"] == snapshot
@@ -60,13 +57,9 @@ async def test_recommendations_none(test_client, advisor_client, snapshot) -> No
     advisor_client.find_rule_category_by_name = MagicMock(
         return_value=async_value(RuleCategory(id="4", name="performance"))
     )
-    advisor_client.find_rules = MagicMock(
-        return_value=async_value(FindRulesResponse(rules=[], link="i-am-not-zelda"))
-    )
+    advisor_client.find_rules = MagicMock(return_value=async_value(FindRulesResponse(rules=[], link="i-am-not-zelda")))
 
-    response = await test_client.get(
-        "/advisor/recommendations", query_string={"category": "performance"}
-    )
+    response = await test_client.get("/advisor/recommendations", query_string={"category": "performance"})
     assert response.status == "200 OK"
     data = await response.get_json()
     assert data["response"] == snapshot

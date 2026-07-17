@@ -1,27 +1,24 @@
 import abc
 
+import injector
 import quart
 from werkzeug.exceptions import BadRequest
 
-import injector
-from common.session_storage import SessionStorage
 from common.auth import decoded_identity_header
+from common.session_storage import SessionStorage
 
 
 class AbstractUserIdentityProvider(abc.ABC):
+    @abc.abstractmethod
     async def get_user_identity(self) -> str: ...
 
     async def is_internal(self) -> bool:
-        identity = decoded_identity_header(
-            await self.user_identity_provider.get_user_identity()
-        )
+        identity = decoded_identity_header(await self.user_identity_provider.get_user_identity())
         return identity["user"]["is_internal"]
 
 
 class QuartWatsonExtensionUserIdentityProvider(AbstractUserIdentityProvider):
-    def __init__(
-        self, request: quart.Request, session_storage: injector.Inject[SessionStorage]
-    ):
+    def __init__(self, request: quart.Request, session_storage: injector.Inject[SessionStorage]):
         self.request = request
         self.session_storage = session_storage
 
@@ -69,7 +66,13 @@ class FixedUserIdentityProvider(AbstractUserIdentityProvider):
         }
         """
 
-        return "eyJpZGVudGl0eSI6eyJhY2NvdW50X251bWJlciI6ImFjY291bnQxMjMiLCJvcmdfaWQiOiJvcmcxMjMiLCJ0eXBlIjoiVXNlciIsInVzZXIiOnsiaXNfb3JnX2FkbWluIjp0cnVlLCJpc19pbnRlcm5hbCI6dHJ1ZSwidXNlcl9pZCI6IjEyMzQ1Njc4OTAiLCJ1c2VybmFtZSI6ImFzdHJvIiwiZW1haWwiOiJlbWFpbEBlbWFpbC5jb20ifSwiaW50ZXJuYWwiOnsib3JnX2lkIjoib3JnMTIzIn19fQ=="
+        return (
+            "eyJpZGVudGl0eSI6eyJhY2NvdW50X251bWJlciI6ImFjY291bnQxMjMiLCJvcmdfaWQiOiJvcm"
+            "cxMjMiLCJ0eXBlIjoiVXNlciIsInVzZXIiOnsiaXNfb3JnX2FkbWluIjp0cnVlLCJpc19pbnRl"
+            "cm5hbCI6dHJ1ZSwidXNlcl9pZCI6IjEyMzQ1Njc4OTAiLCJ1c2VybmFtZSI6ImFzdHJvIiwi"
+            "ZW1haWwiOiJlbWFpbEBlbWFpbC5jb20ifSwiaW50ZXJuYWwiOnsib3JnX2lkIjoib3JnMTIzIn"
+            "19fQ=="
+        )
 
     async def is_internal(self) -> bool:
         return True

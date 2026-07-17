@@ -1,10 +1,11 @@
 import abc
-import injector
 from dataclasses import dataclass
 from typing import List, Optional
 
+import injector
 from common.identity import AbstractUserIdentityProvider
 from common.platform_request import AbstractPlatformRequest
+
 from watson_extension.clients import AdvisorOpenshiftURL
 
 
@@ -67,9 +68,7 @@ class AdvisorClientHttp(AdvisorClient):
             Cluster(
                 id=c["cluster_id"],
                 name=c["cluster_name"],
-                last_checked_at=c["last_checked_at"]
-                if "last_checked_at" in c
-                else None,
+                last_checked_at=c["last_checked_at"] if "last_checked_at" in c else None,
             )
             for c in content["data"]
         ]
@@ -91,9 +90,7 @@ class AdvisorClientHttp(AdvisorClient):
 
         content = await response.json()
         if content["status"] != "ok":
-            raise RuntimeError(
-                f"Received invalid status from openshift_advisor/workloads: {content['status']}"
-            )
+            raise RuntimeError(f"Received invalid status from openshift_advisor/workloads: {content['status']}")
 
         workloads = [
             Workload(

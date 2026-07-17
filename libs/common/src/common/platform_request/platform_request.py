@@ -1,8 +1,8 @@
 from typing import Optional
 
-from common.platform_request.abstract_platform_request import AbstractPlatformRequest
-
 from aiohttp import ClientResponse, ClientSession
+
+from common.platform_request.abstract_platform_request import AbstractPlatformRequest
 
 
 class PlatformRequest(AbstractPlatformRequest):
@@ -21,6 +21,4 @@ class PlatformRequest(AbstractPlatformRequest):
         if user_identity is not None:
             headers["x-rh-identity"] = user_identity
 
-        return await self.session.request(
-            method, f"{base_url}{api_path}", headers=headers, **kwargs
-        )
+        return await self.session.request(method, f"{base_url}{api_path}", headers=headers, **kwargs)

@@ -1,12 +1,14 @@
-from typing import Dict, Any, Tuple, List, Type, Optional, Iterable
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Type
 
 from quart_schema import DataSource, OpenAPIProvider
 from quart_schema.openapi import Model, Rule
 
 
-# Given the requirements [1] for a watson extension, we cannot use openapi 3.1.0 or anyOf, oneOf, allOf, among other things.
-# We will have to patch them or maintain manually the API for the watson-extension.
-# We can try to patch the openapi file as long as we can.
+# Given the requirements [1] for a watson extension, we cannot use
+# openapi 3.1.0 or anyOf, oneOf, allOf, among other things.
+# We will have to patch them or maintain manually the API for the
+# watson-extension. We can try to patch the openapi file as long
+# as we can.
 #
 # [1] https://cloud.ibm.com/docs/watson-assistant/watson-assistant?topic=watson-assistant-build-custom-extension
 class WatsonExtensionAPIProvider(OpenAPIProvider):
@@ -17,7 +19,8 @@ class WatsonExtensionAPIProvider(OpenAPIProvider):
 
     def generate_rules(self) -> Iterable[Rule]:
         for rule in super().generate_rules():
-            # This static endpoints gets added when using quart-injector - unsure if it's a dev only rule, but hiding from here.
+            # This static endpoint gets added when using quart-injector
+            # - unsure if it's a dev only rule, but hiding from here.
             if rule.endpoint == "static":
                 continue
 
@@ -27,7 +30,7 @@ class WatsonExtensionAPIProvider(OpenAPIProvider):
         paths, components = super().build_paths(rule)
 
         if rule.endpoint.startswith("public_root_alias"):
-            return dict(), dict()
+            return {}, {}
 
         for component in components.values():
             self._patch_schema(component)
@@ -39,18 +42,14 @@ class WatsonExtensionAPIProvider(OpenAPIProvider):
 
         return paths, components
 
-    def build_querystring_parameters(
-        self, model: Type[Model]
-    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    def build_querystring_parameters(self, model: Type[Model]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
         parameters, definitions = super().build_querystring_parameters(model)
         for parameter in parameters:
             if "schema" in parameter:
                 self._patch_schema(parameter["schema"])
         return parameters, definitions
 
-    def build_request_body(
-        self, model: Type[Model], source: DataSource
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def build_request_body(self, model: Type[Model], source: DataSource) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         request_body, definitions = super().build_request_body(model, source)
         if "content" in request_body:
             content = request_body["content"]
@@ -78,9 +77,7 @@ class WatsonExtensionAPIProvider(OpenAPIProvider):
                 self._patch_schema(prop)
 
         if "anyOf" in schema:
-            schema["anyOf"] = [
-                v for v in schema["anyOf"] if not self._is_type_with_null_string(v)
-            ]
+            schema["anyOf"] = [v for v in schema["anyOf"] if not self._is_type_with_null_string(v)]
             if len(schema["anyOf"]) == 1:
                 content = schema["anyOf"][0]
                 if set(content.keys()).isdisjoint(schema):

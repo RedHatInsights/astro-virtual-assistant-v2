@@ -1,19 +1,18 @@
-import quart_injector
 import common.metrics.quart as quart_metrics
+import quart_injector
+import virtual_assistant.config as config
+from common.logging import build_logger
+from common.types.errors import ValidationError
 from quart import Quart
 from quart_schema import (
+    Info,
     QuartSchema,
     RequestSchemaValidationError,
-    Info,
     Server,
     ServerVariable,
 )
-import virtual_assistant.config as config
-
-from common.logging import build_logger
 from virtual_assistant.quart_schema import VirtualAssistantOpenAPIProvider
-from common.types.errors import ValidationError
-from virtual_assistant.startup import wire_routes, injector_from_config
+from virtual_assistant.startup import injector_from_config, wire_routes
 
 build_logger(config.logger_type)
 config.log_config()
@@ -23,9 +22,7 @@ wire_routes(app)
 quart_injector.QuartModule(app)
 quart_injector.wire(app, injector_from_config)
 quart_metrics.register_app(app, port=config.metrics_port)
-quart_metrics.register_http_metrics(
-    app, config.name, lambda r: r.path.startswith("/api")
-)
+quart_metrics.register_http_metrics(app, config.name, lambda r: r.path.startswith("/api"))
 
 
 @app.errorhandler(RequestSchemaValidationError)

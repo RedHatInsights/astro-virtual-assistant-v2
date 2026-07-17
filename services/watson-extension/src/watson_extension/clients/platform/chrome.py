@@ -1,11 +1,12 @@
 import abc
 import json
-import injector
 from dataclasses import dataclass
 from typing import List, Optional
 
+import injector
 from common.identity import AbstractUserIdentityProvider
 from common.platform_request import AbstractPlatformRequest
+
 from watson_extension.clients import ChromeServiceURL
 
 

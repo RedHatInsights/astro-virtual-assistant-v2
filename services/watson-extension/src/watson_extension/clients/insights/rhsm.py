@@ -1,6 +1,6 @@
 import abc
 from dataclasses import dataclass
-from typing import Optional, List
+from typing import List, Optional
 
 import injector
 
@@ -23,10 +23,9 @@ class ActivationKeyResponse:
 
 class RhsmClient(abc.ABC):
     @abc.abstractmethod
-    async def check_subscriptions(
-        self, category: Optional[str]
-    ) -> List[SubscriptionInfo]: ...
+    async def check_subscriptions(self, category: Optional[str]) -> List[SubscriptionInfo]: ...
 
+    @abc.abstractmethod
     async def create_activation_key(self, name: str): ...
 
 
@@ -65,29 +64,17 @@ class RhsmClientHttp(RhsmClient):
                     category_text = "expiring"
 
                 subs_category_count = content_body.get(category)
-                subscriptions_info.append(
-                    SubscriptionInfo(number=subs_category_count, category=category_text)
-                )
+                subscriptions_info.append(SubscriptionInfo(number=subs_category_count, category=category_text))
             else:
                 subscriptions_info = []
                 if content_body.get("active"):
-                    subscriptions_info.append(
-                        SubscriptionInfo(
-                            number=content_body["active"], category="active"
-                        )
-                    )
+                    subscriptions_info.append(SubscriptionInfo(number=content_body["active"], category="active"))
                 if content_body.get("expiringSoon"):
                     subscriptions_info.append(
-                        SubscriptionInfo(
-                            number=content_body["expiringSoon"], category="expiring"
-                        )
+                        SubscriptionInfo(number=content_body["expiringSoon"], category="expiring")
                     )
                 if content_body.get("expired"):
-                    subscriptions_info.append(
-                        SubscriptionInfo(
-                            number=content_body["expired"], category="expired"
-                        )
-                    )
+                    subscriptions_info.append(SubscriptionInfo(number=content_body["expired"], category="expired"))
 
         return subscriptions_info
 

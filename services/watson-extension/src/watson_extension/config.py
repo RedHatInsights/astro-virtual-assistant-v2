@@ -1,6 +1,8 @@
-from common.config import config, log_config as _log_config
-from decouple import Csv, Choices
 import logging
+
+from common.config import config
+from common.config import log_config as _log_config
+from decouple import Choices, Csv
 
 name = config("APP_NAME", default="virtual-assistant-watson-extension")
 base_url = config("BASE_URL", default="/api/virtual-assistant-watson-extension/v2/")
@@ -18,25 +20,13 @@ else:
 # Urls
 advisor_url = config("ENDPOINT__ADVISOR_BACKEND__API__URL", default=__platform_url)
 rhsm_url = config("ENDPOINT__RHSM_API_PROXY__SERVICE__URL", default=__platform_url)
-vulnerability_url = config(
-    "ENDPOINT__VULNERABILITY_ENGINE__MANAGER_SERVICE__URL", default=__platform_url
-)
-content_sources_url = config(
-    "ENDPOINT__CONTENT_SOURCES_BACKEND__SERVICE__URL", default=__platform_url
-)
-advisor_openshift_url = config(
-    "ENDPOINT__CCX_SMART_PROXY__SERVICE__URL", default=__platform_url
-)
-chrome_service_url = config(
-    "ENDPOINT__CHROME_SERVICE__API__URL", default=__platform_url
-)
+vulnerability_url = config("ENDPOINT__VULNERABILITY_ENGINE__MANAGER_SERVICE__URL", default=__platform_url)
+content_sources_url = config("ENDPOINT__CONTENT_SOURCES_BACKEND__SERVICE__URL", default=__platform_url)
+advisor_openshift_url = config("ENDPOINT__CCX_SMART_PROXY__SERVICE__URL", default=__platform_url)
+chrome_service_url = config("ENDPOINT__CHROME_SERVICE__API__URL", default=__platform_url)
 sources_url = config("ENDPOINT__SOURCES_API__SVC__URL", default=__platform_url)
-notifications_gw_url = config(
-    "ENDPOINT__NOTIFICATIONS_GW__SERVICE__URL", default=__platform_url
-)
-platform_notifications_url = config(
-    "ENDPOINT__NOTIFICATIONS_BACKEND__SERVICE__URL", default=__platform_url
-)
+notifications_gw_url = config("ENDPOINT__NOTIFICATIONS_GW__SERVICE__URL", default=__platform_url)
+platform_notifications_url = config("ENDPOINT__NOTIFICATIONS_BACKEND__SERVICE__URL", default=__platform_url)
 rbac_url = config("ENDPOINT__RBAC__SERVICE__URL", default=__platform_url)
 
 # Platform requests
@@ -59,9 +49,7 @@ elif platform_request == "sa":
         default="https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token",
     )
 
-logger_type = config(
-    "LOGGER_TYPE", default="basic", cast=Choices(["basic", "cloudwatch"])
-)
+logger_type = config("LOGGER_TYPE", default="basic", cast=Choices(["basic", "cloudwatch"]))
 
 authentication_type = config(
     "AUTHENTICATION_TYPE",
@@ -74,9 +62,7 @@ elif authentication_type == "service-account":
     sa_client_id = config("SA_CLIENT_ID")
 
 # Session storage
-session_storage = config(
-    "SESSION_STORAGE", default="file", cast=Choices(["file", "redis"])
-)
+session_storage = config("SESSION_STORAGE", default="file", cast=Choices(["file", "redis"]))
 if session_storage == "redis":
     redis_hostname = config("REDIS_HOSTNAME")
     redis_port = config("REDIS_PORT")

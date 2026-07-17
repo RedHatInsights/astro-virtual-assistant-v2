@@ -1,13 +1,13 @@
 import abc
-import injector
 import logging
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
+import injector
 from common.identity import AbstractUserIdentityProvider
 from common.platform_request import AbstractPlatformRequest
-from watson_extension.clients import RbacURL
 
+from watson_extension.clients import RbacURL
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +44,7 @@ class RBACClient(abc.ABC):
     @abc.abstractmethod
     async def get_roles_for_tam(self) -> List[Roles]: ...
 
+    @abc.abstractmethod
     async def send_rbac_tam_request(self, body: Dict[str, Any]) -> bool: ...
 
 
@@ -100,8 +101,6 @@ class RBACClientHttp(RBACClient):
 
 class RBACClientNoOp(RBACClientHttp):
     async def send_rbac_tam_request(self, body: TAMRequestAccessPayload) -> bool:
-        logger.info(
-            f"Called send_rbac_tam_request in local environment with body: {body}"
-        )
+        logger.info(f"Called send_rbac_tam_request in local environment with body: {body}")
 
         return True

@@ -1,7 +1,6 @@
 import aiohttp
 import pytest
 from aioresponses import aioresponses
-
 from common.identity import FixedUserIdentityProvider
 from common.platform_request import PlatformRequest
 from virtual_assistant.assistant import (
@@ -12,8 +11,8 @@ from virtual_assistant.assistant import (
 )
 from virtual_assistant.assistant.response_processor.rhel_lightspeed import (
     RhelLightspeed,
-    RhelLightspeedResponse,
     RhelLightspeedData,
+    RhelLightspeedResponse,
 )
 
 
@@ -94,9 +93,7 @@ async def test_rhel_lightspeed_ignores_others(rhel_lightspeed, aiohttp_mock):
     aiohttp_mock.assert_called_once()
 
 
-async def test_rhel_lightspeed_not_called_without_command(
-    rhel_lightspeed, aiohttp_mock
-):
+async def test_rhel_lightspeed_not_called_without_command(rhel_lightspeed, aiohttp_mock):
     processed = await rhel_lightspeed.process(
         [
             ResponseText(

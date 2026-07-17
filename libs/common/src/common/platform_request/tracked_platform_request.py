@@ -2,10 +2,11 @@ import logging
 import time
 from typing import Optional
 
+from aiohttp import ClientResponse
+from aioprometheus import Counter, Histogram, Registry
+
 from common.metrics import get_or_create_metric
 from common.platform_request import AbstractPlatformRequest
-from aioprometheus import Counter, Histogram, Registry
-from aiohttp import ClientResponse
 
 _REQUEST_TOTAL_METRIC_NAME = "platform_requests_total"
 _REQUEST_DURATION_METRIC_NAME = "platform_request_duration_seconds"
@@ -48,9 +49,7 @@ class TrackedPlatformRequest(AbstractPlatformRequest):
         start = time.monotonic()
         status = "unknown"
         try:
-            response = await self.platform_request.request(
-                method, base_url, api_path, user_identity, **kwargs
-            )
+            response = await self.platform_request.request(method, base_url, api_path, user_identity, **kwargs)
             status = str(response.status)
             return response
         except Exception:
@@ -72,6 +71,4 @@ class TrackedPlatformRequest(AbstractPlatformRequest):
                 self.request_total.inc(labels)
                 self.request_duration.observe(labels, duration)
             except Exception as e:
-                logging.getLogger(__name__).error(
-                    "Failed to send platform_request metrics", e
-                )
+                logging.getLogger(__name__).error("Failed to send platform_request metrics", e)

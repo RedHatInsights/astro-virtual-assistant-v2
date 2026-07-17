@@ -1,12 +1,11 @@
 import injector
 from pydantic import BaseModel
-
 from quart import Blueprint, render_template
-from quart_schema import validate_response, validate_querystring, document_headers
+from quart_schema import document_headers, validate_querystring, validate_response
 
 from watson_extension.core.openshift.advisor import (
-    RecommendationCategory,
     AdvisorCore,
+    RecommendationCategory,
 )
 from watson_extension.routes import RHSessionIdHeader
 
@@ -29,9 +28,7 @@ async def recommendations(
     query_args: RecommendationsRequestQuery,
     advisor_service: injector.Inject[AdvisorCore],
 ) -> RecommendationsResponse:
-    recommendation_response = await advisor_service.get_recommendations(
-        query_args.category
-    )
+    recommendation_response = await advisor_service.get_recommendations(query_args.category)
 
     if recommendation_response.category == RecommendationCategory.RECOMMENDATION:
         category_name = "recommendations"

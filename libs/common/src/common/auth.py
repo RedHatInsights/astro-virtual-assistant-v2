@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import binascii
-
-from quart import request, jsonify
 import base64
+import binascii
 import functools
 import json
+
+from quart import jsonify, request
 
 
 def check_identity(identity_header):

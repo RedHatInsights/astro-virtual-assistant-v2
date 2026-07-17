@@ -1,8 +1,9 @@
 from unittest.mock import MagicMock
-from hypothesis import given, strategies as st, assume
-import quart
-import pytest
 
+import pytest
+import quart
+from hypothesis import assume, given
+from hypothesis import strategies as st
 from watson_extension.auth.api_key_authentication import ApiKeyAuthentication
 from werkzeug.exceptions import Unauthorized
 

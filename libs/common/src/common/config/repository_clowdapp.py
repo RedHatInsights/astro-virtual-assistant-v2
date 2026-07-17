@@ -53,9 +53,7 @@ class RepositoryClowdapp(RepositoryEmpty):
         if os.getenv(item, None) is not None:
             return os.getenv(item)
 
-        if item.startswith(self.__ENDPOINT_PREFIX) or item.startswith(
-            self.__PRIVATE_ENDPOINT_PREFIX
-        ):
+        if item.startswith(self.__ENDPOINT_PREFIX) or item.startswith(self.__PRIVATE_ENDPOINT_PREFIX):
             elements = item.split("__")
             if len(elements) == 4:
                 app = _kebab_case(elements[1].lower())
@@ -76,17 +74,11 @@ class RepositoryClowdapp(RepositoryEmpty):
             if item == self.__DATABASE_PREFIX + "CA_PATH":
                 return self.__get_database_ca_path()
 
-            return _get_item_with_param(
-                self.__DATABASE_PREFIX, item, self.config.database
-            )
+            return _get_item_with_param(self.__DATABASE_PREFIX, item, self.config.database)
         elif item.startswith(self.__INMEMORY_PREFIX):
-            return _get_item_with_param(
-                self.__INMEMORY_PREFIX, item, self.config.inMemoryDb
-            )
+            return _get_item_with_param(self.__INMEMORY_PREFIX, item, self.config.inMemoryDb)
         elif item.startswith(self.__LOGGING_PREFIX):
-            return _get_item_with_param(
-                self.__LOGGING_PREFIX, item, self.config.logging.cloudwatch
-            )
+            return _get_item_with_param(self.__LOGGING_PREFIX, item, self.config.logging.cloudwatch)
         else:
             return _get_item_with_param("", item, self.config, fail_if_not_found=False)
 
@@ -124,8 +116,7 @@ def _get_item_with_param(prefix: Text, item: Text, config, fail_if_not_found=Tru
             return getattr(config, what)
         elif fail_if_not_found:
             raise ValueError(
-                "Invalid configuration attribute %s for %s. Valid attributes: %s"
-                % (what, item, config.__dict__.keys())
+                "Invalid configuration attribute %s for %s. Valid attributes: %s" % (what, item, config.__dict__.keys())
             )
 
     return None

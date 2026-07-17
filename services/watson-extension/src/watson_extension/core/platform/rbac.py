@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Tuple
+
 import injector
 
 from watson_extension.clients.platform.rbac import (
@@ -17,9 +18,7 @@ class RBACCore:
     async def get_roles_for_tam(self) -> List[Dict[str, Any]]:
         return await self.rbac_client.get_roles_for_tam()
 
-    async def send_rbac_tam_request(
-        self, account_id, org_id, start_date, end_date, roles
-    ) -> bool:
+    async def send_rbac_tam_request(self, account_id, org_id, start_date, end_date, roles) -> bool:
         return await self.rbac_client.send_rbac_tam_request(
             TAMRequestAccessPayload(
                 account_id=account_id,

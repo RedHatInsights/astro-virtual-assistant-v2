@@ -1,6 +1,6 @@
 import os
-
 from collections import ChainMap
+
 from decouple import Config, RepositoryEnv
 
 from common.config.repository_clowdapp import RepositoryClowdapp
@@ -46,17 +46,13 @@ def log_config(module, logging_function=None):
         return True
 
     def get_value(key: str, value) -> str:
-        if value is None or (
-            isinstance(value, int) and not isinstance(value, bool) and value == 0
-        ):
+        if value is None or (isinstance(value, int) and not isinstance(value, bool) and value == 0):
             return f"--not-set-- ({value})"
 
         upper_key = key.upper()
         accepted_variables = ["dev_sso_refresh_token_url"]
         if (
-            any(
-                banned in upper_key for banned in ["PASSWORD", "TOKEN", "SECRET", "KEY"]
-            )
+            any(banned in upper_key for banned in ["PASSWORD", "TOKEN", "SECRET", "KEY"])
             and key not in accepted_variables
         ):
             return "*********"

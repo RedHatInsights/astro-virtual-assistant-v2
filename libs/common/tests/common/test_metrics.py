@@ -1,6 +1,5 @@
 import pytest
-from aioprometheus import Registry, Gauge, Histogram
-
+from aioprometheus import Gauge, Histogram, Registry
 from common.metrics import get_or_create_metric
 
 
@@ -73,8 +72,6 @@ def test_get_or_create_metric_different_registries():
         const_labels={"app": "test"},
         buckets=[0.1, 0.2, 0.5],
     )
-    gauge = get_or_create_metric(
-        registry2, "not_found_histogram", Gauge, doc="redefining in other registry"
-    )
+    gauge = get_or_create_metric(registry2, "not_found_histogram", Gauge, doc="redefining in other registry")
 
     assert histogram is not gauge

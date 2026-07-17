@@ -1,14 +1,12 @@
 from unittest.mock import MagicMock
 
 import pytest
-from common.session_storage import SessionStorage, Session
+import quart
+from common.identity import QuartWatsonExtensionUserIdentityProvider
+from common.session_storage import Session, SessionStorage
 from werkzeug.exceptions import BadRequest
 
-import quart
-
 from .. import async_value
-
-from common.identity import QuartWatsonExtensionUserIdentityProvider
 
 
 async def test_quart_user_identity_provider():
@@ -17,9 +15,7 @@ async def test_quart_user_identity_provider():
 
     session_storage = MagicMock(SessionStorage)
     session_storage.get = MagicMock(
-        return_value=async_value(
-            Session(key="123456", user_id="user-id", user_identity="identity")
-        )
+        return_value=async_value(Session(key="123456", user_id="user-id", user_identity="identity"))
     )
 
     testee = QuartWatsonExtensionUserIdentityProvider(request, session_storage)

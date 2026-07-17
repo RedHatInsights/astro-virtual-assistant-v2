@@ -1,15 +1,14 @@
-from typing import Optional, Callable
+from typing import Callable, Optional
 
-from quart import Quart, Blueprint
-from quart_schema import QuartSchema
-import quart_injector
 import injector
-
-from watson_extension.clients import AdvisorURL
+import quart_injector
 from common.identity import (
-    FixedUserIdentityProvider,
     AbstractUserIdentityProvider,
+    FixedUserIdentityProvider,
 )
+from quart import Blueprint, Quart
+from quart_schema import QuartSchema
+from watson_extension.clients import AdvisorURL
 
 
 def app_with_blueprint(
@@ -19,11 +18,7 @@ def app_with_blueprint(
     app = Quart(__name__, template_folder="../../src/templates")
     app.register_blueprint(blueprint)
 
-    injector_binders = (
-        [_injector_config, injector_module]
-        if injector_module is not None
-        else [_injector_config]
-    )
+    injector_binders = [_injector_config, injector_module] if injector_module is not None else [_injector_config]
 
     quart_injector.wire(app, injector_binders)
 

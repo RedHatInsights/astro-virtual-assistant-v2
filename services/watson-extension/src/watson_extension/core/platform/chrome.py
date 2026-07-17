@@ -1,4 +1,5 @@
 from typing import List
+
 import injector
 
 from watson_extension.clients.platform.chrome import ChromeServiceClient
@@ -96,9 +97,7 @@ class ChromeServiceCore:
         }
 
     async def modify_favorite_service(self, href, favorite):
-        return await self.chrome_service_client.modify_favorite_service(
-            href=href, favorite=favorite
-        )
+        return await self.chrome_service_client.modify_favorite_service(href=href, favorite=favorite)
 
 
 # Helpers

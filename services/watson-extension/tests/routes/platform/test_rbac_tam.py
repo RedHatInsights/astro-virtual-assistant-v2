@@ -4,16 +4,15 @@ from unittest.mock import MagicMock
 import injector
 import pytest
 from quart.typing import TestClientProtocol
-
 from watson_extension.clients.platform.rbac import (
     RBACClient,
     Roles,
 )
 from watson_extension.core.platform.rbac import RBACCore
-
-from ..common import app_with_blueprint
 from watson_extension.routes.platform.rbac import blueprint
+
 from ... import async_value
+from ..common import app_with_blueprint
 
 
 @pytest.fixture
@@ -107,9 +106,7 @@ async def test_tam_request_body(test_client, rbac_client: MagicMock, snapshot):
         assert payload.account_id == "12345"
         assert payload.org_id == "foo"
         assert payload.start_date == date.today().strftime("%m/%d/%Y")
-        assert payload.end_date == (date.today() + timedelta(days=3)).strftime(
-            "%m/%d/%Y"
-        )
+        assert payload.end_date == (date.today() + timedelta(days=3)).strftime("%m/%d/%Y")
         assert payload.roles == ["Automation Analytics viewer", "Foo bariest"]
         return True
 
@@ -135,11 +132,7 @@ async def test_tam_request_body(test_client, rbac_client: MagicMock, snapshot):
         ("invalid_duration", date.today()),
     ],
 )
-def test_get_start_end_date_from_duration(
-    test_client, rbac_client: MagicMock, duration, expected_end_date
-):
-    start_date, end_date = RBACCore(
-        rbac_client=rbac_client
-    ).get_start_end_date_from_duration(duration)
+def test_get_start_end_date_from_duration(test_client, rbac_client: MagicMock, duration, expected_end_date):
+    start_date, end_date = RBACCore(rbac_client=rbac_client).get_start_end_date_from_duration(duration)
     assert start_date == date.today().strftime("%m/%d/%Y")
     assert end_date == expected_end_date.strftime("%m/%d/%Y")
