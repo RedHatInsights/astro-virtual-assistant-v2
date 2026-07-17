@@ -289,7 +289,7 @@ class WatsonAssistant(Assistant):
     async def send_message(
         self, message: AssistantInput, context: AssistantContext
     ) -> AssistantOutput:
-        sanitized_text = re.sub(r"\s+", " ", message.query.text).strip()
+        sanitized_text = re.sub(r"\s+", " ", message.query.text or "").strip()
         message_input = MessageInput(
             message_type="text",
             text=sanitized_text,
