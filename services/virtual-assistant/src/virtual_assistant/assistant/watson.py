@@ -1,35 +1,38 @@
 import asyncio
+import base64
 import dataclasses
 import json
-import base64
+import logging
 import re
 import textwrap
-import logging
-from typing import List, Any, Tuple
+from typing import Any, List, Tuple
+
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson import AssistantV2
+from ibm_watson.assistant_v2 import (
+    MessageContext,
+    MessageContextActionSkill,
+    MessageContextSkills,
+    MessageInput,
+    MessageInputOptions,
+    RuntimeIntent,
+)
 
 from . import (
     Assistant,
     AssistantContext,
     AssistantInput,
     AssistantOutput,
-    Response as AssistantResponse,
+    OptionsType,
     ResponseCommand,
-    ResponseText,
     ResponseOption,
     ResponseOptions,
-    OptionsType,
     ResponsePause,
+    ResponseText,
 )
-from ibm_watson import AssistantV2
-from ibm_watson.assistant_v2 import RuntimeIntent
-from ibm_watson.assistant_v2 import (
-    MessageInput,
-    MessageInputOptions,
-    MessageContext,
-    MessageContextSkills,
-    MessageContextActionSkill,
+from . import (
+    Response as AssistantResponse,
 )
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 _WATSON_DRAFT_ENVIRONMENT_VARIABLE = "Draft"
 _WATSON_IS_INTERNAL_ENVIRONMENT_VARIABLE = "IsInternal"
@@ -286,7 +289,7 @@ class WatsonAssistant(Assistant):
     async def send_message(
         self, message: AssistantInput, context: AssistantContext
     ) -> AssistantOutput:
-        sanitized_text = re.sub("\s+", " ", message.query.text).strip()
+        sanitized_text = re.sub(r"\s+", " ", message.query.text or "").strip()
         message_input = MessageInput(
             message_type="text",
             text=sanitized_text,

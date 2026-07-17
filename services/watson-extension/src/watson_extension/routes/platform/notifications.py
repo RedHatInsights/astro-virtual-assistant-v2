@@ -1,17 +1,16 @@
-import injector
-from pydantic import BaseModel
 from typing import List
 
+import injector
+from pydantic import BaseModel
 from quart import Blueprint, render_template
-from quart_schema import validate_response, validate_querystring, document_headers
+from quart_schema import document_headers, validate_querystring, validate_response
 
 from watson_extension.core.platform.notifications import (
-    NotificationsBundle,
     NotificationEventInfo,
+    NotificationsBundle,
     PlatformNotificationsCore,
 )
 from watson_extension.routes import RHSessionIdHeader
-
 
 blueprint = Blueprint("notifications", __name__, url_prefix="/notifications")
 

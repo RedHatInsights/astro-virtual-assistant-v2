@@ -3,9 +3,9 @@ import time
 from typing import Callable, Optional
 
 import quart
-from quart import Quart, request, g
-from aioprometheus import Registry, Counter, Histogram
+from aioprometheus import Counter, Histogram, Registry
 from aioprometheus.service import Service
+from quart import Quart, g, request
 
 QUART_EXTENSION_METRIC_REGISTRY = "metric_registry"
 
@@ -34,7 +34,8 @@ def register_app(app: Quart, port: int, metrics_path="/metrics"):
 def get_registry(app: Quart):
     if QUART_EXTENSION_METRIC_REGISTRY not in app.extensions:
         raise KeyError(
-            f"Metrics registry '{QUART_EXTENSION_METRIC_REGISTRY}' is missing. Please ensure it is registered via 'register_app'."
+            f"Metrics registry '{QUART_EXTENSION_METRIC_REGISTRY}' is missing."
+            " Please ensure it is registered via 'register_app'."
         )
     return app.extensions[QUART_EXTENSION_METRIC_REGISTRY]
 

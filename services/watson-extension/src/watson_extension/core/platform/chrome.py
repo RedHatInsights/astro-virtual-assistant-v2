@@ -1,4 +1,5 @@
 from typing import List
+
 import injector
 
 from watson_extension.clients.platform.chrome import ChromeServiceClient

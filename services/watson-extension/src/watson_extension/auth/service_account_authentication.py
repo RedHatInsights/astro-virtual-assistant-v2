@@ -19,8 +19,8 @@ class ServiceAccountAuthentication(Authentication):
 
         try:
             decoded = json.loads(base64.b64decode(identity_header))
-        except (binascii.Error, ValueError):
-            raise Unauthorized("Invalid identity header")
+        except (binascii.Error, ValueError) as err:
+            raise Unauthorized("Invalid identity header") from err
 
         if "identity" not in decoded or "service_account" not in decoded["identity"]:
             raise Unauthorized("Invalid identity header")

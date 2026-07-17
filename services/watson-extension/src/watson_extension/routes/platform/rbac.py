@@ -1,15 +1,14 @@
 import injector
+from common.auth import decoded_identity_header
 from pydantic import BaseModel
-
 from quart import Blueprint, render_template
-from quart_schema import validate_response, validate_querystring, document_headers
+from quart_schema import document_headers, validate_querystring, validate_response
 
+from watson_extension.clients.identity import AbstractUserIdentityProvider
 from watson_extension.core.platform.rbac import (
     RBACCore,
 )
 from watson_extension.routes import RHSessionIdHeader
-from watson_extension.clients.identity import AbstractUserIdentityProvider
-from common.auth import decoded_identity_header
 
 blueprint = Blueprint("rbac", __name__, url_prefix="/rbac")
 

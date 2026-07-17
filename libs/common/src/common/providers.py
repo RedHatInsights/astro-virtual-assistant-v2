@@ -1,16 +1,16 @@
 from typing import Optional
 
 import aiohttp
+from injector import CallableT, Inject, provider
 from quart import Quart
-from injector import Inject, CallableT, provider
 from redis.asyncio import StrictRedis
 
 from common.metrics.quart import get_registry
 from common.platform_request import (
-    DevPlatformRequest,
-    ServiceAccountPlatformRequest,
-    PlatformRequest,
     AbstractPlatformRequest,
+    DevPlatformRequest,
+    PlatformRequest,
+    ServiceAccountPlatformRequest,
 )
 from common.platform_request.tracked_platform_request import TrackedPlatformRequest
 from common.session_storage.file import FileSessionStorage

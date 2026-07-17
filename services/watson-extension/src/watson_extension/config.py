@@ -1,6 +1,8 @@
-from common.config import config, log_config as _log_config
-from decouple import Csv, Choices
 import logging
+
+from common.config import config
+from common.config import log_config as _log_config
+from decouple import Choices, Csv
 
 name = config("APP_NAME", default="virtual-assistant-watson-extension")
 base_url = config("BASE_URL", default="/api/virtual-assistant-watson-extension/v2/")

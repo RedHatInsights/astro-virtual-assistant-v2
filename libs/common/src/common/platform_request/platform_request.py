@@ -1,8 +1,8 @@
 from typing import Optional
 
-from common.platform_request.abstract_platform_request import AbstractPlatformRequest
-
 from aiohttp import ClientResponse, ClientSession
+
+from common.platform_request.abstract_platform_request import AbstractPlatformRequest
 
 
 class PlatformRequest(AbstractPlatformRequest):

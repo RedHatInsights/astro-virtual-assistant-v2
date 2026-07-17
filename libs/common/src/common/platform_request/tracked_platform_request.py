@@ -2,10 +2,11 @@ import logging
 import time
 from typing import Optional
 
+from aiohttp import ClientResponse
+from aioprometheus import Counter, Histogram, Registry
+
 from common.metrics import get_or_create_metric
 from common.platform_request import AbstractPlatformRequest
-from aioprometheus import Counter, Histogram, Registry
-from aiohttp import ClientResponse
 
 _REQUEST_TOTAL_METRIC_NAME = "platform_requests_total"
 _REQUEST_DURATION_METRIC_NAME = "platform_request_duration_seconds"

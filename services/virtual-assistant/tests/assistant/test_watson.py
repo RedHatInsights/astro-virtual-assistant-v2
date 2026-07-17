@@ -1,35 +1,36 @@
 import json
 import textwrap
-from hypothesis import given, strategies as st, settings, HealthCheck
 from unittest.mock import MagicMock
-from .. import get_resource_contents
 
 import pytest
-
+from hypothesis import HealthCheck, given, settings
+from hypothesis import strategies as st
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson import AssistantV2
+from ibm_watson.assistant_v2 import (
+    MessageContext,
+    MessageContextActionSkill,
+    MessageContextSkills,
+    MessageInput,
+    MessageInputOptions,
+)
 from virtual_assistant.assistant import (
-    AssistantInput,
     AssistantContext,
+    AssistantInput,
+    OptionsType,
     Query,
     ResponseType,
-    OptionsType,
 )
 from virtual_assistant.assistant.watson import (
     WatsonAssistant,
+    WatsonAssistantVariables,
     build_assistant,
     format_response,
     get_feedback_command_params,
     get_service_account_command_params,
-    WatsonAssistantVariables,
 )
-from ibm_watson import AssistantV2
-from ibm_watson.assistant_v2 import (
-    MessageInput,
-    MessageInputOptions,
-    MessageContext,
-    MessageContextSkills,
-    MessageContextActionSkill,
-)
-from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+
+from .. import get_resource_contents
 
 
 @pytest.fixture

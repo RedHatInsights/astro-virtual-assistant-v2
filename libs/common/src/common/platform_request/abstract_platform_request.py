@@ -1,15 +1,15 @@
 import abc
 from typing import Optional
-from aiohttp import ClientResponse
 
+from aiohttp import ClientResponse
 from aiohttp.hdrs import (
+    METH_DELETE,
     METH_GET,
-    METH_OPTIONS,
     METH_HEAD,
+    METH_OPTIONS,
+    METH_PATCH,
     METH_POST,
     METH_PUT,
-    METH_PATCH,
-    METH_DELETE,
 )
 
 

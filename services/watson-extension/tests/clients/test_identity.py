@@ -1,14 +1,12 @@
 from unittest.mock import MagicMock
 
 import pytest
-from common.session_storage import SessionStorage, Session
+import quart
+from common.identity import QuartWatsonExtensionUserIdentityProvider
+from common.session_storage import Session, SessionStorage
 from werkzeug.exceptions import BadRequest
 
-import quart
-
 from .. import async_value
-
-from common.identity import QuartWatsonExtensionUserIdentityProvider
 
 
 async def test_quart_user_identity_provider():

@@ -1,9 +1,10 @@
 import os
-from unittest import mock
 import sys
+from unittest import mock
+
+import pytest
 
 from . import path_to_resource
-import pytest
 
 __config_modules = [
     "app_common_python",

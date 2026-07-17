@@ -3,16 +3,16 @@ import json
 from unittest.mock import MagicMock
 from wsgiref.headers import Headers
 
-from hypothesis import given, strategies as st, assume
-import quart
 import pytest
-
-from tests import get_resource_contents
-from werkzeug.exceptions import Unauthorized
-
+import quart
+from hypothesis import assume, given
+from hypothesis import strategies as st
 from watson_extension.auth.service_account_authentication import (
     ServiceAccountAuthentication,
 )
+from werkzeug.exceptions import Unauthorized
+
+from tests import get_resource_contents
 
 
 def get_identity_header(client_id):

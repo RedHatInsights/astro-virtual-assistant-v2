@@ -3,14 +3,13 @@ from unittest.mock import MagicMock
 import injector
 import pytest
 from quart.typing import TestClientProtocol
-
 from watson_extension.clients.general.redhat_status import (
     RedhatStatusClient,
 )
-from ..common import app_with_blueprint
-
 from watson_extension.routes.general.redhat_status import blueprint
+
 from ... import async_value
+from ..common import app_with_blueprint
 
 
 @pytest.fixture

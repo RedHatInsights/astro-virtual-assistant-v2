@@ -1,6 +1,5 @@
 import pytest
-from aioprometheus import Registry, Gauge, Histogram
-
+from aioprometheus import Gauge, Histogram, Registry
 from common.metrics import get_or_create_metric
 
 

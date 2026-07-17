@@ -1,6 +1,6 @@
 from typing import List
 
-from virtual_assistant.assistant import Response, Query, ResponseType
+from virtual_assistant.assistant import Query, Response, ResponseType
 from virtual_assistant.assistant.response_processor.response_processor import (
     ResponseProcessor,
 )

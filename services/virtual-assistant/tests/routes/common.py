@@ -1,9 +1,9 @@
-from typing import Optional, Callable
+from typing import Callable, Optional
 
-from quart import Quart, Blueprint
-from quart_schema import QuartSchema
-import quart_injector
 import injector
+import quart_injector
+from quart import Blueprint, Quart
+from quart_schema import QuartSchema
 
 
 def app_with_blueprint(

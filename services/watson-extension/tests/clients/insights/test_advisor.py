@@ -1,16 +1,16 @@
 import aiohttp
 import pytest
 from aioresponses import aioresponses
-
-from ... import get_resource_contents
-from watson_extension.clients import AdvisorURL
 from common.identity import FixedUserIdentityProvider
+from common.platform_request import PlatformRequest
+from watson_extension.clients import AdvisorURL
 from watson_extension.clients.insights.advisor import (
     AdvisorClient,
     AdvisorClientHttp,
     FindRuleSort,
 )
-from common.platform_request import PlatformRequest
+
+from ... import get_resource_contents
 
 
 @pytest.fixture

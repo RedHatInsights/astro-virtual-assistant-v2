@@ -1,15 +1,15 @@
 import aiohttp
 import pytest
 from aioresponses import aioresponses
-
-from ... import get_resource_contents
-from watson_extension.clients import AdvisorOpenshiftURL
 from common.identity import FixedUserIdentityProvider
+from common.platform_request import PlatformRequest
+from watson_extension.clients import AdvisorOpenshiftURL
 from watson_extension.clients.openshift.advisor import (
     AdvisorClient,
     AdvisorClientHttp,
 )
-from common.platform_request import PlatformRequest
+
+from ... import get_resource_contents
 
 
 @pytest.fixture

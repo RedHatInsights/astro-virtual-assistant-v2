@@ -1,11 +1,12 @@
 import os
-from unittest import mock
 import sys
+from unittest import mock
 from unittest.mock import MagicMock
 
-from .. import path_to_resource
 import pytest
 from decouple import UndefinedValueError
+
+from .. import path_to_resource
 
 __config_modules = [
     "app_common_python",

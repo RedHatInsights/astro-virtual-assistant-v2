@@ -1,5 +1,6 @@
 from quart import Blueprint
-from . import chrome, rbac, notifications, integrations
+
+from . import chrome, integrations, notifications, rbac
 
 blueprint = Blueprint("platform", __name__, url_prefix="/platform")
 

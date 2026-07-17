@@ -1,24 +1,23 @@
 import os
 import sys
-import quart_injector
-import injector
-import aiohttp
-
 from unittest import mock
 from unittest.mock import MagicMock
+
+import aiohttp
+import injector
+import pytest
+import quart_injector
 from aioresponses import aioresponses
 from openapi_spec_validator import validate
-
+from pytest_mock_resources import RedisConfig, create_redis_fixture
 from virtual_assistant.assistant import ResponseType
 from virtual_assistant.assistant.response_processor.rhel_lightspeed import (
-    RhelLightspeedResponse,
     RhelLightspeedData,
+    RhelLightspeedResponse,
 )
 from virtual_assistant.routes.talk import TalkResponse
-from . import get_json_resource
 
-import pytest
-from pytest_mock_resources import create_redis_fixture, RedisConfig
+from . import get_json_resource
 
 redis_fixture = create_redis_fixture()
 

@@ -1,32 +1,30 @@
 import logging
-from typing import Optional, List, Union, Tuple, Any
-from werkzeug.exceptions import BadRequest
+from typing import Any, List, Optional, Tuple, Union
 
 import injector
-from common.session_storage import SessionStorage, Session
-from ibm_cloud_sdk_core.api_exception import ApiException
-from quart import Blueprint, request
-from quart_schema import validate_request, validate_response
-from pydantic import BaseModel
-
-
 from common.auth import (
     assistant_user_id,
-    require_identity_header,
     decoded_identity_header,
+    require_identity_header,
 )
+from common.session_storage import Session, SessionStorage
 from common.types.errors import ValidationError
+from ibm_cloud_sdk_core.api_exception import ApiException
+from pydantic import BaseModel
+from quart import Blueprint, request
+from quart_schema import validate_request, validate_response
+from werkzeug.exceptions import BadRequest
+
 from virtual_assistant.assistant import (
     Assistant,
     AssistantContext,
-    Response,
     AssistantInput,
     Query,
+    Response,
 )
 from virtual_assistant.assistant.response_processor.response_processor import (
     ResponseProcessor,
 )
-
 
 blueprint = Blueprint("talk", __name__, url_prefix="/talk")
 
@@ -64,13 +62,20 @@ class TalkResponse(BaseModel):
     """List of responses given by the assistant"""
 
     confidence: float
-    """Confidence in the response given the input. This value might be off if we are in the middle of a multi-step action"""
+    """Confidence in the response given the input.
+
+    This value might be off if we are in the middle of a multi-step action.
+    """
 
     is_action_running: bool
     """True if we are in the middle of a multi-step action"""
 
     debug_output: Optional[dict[str, Any]] = None
-    """Debug output returned if specified - This will include details the assistant went on when fulfilling the request"""
+    """Debug output returned if specified.
+
+    This will include details the assistant went on when fulfilling
+    the request.
+    """
 
 
 @blueprint.route("", methods=["POST"])

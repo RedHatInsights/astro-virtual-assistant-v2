@@ -1,7 +1,8 @@
-from decouple import Choices
-from common.config import config, log_config as _log_config
 import logging
 
+from common.config import config
+from common.config import log_config as _log_config
+from decouple import Choices
 
 name = config("APP_NAME", default="virtual-assistant")
 base_url = config("BASE_URL", default="/api/virtual-assistant/v2/")

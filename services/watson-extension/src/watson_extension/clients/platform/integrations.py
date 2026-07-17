@@ -1,15 +1,16 @@
-from typing import Optional, Tuple, List, Dict
 import abc
-import injector
-import logging
 import enum
+import logging
+from typing import Dict, List, Optional, Tuple
 from urllib.parse import urlparse
+
+import injector
 from aiohttp import ClientResponse
+
 from watson_extension.clients import PlatformNotificationsURL
 from watson_extension.clients.identity import AbstractUserIdentityProvider
-from watson_extension.clients.platform_request import AbstractPlatformRequest
 from watson_extension.clients.platform import IntegrationInfo
-
+from watson_extension.clients.platform_request import AbstractPlatformRequest
 
 logger = logging.getLogger(__name__)
 

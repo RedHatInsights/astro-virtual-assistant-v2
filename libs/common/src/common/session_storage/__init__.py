@@ -1,4 +1,4 @@
-from abc import abstractmethod, ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional
 
@@ -11,9 +11,6 @@ class Session:
 
 
 class SessionStorage(ABC):
-    def __init__(self):
-        pass
-
     async def put(self, session: Session):
         return await self.store(session)
 

@@ -1,9 +1,9 @@
 from typing import Optional
 
-from common.platform_request.abstract_platform_request import AbstractPlatformRequest
-
-from werkzeug.exceptions import InternalServerError
 from aiohttp import ClientResponse, ClientSession
+from werkzeug.exceptions import InternalServerError
+
+from common.platform_request.abstract_platform_request import AbstractPlatformRequest
 
 
 class DevPlatformRequest(AbstractPlatformRequest):

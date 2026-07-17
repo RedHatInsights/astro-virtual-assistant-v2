@@ -1,10 +1,10 @@
 from typing import List
 
-from pydantic import BaseModel
-
 from common.identity import AbstractUserIdentityProvider
 from common.platform_request import AbstractPlatformRequest
-from virtual_assistant.assistant import Response, ResponseType, Query, ResponseText
+from pydantic import BaseModel
+
+from virtual_assistant.assistant import Query, Response, ResponseText, ResponseType
 from virtual_assistant.assistant.response_processor.response_processor import (
     ResponseProcessor,
 )

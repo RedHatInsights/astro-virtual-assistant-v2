@@ -1,8 +1,8 @@
 from virtual_assistant.assistant import (
     Query,
-    ResponseText,
-    ResponseOptions,
     ResponseOption,
+    ResponseOptions,
+    ResponseText,
     ResponseType,
 )
 from virtual_assistant.assistant.response_processor.combine_empty import CombineEmpty

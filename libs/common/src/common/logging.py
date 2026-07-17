@@ -2,6 +2,7 @@ import logging
 from logging import Formatter
 
 from logstash_formatter import LogstashFormatterV1
+
 from .config import shared_config as app
 
 
@@ -27,8 +28,8 @@ def build_logger(logger_type: str) -> None:
 def _build_cloudwatch_logger() -> None:
     _build_default_logger()
 
-    from boto3.session import Session
     import watchtower
+    from boto3.session import Session
 
     boto3_session = Session(
         aws_access_key_id=app.logging_cloudwatch_access_key_id,

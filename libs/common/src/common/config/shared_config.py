@@ -1,6 +1,9 @@
-from decouple import undefined as __undefined, Choices
-from . import config
 import os
+
+from decouple import Choices
+from decouple import undefined as __undefined
+
+from . import config
 
 is_running_locally = config("IS_RUNNING_LOCALLY", default=False, cast=bool)
 __optional_when_locally = __undefined if is_running_locally is False else None

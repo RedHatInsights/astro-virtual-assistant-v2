@@ -1,11 +1,11 @@
 import abc
+import logging
 
 import injector
-import logging
+
 from watson_extension.clients import NotificationsGWURL
 from watson_extension.clients.identity import AbstractUserIdentityProvider
 from watson_extension.clients.platform_request import AbstractPlatformRequest
-
 
 logger = logging.getLogger(__name__)
 

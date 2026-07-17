@@ -1,12 +1,11 @@
 import enum
-from typing import Optional, List, Tuple
+from typing import List, Optional, Tuple
 
 import injector
 
 from watson_extension.clients.platform import IntegrationInfo
 from watson_extension.clients.platform.integrations import IntegrationsClient
 from watson_extension.clients.platform.sources import SourcesClient
-
 
 MAX_NUMBER_OF_INTEGRATIONS = 5
 

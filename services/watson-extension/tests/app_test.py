@@ -1,25 +1,21 @@
 import json
 import os
 import sys
-import aiohttp
-
 from unittest import mock
-import quart_injector
 
+import aiohttp
 import injector
-from aioresponses import aioresponses
-from openapi_spec_validator import validate
-
 import pytest
-
+import quart_injector
+from aioresponses import aioresponses
 from common.session_storage import Session
-from watson_extension.routes.health import StatusResponse, Status
-from redis.asyncio import StrictRedis
-
-from pytest_mock_resources import create_redis_fixture, RedisConfig
-
 from common.session_storage.redis import RedisSessionStorage
-from . import path_to_resource, get_resource_contents
+from openapi_spec_validator import validate
+from pytest_mock_resources import RedisConfig, create_redis_fixture
+from redis.asyncio import StrictRedis
+from watson_extension.routes.health import Status, StatusResponse
+
+from . import get_resource_contents, path_to_resource
 
 redis_fixture = create_redis_fixture()
 

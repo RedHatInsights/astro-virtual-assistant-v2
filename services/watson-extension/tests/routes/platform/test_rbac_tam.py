@@ -4,16 +4,15 @@ from unittest.mock import MagicMock
 import injector
 import pytest
 from quart.typing import TestClientProtocol
-
 from watson_extension.clients.platform.rbac import (
     RBACClient,
     Roles,
 )
 from watson_extension.core.platform.rbac import RBACCore
-
-from ..common import app_with_blueprint
 from watson_extension.routes.platform.rbac import blueprint
+
 from ... import async_value
+from ..common import app_with_blueprint
 
 
 @pytest.fixture

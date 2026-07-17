@@ -1,6 +1,6 @@
 import os
-
 from collections import ChainMap
+
 from decouple import Config, RepositoryEnv
 
 from common.config.repository_clowdapp import RepositoryClowdapp

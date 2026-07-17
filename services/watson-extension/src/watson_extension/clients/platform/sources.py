@@ -1,12 +1,13 @@
 import abc
+from typing import Dict, List, Optional, Tuple
+
 import injector
-from typing import Dict, Tuple, Optional, List
 from aiohttp import ClientResponse
 
 from watson_extension.clients import SourcesURL
 from watson_extension.clients.identity import AbstractUserIdentityProvider
-from watson_extension.clients.platform_request import AbstractPlatformRequest
 from watson_extension.clients.platform import IntegrationInfo
+from watson_extension.clients.platform_request import AbstractPlatformRequest
 
 
 class SourcesClient(abc.ABC):

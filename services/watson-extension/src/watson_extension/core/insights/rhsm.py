@@ -1,6 +1,7 @@
-import injector
 import enum
 from typing import Optional
+
+import injector
 
 from watson_extension.clients.insights.rhsm import RhsmClient
 

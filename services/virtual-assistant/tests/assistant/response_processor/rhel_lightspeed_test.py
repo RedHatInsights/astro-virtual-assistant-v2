@@ -1,7 +1,6 @@
 import aiohttp
 import pytest
 from aioresponses import aioresponses
-
 from common.identity import FixedUserIdentityProvider
 from common.platform_request import PlatformRequest
 from virtual_assistant.assistant import (
@@ -12,8 +11,8 @@ from virtual_assistant.assistant import (
 )
 from virtual_assistant.assistant.response_processor.rhel_lightspeed import (
     RhelLightspeed,
-    RhelLightspeedResponse,
     RhelLightspeedData,
+    RhelLightspeedResponse,
 )
 
 

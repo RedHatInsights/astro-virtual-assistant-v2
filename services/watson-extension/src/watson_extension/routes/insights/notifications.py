@@ -1,10 +1,8 @@
 import injector
-from pydantic import BaseModel
-
-from quart import Blueprint
-from quart_schema import validate_querystring, document_headers, validate_response
-
 from common.auth import decoded_identity_header
+from pydantic import BaseModel
+from quart import Blueprint
+from quart_schema import document_headers, validate_querystring, validate_response
 
 from watson_extension.clients.identity import AbstractUserIdentityProvider
 from watson_extension.core.insights.notifications import (

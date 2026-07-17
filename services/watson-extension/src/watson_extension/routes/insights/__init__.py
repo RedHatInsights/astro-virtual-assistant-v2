@@ -1,5 +1,6 @@
 from quart import Blueprint
-from . import advisor, inventory, vulnerability, content_sources, rhsm, notifications
+
+from . import advisor, content_sources, inventory, notifications, rhsm, vulnerability
 
 blueprint = Blueprint("insights", __name__, url_prefix="/insights")
 

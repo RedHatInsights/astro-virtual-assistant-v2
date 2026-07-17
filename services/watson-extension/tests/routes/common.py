@@ -1,15 +1,14 @@
-from typing import Optional, Callable
+from typing import Callable, Optional
 
-from quart import Quart, Blueprint
-from quart_schema import QuartSchema
-import quart_injector
 import injector
-
-from watson_extension.clients import AdvisorURL
+import quart_injector
 from common.identity import (
-    FixedUserIdentityProvider,
     AbstractUserIdentityProvider,
+    FixedUserIdentityProvider,
 )
+from quart import Blueprint, Quart
+from quart_schema import QuartSchema
+from watson_extension.clients import AdvisorURL
 
 
 def app_with_blueprint(

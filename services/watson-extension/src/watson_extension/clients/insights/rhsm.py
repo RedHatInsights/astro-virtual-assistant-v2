@@ -1,6 +1,6 @@
 import abc
 from dataclasses import dataclass
-from typing import Optional, List
+from typing import List, Optional
 
 import injector
 
@@ -27,6 +27,7 @@ class RhsmClient(abc.ABC):
         self, category: Optional[str]
     ) -> List[SubscriptionInfo]: ...
 
+    @abc.abstractmethod
     async def create_activation_key(self, name: str): ...
 
 

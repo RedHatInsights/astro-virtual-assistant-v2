@@ -1,9 +1,9 @@
 import abc
 import logging
-from typing import Optional, Dict
-import injector
-import aiohttp
+from typing import Dict, Optional
 
+import aiohttp
+import injector
 
 logger = logging.getLogger(__name__)
 

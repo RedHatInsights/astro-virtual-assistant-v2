@@ -1,12 +1,10 @@
 import json
 
 import pytest
-from redis.asyncio import StrictRedis
-
-from pytest_mock_resources import create_redis_fixture, RedisConfig
-
 from common.session_storage import Session
 from common.session_storage.redis import RedisSessionStorage
+from pytest_mock_resources import RedisConfig, create_redis_fixture
+from redis.asyncio import StrictRedis
 
 redis_fixture = create_redis_fixture()
 

@@ -1,15 +1,14 @@
-from unittest.mock import MagicMock, AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import injector
 import pytest
 from quart.typing import TestClientProtocol
-
 from watson_extension.clients.insights.notifications import (
     NotificationsClient,
 )
-from ..common import app_with_blueprint
-
 from watson_extension.routes.insights.notifications import blueprint
+
+from ..common import app_with_blueprint
 
 
 @pytest.fixture

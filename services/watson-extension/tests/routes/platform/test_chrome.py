@@ -3,18 +3,17 @@ from unittest.mock import MagicMock
 import injector
 import pytest
 from quart.typing import TestClientProtocol
-
 from watson_extension.clients.platform.chrome import (
     ChromeServiceClient,
     Favorite,
-    User,
     Service,
+    User,
     parse_links_into_obj,
 )
-from ..common import app_with_blueprint
-
 from watson_extension.routes.platform.chrome import blueprint
+
 from ... import async_value
+from ..common import app_with_blueprint
 
 
 @pytest.fixture

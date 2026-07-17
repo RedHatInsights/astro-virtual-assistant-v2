@@ -3,13 +3,12 @@ from unittest.mock import MagicMock
 import injector
 import pytest
 from quart.typing import TestClientProtocol
-
 from watson_extension.clients.platform.rbac import (
     RBACClient,
 )
+from watson_extension.routes.platform.rbac import blueprint
 
 from ..common import app_with_blueprint
-from watson_extension.routes.platform.rbac import blueprint
 
 
 @pytest.fixture

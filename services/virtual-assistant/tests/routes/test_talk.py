@@ -1,18 +1,17 @@
 from typing import List
 from unittest.mock import MagicMock
 
+import injector
+import pytest
 from common.session_storage import SessionStorage
 from common.session_storage.memory import MemorySessionStorage
 from quart.typing import TestClientProtocol
-import injector
-import pytest
-
+from virtual_assistant.assistant import Assistant, ResponseText, ResponseType
 from virtual_assistant.assistant.echo import EchoAssistant
 from virtual_assistant.assistant.response_processor.response_processor import (
     ResponseProcessor,
 )
-from virtual_assistant.routes.talk import blueprint, TalkResponse
-from virtual_assistant.assistant import Assistant, ResponseType, ResponseText
+from virtual_assistant.routes.talk import TalkResponse, blueprint
 
 from .common import app_with_blueprint
 

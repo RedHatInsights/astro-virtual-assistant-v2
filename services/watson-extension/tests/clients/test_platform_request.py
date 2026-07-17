@@ -1,19 +1,17 @@
 import json
-
-import aiohttp
 from typing import Optional
 from unittest.mock import MagicMock
-from werkzeug.exceptions import InternalServerError
 
+import aiohttp
+import jwt
+import pytest
 import yarl
 from aioresponses import aioresponses
-import pytest
-import jwt
-
 from common.platform_request import (
     AbstractPlatformRequest,
     DevPlatformRequest,
 )
+from werkzeug.exceptions import InternalServerError
 
 
 @pytest.fixture
@@ -142,7 +140,7 @@ async def test_dev_platform_request_gets_invalid_token(session, aiohttp_mock):
     testee = DevPlatformRequest(session, "token", "token-url")
 
     # Also fails if we get an invalid token
-    with pytest.raises(Exception):
+    with pytest.raises(jwt.exceptions.DecodeError):
         testee._dev_token = "Invalid token"
         aiohttp_mock.post(
             "token-url", status=200, body=json.dumps({"access_token": "im not a token"})

@@ -1,16 +1,15 @@
-from unittest.mock import MagicMock, AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import injector
 import pytest
 from quart.typing import TestClientProtocol
-
 from watson_extension.clients.platform import IntegrationInfo
 from watson_extension.clients.platform.integrations import IntegrationsClient
 from watson_extension.clients.platform.sources import SourcesClient
-from ..common import app_with_blueprint
-
 from watson_extension.routes.platform.integrations import blueprint
+
 from ... import async_value, get_test_template
+from ..common import app_with_blueprint
 
 
 @pytest.fixture

@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Tuple
+
 import injector
 
 from watson_extension.clients.platform.rbac import (

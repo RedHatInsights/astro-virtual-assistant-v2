@@ -1,12 +1,13 @@
-from typing import Optional, Dict, List
 import abc
-import injector
 import logging
+from typing import Dict, List, Optional
+
+import injector
 from aiohttp import ClientResponse
+
 from watson_extension.clients import PlatformNotificationsURL
 from watson_extension.clients.identity import AbstractUserIdentityProvider
 from watson_extension.clients.platform_request import AbstractPlatformRequest
-
 
 logger = logging.getLogger(__name__)
 

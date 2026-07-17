@@ -3,9 +3,6 @@ from typing import List
 import aiohttp
 import injector
 import quart_injector
-from quart import Quart, Blueprint
-
-
 from common.identity import (
     AbstractUserIdentityProvider,
     FixedUserIdentityProvider,
@@ -14,17 +11,20 @@ from common.identity import (
 from common.platform_request import (
     AbstractPlatformRequest,
 )
+from common.providers import (
+    make_client_session_provider,
+    make_dev_platform_request_provider,
+    make_file_session_storage_provider,
+    make_platform_request_provider,
+    make_redis_session_storage_provider,
+    make_sa_platform_request_provider,
+)
 from common.session_storage import SessionStorage
+from quart import Blueprint, Quart
 
 import virtual_assistant.config as config
-from common.providers import (
-    make_dev_platform_request_provider,
-    make_sa_platform_request_provider,
-    make_platform_request_provider,
-    make_client_session_provider,
-    make_redis_session_storage_provider,
-    make_file_session_storage_provider,
-)
+from virtual_assistant.assistant import Assistant
+from virtual_assistant.assistant.echo import EchoAssistant
 from virtual_assistant.assistant.response_processor.combine_empty import CombineEmpty
 from virtual_assistant.assistant.response_processor.response_processor import (
     ResponseProcessor,
@@ -32,15 +32,12 @@ from virtual_assistant.assistant.response_processor.response_processor import (
 from virtual_assistant.assistant.response_processor.rhel_lightspeed import (
     RhelLightspeed,
 )
-from virtual_assistant.routes import health
-from virtual_assistant.routes import talk
-from virtual_assistant.assistant import Assistant
 from virtual_assistant.assistant.watson import (
     WatsonAssistant,
-    build_assistant,
     WatsonAssistantVariables,
+    build_assistant,
 )
-from virtual_assistant.assistant.echo import EchoAssistant
+from virtual_assistant.routes import health, talk
 
 
 @injector.provider

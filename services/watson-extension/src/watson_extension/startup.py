@@ -2,16 +2,26 @@ import aiohttp
 import injector
 import quart
 import quart_injector
-from quart import Quart, Blueprint
-
-from common.providers import (
-    make_redis_session_storage_provider,
-    make_file_session_storage_provider,
-    make_dev_platform_request_provider,
-    make_sa_platform_request_provider,
-    make_platform_request_provider,
-    make_client_session_provider,
+from common.identity import (
+    AbstractUserIdentityProvider,
+    FixedUserIdentityProvider,
+    QuartWatsonExtensionUserIdentityProvider,
 )
+from common.platform_request import (
+    AbstractPlatformRequest,
+)
+from common.providers import (
+    make_client_session_provider,
+    make_dev_platform_request_provider,
+    make_file_session_storage_provider,
+    make_platform_request_provider,
+    make_redis_session_storage_provider,
+    make_sa_platform_request_provider,
+)
+from common.session_storage import SessionStorage
+from quart import Blueprint, Quart
+
+import watson_extension.config as config
 from watson_extension.auth import Authentication
 from watson_extension.auth.api_key_authentication import ApiKeyAuthentication
 from watson_extension.auth.no_authentication import NoAuthentication
@@ -19,83 +29,67 @@ from watson_extension.auth.service_account_authentication import (
     ServiceAccountAuthentication,
 )
 from watson_extension.clients import (
-    AdvisorURL,
     AdvisorOpenshiftURL,
+    AdvisorURL,
     ChromeServiceURL,
-    VulnerabilityURL,
     ContentSourcesURL,
-    RhsmURL,
-    SourcesURL,
     NotificationsGWURL,
     PlatformNotificationsURL,
-)
-from watson_extension.clients.insights.advisor import AdvisorClient, AdvisorClientHttp
-from watson_extension.clients.openshift.advisor import (
-    AdvisorClient as AdvisorOpenshiftClient,
-    AdvisorClientHttp as AdvisorOpenshiftClientHttp,
-)
-from watson_extension.clients.insights.vulnerability import (
-    VulnerabilityClient,
-    VulnerabilityClientHttp,
-)
-from watson_extension.clients.insights.content_sources import (
-    ContentSourcesClient,
-    ContentSourcesClientHttp,
-)
-from watson_extension.clients.insights.rhsm import (
-    RhsmClient,
-    RhsmClientHttp,
-)
-from watson_extension.clients.platform.chrome import (
-    ChromeServiceClient,
-    ChromeServiceClientHttp,
-)
-from watson_extension.clients.platform.sources import (
-    SourcesClient,
-    SourcesClientHttp,
-)
-from watson_extension.clients.insights.notifications import (
-    NotificationsClient,
-    NotificationsClientHttp,
-    NotificationClientNoOp,
-)
-from watson_extension.clients.platform.notifications import (
-    PlatformNotificationsClient,
-    PlatformNotificationsClientHttp,
-)
-from watson_extension.clients.platform.integrations import (
-    IntegrationsClient,
-    IntegrationsClientHttp,
-)
-from watson_extension.clients.platform.rbac import (
-    RbacURL,
-    RBACClient,
-    RBACClientHttp,
-    RBACClientNoOp,
+    RhsmURL,
+    SourcesURL,
+    VulnerabilityURL,
 )
 from watson_extension.clients.general.redhat_status import (
     RedhatStatusClient,
     RedhatStatusClientHttp,
 )
-
-
-from common.platform_request import (
-    AbstractPlatformRequest,
+from watson_extension.clients.insights.advisor import AdvisorClient, AdvisorClientHttp
+from watson_extension.clients.insights.content_sources import (
+    ContentSourcesClient,
+    ContentSourcesClientHttp,
 )
-from watson_extension.routes import health
-from watson_extension.routes import insights
-from watson_extension.routes import openshift
-from watson_extension.routes import platform
-from watson_extension.routes import general
-
-import watson_extension.config as config
-
-from common.session_storage import SessionStorage
-from common.identity import (
-    QuartWatsonExtensionUserIdentityProvider,
-    AbstractUserIdentityProvider,
-    FixedUserIdentityProvider,
+from watson_extension.clients.insights.notifications import (
+    NotificationClientNoOp,
+    NotificationsClient,
+    NotificationsClientHttp,
 )
+from watson_extension.clients.insights.rhsm import (
+    RhsmClient,
+    RhsmClientHttp,
+)
+from watson_extension.clients.insights.vulnerability import (
+    VulnerabilityClient,
+    VulnerabilityClientHttp,
+)
+from watson_extension.clients.openshift.advisor import (
+    AdvisorClient as AdvisorOpenshiftClient,
+)
+from watson_extension.clients.openshift.advisor import (
+    AdvisorClientHttp as AdvisorOpenshiftClientHttp,
+)
+from watson_extension.clients.platform.chrome import (
+    ChromeServiceClient,
+    ChromeServiceClientHttp,
+)
+from watson_extension.clients.platform.integrations import (
+    IntegrationsClient,
+    IntegrationsClientHttp,
+)
+from watson_extension.clients.platform.notifications import (
+    PlatformNotificationsClient,
+    PlatformNotificationsClientHttp,
+)
+from watson_extension.clients.platform.rbac import (
+    RBACClient,
+    RBACClientHttp,
+    RBACClientNoOp,
+    RbacURL,
+)
+from watson_extension.clients.platform.sources import (
+    SourcesClient,
+    SourcesClientHttp,
+)
+from watson_extension.routes import general, health, insights, openshift, platform
 
 
 @injector.provider
