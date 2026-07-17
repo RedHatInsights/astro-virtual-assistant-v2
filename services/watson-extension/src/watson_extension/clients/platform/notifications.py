@@ -56,7 +56,9 @@ class PlatformNotificationsClientHttp(PlatformNotificationsClient):
 
         return await response.json()
 
-    async def get_available_events_by_bundle(self, bundleId: str, exclude_muted_types: Optional[bool] = False) -> Dict:
+    async def get_available_events_by_bundle(
+        self, bundleId: str, exclude_muted_types: Optional[bool] = False
+    ) -> Dict:
         params = {
             "limit": 20,
             "offset": 0,

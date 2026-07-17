@@ -50,10 +50,14 @@ def pmr_redis_config() -> RedisConfig:
 @pytest.fixture
 async def assistant_v2():
     create_session_response = MagicMock()
-    create_session_response.get_result = MagicMock(return_value={"session_id": "session_id_0001"})
+    create_session_response.get_result = MagicMock(
+        return_value={"session_id": "session_id_0001"}
+    )
 
     message_response = MagicMock()
-    message_response.get_result = MagicMock(return_value=get_json_resource("itest_watson_response.json"))
+    message_response.get_result = MagicMock(
+        return_value=get_json_resource("itest_watson_response.json")
+    )
 
     mocked = MagicMock()
     mocked.create_session = MagicMock(return_value=create_session_response)

@@ -23,4 +23,6 @@ def get_or_create_metric(
                 f" {collector.__name__}"
             )
         return metric
-    return collector(name=name, doc=doc, const_labels=const_labels, registry=registry, **kwargs)
+    return collector(
+        name=name, doc=doc, const_labels=const_labels, registry=registry, **kwargs
+    )

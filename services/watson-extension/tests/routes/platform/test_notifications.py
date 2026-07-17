@@ -23,7 +23,9 @@ async def test_client(platform_notifications_client) -> TestClientProtocol:
     return app_with_blueprint(blueprint, injector_binder).test_client()
 
 
-async def test_notifications_event_options(test_client, platform_notifications_client) -> None:
+async def test_notifications_event_options(
+    test_client, platform_notifications_client
+) -> None:
     platform_notifications_client.get_available_bundles = MagicMock(
         return_value=async_value(
             [
@@ -84,61 +86,90 @@ async def test_notifications_event_options(test_client, platform_notifications_c
     ]
 
 
-async def test_remove_behavior_group_success(test_client, platform_notifications_client) -> None:
-    platform_notifications_client.get_behavior_groups = MagicMock(return_value=async_value([{"test": "yes"}]))
+async def test_remove_behavior_group_success(
+    test_client, platform_notifications_client
+) -> None:
+    platform_notifications_client.get_behavior_groups = MagicMock(
+        return_value=async_value([{"test": "yes"}])
+    )
 
     mute_event_response = AsyncMock()
     mute_event_response.status = 200
 
-    platform_notifications_client.mute_event = MagicMock(return_value=async_value(mute_event_response))
+    platform_notifications_client.mute_event = MagicMock(
+        return_value=async_value(mute_event_response)
+    )
 
     query_params = {
         "bundle_id": "8a1d329e-7865-4751-b468-e764fe499887",
         "event_id": "f2130a90-a0a6-41a8-97d2-84223ffe9900",
         "event_application_display_name": "Advisor",
     }
-    response = await test_client.get("/notifications/remove_behavior_group", query_string=query_params)
+    response = await test_client.get(
+        "/notifications/remove_behavior_group", query_string=query_params
+    )
     assert response.status == "200 OK"
     data = await response.get_json()
 
     assert data["response"] == "I have muted notifications for the Advisor event."
 
 
-async def test_remove_behavior_group_error(test_client, platform_notifications_client) -> None:
-    platform_notifications_client.get_behavior_groups = MagicMock(return_value=async_value([{"test": "yes"}]))
+async def test_remove_behavior_group_error(
+    test_client, platform_notifications_client
+) -> None:
+    platform_notifications_client.get_behavior_groups = MagicMock(
+        return_value=async_value([{"test": "yes"}])
+    )
 
     mute_event_response = AsyncMock()
     mute_event_response.ok = False
 
-    platform_notifications_client.mute_event = MagicMock(return_value=async_value(mute_event_response))
+    platform_notifications_client.mute_event = MagicMock(
+        return_value=async_value(mute_event_response)
+    )
 
     query_params = {
         "bundle_id": "8a1d329e-7865-4751-b468-e764fe499887",
         "event_id": "f2130a90-a0a6-41a8-97d2-84223ffe9900",
         "event_application_display_name": "Advisor",
     }
-    response = await test_client.get("/notifications/remove_behavior_group", query_string=query_params)
+    response = await test_client.get(
+        "/notifications/remove_behavior_group", query_string=query_params
+    )
     assert response.status == "200 OK"
     data = await response.get_json()
 
-    assert data["response"] == "I was unable to mute this event. Please try again later."
+    assert (
+        data["response"] == "I was unable to mute this event. Please try again later."
+    )
 
 
-async def test_remove_behavior_group_no_behavior_group(test_client, platform_notifications_client) -> None:
-    platform_notifications_client.get_behavior_groups = MagicMock(return_value=async_value([]))
+async def test_remove_behavior_group_no_behavior_group(
+    test_client, platform_notifications_client
+) -> None:
+    platform_notifications_client.get_behavior_groups = MagicMock(
+        return_value=async_value([])
+    )
 
     mute_event_response = AsyncMock()
     mute_event_response.ok = False
 
-    platform_notifications_client.mute_event = MagicMock(return_value=async_value(mute_event_response))
+    platform_notifications_client.mute_event = MagicMock(
+        return_value=async_value(mute_event_response)
+    )
 
     query_params = {
         "bundle_id": "8a1d329e-7865-4751-b468-e764fe499887",
         "event_id": "f2130a90-a0a6-41a8-97d2-84223ffe9900",
         "event_application_display_name": "Advisor",
     }
-    response = await test_client.get("/notifications/remove_behavior_group", query_string=query_params)
+    response = await test_client.get(
+        "/notifications/remove_behavior_group", query_string=query_params
+    )
     assert response.status == "200 OK"
     data = await response.get_json()
 
-    assert data["response"] == "You don't have any behavior groups attached to the Advisor event yet."
+    assert (
+        data["response"]
+        == "You don't have any behavior groups attached to the Advisor event yet."
+    )

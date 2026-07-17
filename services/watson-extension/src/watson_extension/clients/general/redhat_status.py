@@ -26,6 +26,8 @@ class RedhatStatusClientHttp(RedhatStatusClient):
             ) as status_response:
                 result = await status_response.json()
         except Exception as e:
-            logger.error(f"An Exception occured while handling response from status.redhat.com: {e}")
+            logger.error(
+                f"An Exception occured while handling response from status.redhat.com: {e}"
+            )
             raise e
         return result

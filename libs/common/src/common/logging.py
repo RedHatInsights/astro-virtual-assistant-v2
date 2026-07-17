@@ -8,7 +8,9 @@ from .config import shared_config as app
 
 class VirtualAssistantLogFormatter(Formatter):
     def __init__(self, *args, **kwargs):
-        super().__init__("%(asctime)s %(threadName)s %(levelname)s %(name)s - %(message)s")
+        super().__init__(
+            "%(asctime)s %(threadName)s %(levelname)s %(name)s - %(message)s"
+        )
 
     def format(self, record):
         return super().format(record)

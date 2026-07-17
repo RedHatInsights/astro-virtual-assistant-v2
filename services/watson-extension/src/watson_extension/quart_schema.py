@@ -42,14 +42,18 @@ class WatsonExtensionAPIProvider(OpenAPIProvider):
 
         return paths, components
 
-    def build_querystring_parameters(self, model: Type[Model]) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    def build_querystring_parameters(
+        self, model: Type[Model]
+    ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
         parameters, definitions = super().build_querystring_parameters(model)
         for parameter in parameters:
             if "schema" in parameter:
                 self._patch_schema(parameter["schema"])
         return parameters, definitions
 
-    def build_request_body(self, model: Type[Model], source: DataSource) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def build_request_body(
+        self, model: Type[Model], source: DataSource
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         request_body, definitions = super().build_request_body(model, source)
         if "content" in request_body:
             content = request_body["content"]
@@ -77,7 +81,9 @@ class WatsonExtensionAPIProvider(OpenAPIProvider):
                 self._patch_schema(prop)
 
         if "anyOf" in schema:
-            schema["anyOf"] = [v for v in schema["anyOf"] if not self._is_type_with_null_string(v)]
+            schema["anyOf"] = [
+                v for v in schema["anyOf"] if not self._is_type_with_null_string(v)
+            ]
             if len(schema["anyOf"]) == 1:
                 content = schema["anyOf"][0]
                 if set(content.keys()).isdisjoint(schema):

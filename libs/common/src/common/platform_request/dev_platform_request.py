@@ -66,4 +66,6 @@ class DevPlatformRequest(AbstractPlatformRequest):
         if user_identity is not None:
             headers["Authorization"] = "Bearer " + self._dev_token
 
-        return await self.session.request(method, f"{base_url}{api_path}", headers=headers, **kwargs)
+        return await self.session.request(
+            method, f"{base_url}{api_path}", headers=headers, **kwargs
+        )

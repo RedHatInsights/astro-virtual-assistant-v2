@@ -27,7 +27,9 @@ async def test_client(content_sources_client) -> TestClientProtocol:
     return app_with_blueprint(blueprint, injector_binder).test_client()
 
 
-async def test_custom_repositories_enabled(test_client, content_sources_client, snapshot) -> None:
+async def test_custom_repositories_enabled(
+    test_client, content_sources_client, snapshot
+) -> None:
     content_sources_client.get_popular_repositories = MagicMock(
         return_value=async_value(
             GetPopularRepositoriesResponse(
@@ -61,7 +63,9 @@ async def test_custom_repositories_enabled(test_client, content_sources_client, 
     assert data["response"] == snapshot
 
 
-async def test_custom_repositories_already_enabled(test_client, content_sources_client, snapshot) -> None:
+async def test_custom_repositories_already_enabled(
+    test_client, content_sources_client, snapshot
+) -> None:
     content_sources_client.get_popular_repositories = MagicMock(
         return_value=async_value(
             GetPopularRepositoriesResponse(
@@ -95,7 +99,9 @@ async def test_custom_repositories_already_enabled(test_client, content_sources_
     assert data["response"] == snapshot
 
 
-async def test_custom_repositories_error(test_client, content_sources_client, snapshot) -> None:
+async def test_custom_repositories_error(
+    test_client, content_sources_client, snapshot
+) -> None:
     content_sources_client.get_popular_repositories = MagicMock(
         return_value=async_value(
             GetPopularRepositoriesResponse(

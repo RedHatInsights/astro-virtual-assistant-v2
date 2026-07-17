@@ -51,7 +51,9 @@ async def favorites(
         )
     if service_data["already"] != query_args.favoriting:
         try:
-            await chrome_service.modify_favorite_service(service_data["href"], favorite=query_args.favoriting)
+            await chrome_service.modify_favorite_service(
+                service_data["href"], favorite=query_args.favoriting
+            )
         except Exception:
             return FavoritesResponse(
                 response=await render_template(

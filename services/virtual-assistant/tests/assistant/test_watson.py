@@ -50,7 +50,9 @@ def environment_id():
 
 @pytest.fixture
 def watson(assistant_v2, assistant_id, environment_id) -> WatsonAssistant:
-    return WatsonAssistant(assistant_v2, assistant_id, environment_id, WatsonAssistantVariables())
+    return WatsonAssistant(
+        assistant_v2, assistant_id, environment_id, WatsonAssistantVariables()
+    )
 
 
 async def test_build_assistant():
@@ -71,8 +73,12 @@ async def test_create_session_without_session(watson, assistant_v2):
 
 async def test_send_watson_message(watson, assistant_v2, assistant_id, environment_id):
     await watson.send_message(
-        message=AssistantInput(session_id="1234", user_id="1234", query=Query(text="hello world")),
-        context=AssistantContext(is_internal=False, is_org_admin=False, user_email="user@example.com"),
+        message=AssistantInput(
+            session_id="1234", user_id="1234", query=Query(text="hello world")
+        ),
+        context=AssistantContext(
+            is_internal=False, is_org_admin=False, user_email="user@example.com"
+        ),
     )
     assistant_v2.message.assert_called_once()
     assistant_v2.message.assert_called_with(
@@ -105,11 +111,17 @@ async def test_send_watson_message(watson, assistant_v2, assistant_id, environme
 @settings(
     suppress_health_check=[HealthCheck.function_scoped_fixture]
 )  # The fixtures are not being reset per call, but is fine for this test
-async def test_send_draft_variable(watson, assistant_v2, assistant_id, environment_id, draft_value):
+async def test_send_draft_variable(
+    watson, assistant_v2, assistant_id, environment_id, draft_value
+):
     watson.variables.draft = draft_value
     await watson.send_message(
-        message=AssistantInput(session_id="1234", user_id="1234", query=Query(text="hello world")),
-        context=AssistantContext(is_internal=False, is_org_admin=False, user_email="user@example.com"),
+        message=AssistantInput(
+            session_id="1234", user_id="1234", query=Query(text="hello world")
+        ),
+        context=AssistantContext(
+            is_internal=False, is_org_admin=False, user_email="user@example.com"
+        ),
     )
     context = assistant_v2.message.call_args.kwargs["context"]
     assert context.skills.actions_skill.skill_variables["Draft"] is draft_value
@@ -117,10 +129,14 @@ async def test_send_draft_variable(watson, assistant_v2, assistant_id, environme
 
 @given(st.booleans(), st.booleans())
 @settings(suppress_health_check=[HealthCheck.function_scoped_fixture])
-async def test_send_assistant_context(watson, assistant_v2, assistant_id, environment_id, is_internal, is_org_admin):
+async def test_send_assistant_context(
+    watson, assistant_v2, assistant_id, environment_id, is_internal, is_org_admin
+):
     watson.variables.draft = True
     await watson.send_message(
-        message=AssistantInput(session_id="1234", user_id="1234", query=Query(text="hello world")),
+        message=AssistantInput(
+            session_id="1234", user_id="1234", query=Query(text="hello world")
+        ),
         context=AssistantContext(
             is_internal=is_internal,
             is_org_admin=is_org_admin,
@@ -183,7 +199,9 @@ async def test_get_service_account_command_params_missing_tag():
 
 
 async def test_format_response():
-    formatted = format_response(json.loads(get_resource_contents("watson_format.json")), "user@example.com")
+    formatted = format_response(
+        json.loads(get_resource_contents("watson_format.json")), "user@example.com"
+    )
     assert len(formatted) == 7
 
     assert formatted[0].type == ResponseType.COMMAND
@@ -229,7 +247,10 @@ async def test_format_response():
     assert len(formatted[5].options) == 2
     assert formatted[5].options[0].text == "maybe"
     assert formatted[5].options[0].value == "suggest"
-    assert formatted[5].options[0].option_id == '[{"intent": "some-intent", "confidence": 1}]'
+    assert (
+        formatted[5].options[0].option_id
+        == '[{"intent": "some-intent", "confidence": 1}]'
+    )
     assert formatted[5].options[1].text == "no-id"
     assert formatted[5].options[1].value == "no-id-provided"
     assert formatted[5].options[1].option_id is None

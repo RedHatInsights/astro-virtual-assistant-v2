@@ -28,7 +28,9 @@ async def enable_custom_repositories(
     content_sources_service: injector.Inject[ContentSourcesCore],
 ) -> EnableCustomRepositoriesResponse:
     version = query_args.version
-    custom_repositories_response = await content_sources_service.enable_custom_repositories(version)
+    custom_repositories_response = (
+        await content_sources_service.enable_custom_repositories(version)
+    )
 
     return EnableCustomRepositoriesResponse(
         response=await render_template(

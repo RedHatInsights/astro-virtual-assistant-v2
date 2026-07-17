@@ -49,7 +49,9 @@ class PlatformNotificationsCore:
     ):
         self.platform_notifications_client = platform_notifications_client
 
-    async def validate_notifications_bundle(self, provided_bundle_name: str) -> Optional[BundleInfo]:
+    async def validate_notifications_bundle(
+        self, provided_bundle_name: str
+    ) -> Optional[BundleInfo]:
         if provided_bundle_name == "unsure":
             return BundleInfo(id="unsure", name="unsure", display_name="unsure")
 
@@ -68,12 +70,18 @@ class PlatformNotificationsCore:
 
         return None
 
-    async def get_notifications_event_options(self, bundle: NotificationsBundle) -> List[NotificationEventInfo]:
+    async def get_notifications_event_options(
+        self, bundle: NotificationsBundle
+    ) -> List[NotificationEventInfo]:
         validated_bundle = await self.validate_notifications_bundle(bundle.value)
         if not validated_bundle:
             return []
 
-        result = await self.platform_notifications_client.get_available_events_by_bundle(validated_bundle.id)
+        result = (
+            await self.platform_notifications_client.get_available_events_by_bundle(
+                validated_bundle.id
+            )
+        )
 
         options = []
         for event in result["data"]:
@@ -89,7 +97,9 @@ class PlatformNotificationsCore:
             options.append(event_data)
         return options
 
-    async def remove_behaviour_group(self, bundle_id: str, event_id: str) -> RemoveBehaviourGroupResponse:
+    async def remove_behaviour_group(
+        self, bundle_id: str, event_id: str
+    ) -> RemoveBehaviourGroupResponse:
         result = await self.platform_notifications_client.get_behavior_groups(bundle_id)
 
         if len(result) > 0:

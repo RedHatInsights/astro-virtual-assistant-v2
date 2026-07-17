@@ -41,8 +41,10 @@ async def notifications_event_options(
     query_args: NotificationsEventOptionsRequestQuery,
     platform_notifications_service: injector.Inject[PlatformNotificationsCore],
 ) -> NotificationsEventOptionsResponse:
-    notifications_event_options = await platform_notifications_service.get_notifications_event_options(
-        query_args.bundle_name
+    notifications_event_options = (
+        await platform_notifications_service.get_notifications_event_options(
+            query_args.bundle_name
+        )
     )
 
     return NotificationsEventOptionsResponse(options=notifications_event_options)
@@ -56,8 +58,10 @@ async def remove_behavior_group(
     query_args: RemoveBehaviorGroupRequestQuery,
     platform_notifications_service: injector.Inject[PlatformNotificationsCore],
 ) -> RemoveBehaviorGroupResponse:
-    remove_behavior_group_response = await platform_notifications_service.remove_behaviour_group(
-        query_args.bundle_id, query_args.event_id
+    remove_behavior_group_response = (
+        await platform_notifications_service.remove_behaviour_group(
+            query_args.bundle_id, query_args.event_id
+        )
     )
 
     return RemoveBehaviorGroupResponse(

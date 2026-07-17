@@ -163,7 +163,9 @@ def injector_from_config(binder: injector.Binder) -> None:
             scope=injector.singleton,
         )
     else:
-        raise RuntimeError(f"Unexpected platform request configuration: {config.platform_request}")
+        raise RuntimeError(
+            f"Unexpected platform request configuration: {config.platform_request}"
+        )
 
     if config.is_running_locally:
         binder.bind(
@@ -202,21 +204,35 @@ def injector_from_config(binder: injector.Binder) -> None:
     if config.authentication_type == "no-auth":
         binder.bind(Authentication, to=NoAuthentication, scope=injector.singleton)
     elif config.authentication_type == "api-key":
-        binder.bind(Authentication, to=api_key_authentication_provider, scope=injector.singleton)
+        binder.bind(
+            Authentication, to=api_key_authentication_provider, scope=injector.singleton
+        )
     elif config.authentication_type == "service-account":
-        binder.bind(Authentication, to=sa_authentication_provider, scope=injector.singleton)
+        binder.bind(
+            Authentication, to=sa_authentication_provider, scope=injector.singleton
+        )
     else:
-        raise RuntimeError(f"Unexpected authentication type {config.authentication_type}")
+        raise RuntimeError(
+            f"Unexpected authentication type {config.authentication_type}"
+        )
 
     # urls
     binder.bind(AdvisorURL, to=config.advisor_url, scope=injector.singleton)
     binder.bind(VulnerabilityURL, to=config.vulnerability_url, scope=injector.singleton)
-    binder.bind(ContentSourcesURL, to=config.content_sources_url, scope=injector.singleton)
+    binder.bind(
+        ContentSourcesURL, to=config.content_sources_url, scope=injector.singleton
+    )
     binder.bind(RhsmURL, to=config.rhsm_url, scope=injector.singleton)
-    binder.bind(AdvisorOpenshiftURL, to=config.advisor_openshift_url, scope=injector.singleton)
-    binder.bind(ChromeServiceURL, to=config.chrome_service_url, scope=injector.singleton)
+    binder.bind(
+        AdvisorOpenshiftURL, to=config.advisor_openshift_url, scope=injector.singleton
+    )
+    binder.bind(
+        ChromeServiceURL, to=config.chrome_service_url, scope=injector.singleton
+    )
     binder.bind(SourcesURL, to=config.sources_url, scope=injector.singleton)
-    binder.bind(NotificationsGWURL, to=config.notifications_gw_url, scope=injector.singleton)
+    binder.bind(
+        NotificationsGWURL, to=config.notifications_gw_url, scope=injector.singleton
+    )
     binder.bind(
         PlatformNotificationsURL,
         to=config.platform_notifications_url,
@@ -228,7 +244,9 @@ def injector_from_config(binder: injector.Binder) -> None:
 def injector_defaults(binder: injector.Binder) -> None:
     # clients
     binder.bind(AdvisorClient, AdvisorClientHttp, scope=quart_injector.RequestScope)
-    binder.bind(VulnerabilityClient, VulnerabilityClientHttp, scope=quart_injector.RequestScope)
+    binder.bind(
+        VulnerabilityClient, VulnerabilityClientHttp, scope=quart_injector.RequestScope
+    )
     binder.bind(
         ContentSourcesClient,
         ContentSourcesClientHttp,
@@ -250,8 +268,12 @@ def injector_defaults(binder: injector.Binder) -> None:
         PlatformNotificationsClientHttp,
         scope=quart_injector.RequestScope,
     )
-    binder.bind(IntegrationsClient, IntegrationsClientHttp, scope=quart_injector.RequestScope)
-    binder.bind(RedhatStatusClient, RedhatStatusClientHttp, scope=quart_injector.RequestScope)
+    binder.bind(
+        IntegrationsClient, IntegrationsClientHttp, scope=quart_injector.RequestScope
+    )
+    binder.bind(
+        RedhatStatusClient, RedhatStatusClientHttp, scope=quart_injector.RequestScope
+    )
 
 
 def wire_routes(app: Quart) -> None:

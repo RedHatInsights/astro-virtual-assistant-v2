@@ -17,9 +17,13 @@ from common.session_storage.file import FileSessionStorage
 from common.session_storage.redis import RedisSessionStorage
 
 
-def make_dev_platform_request_provider(refresh_token: str, refresh_token_url: str, app_name: str) -> CallableT:
+def make_dev_platform_request_provider(
+    refresh_token: str, refresh_token_url: str, app_name: str
+) -> CallableT:
     @provider
-    def dev_platform_request(session: Inject[aiohttp.ClientSession], app: Inject[Quart]) -> AbstractPlatformRequest:
+    def dev_platform_request(
+        session: Inject[aiohttp.ClientSession], app: Inject[Quart]
+    ) -> AbstractPlatformRequest:
         return TrackedPlatformRequest(
             DevPlatformRequest(
                 session,
@@ -33,7 +37,9 @@ def make_dev_platform_request_provider(refresh_token: str, refresh_token_url: st
     return dev_platform_request
 
 
-def make_sa_platform_request_provider(token_url: str, sa_id: str, sa_secret: str, app_name: str) -> CallableT:
+def make_sa_platform_request_provider(
+    token_url: str, sa_id: str, sa_secret: str, app_name: str
+) -> CallableT:
     @provider
     def sa_platform_request(
         session: Inject[aiohttp.ClientSession],
@@ -59,7 +65,9 @@ def make_platform_request_provider(app_name: str) -> CallableT:
         session: Inject[aiohttp.ClientSession],
         app: Inject[Quart],
     ) -> AbstractPlatformRequest:
-        return TrackedPlatformRequest(PlatformRequest(session), get_registry(app), app_name)
+        return TrackedPlatformRequest(
+            PlatformRequest(session), get_registry(app), app_name
+        )
 
     return platform_request
 

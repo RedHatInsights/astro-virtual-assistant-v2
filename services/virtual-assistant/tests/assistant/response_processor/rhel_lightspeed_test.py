@@ -93,7 +93,9 @@ async def test_rhel_lightspeed_ignores_others(rhel_lightspeed, aiohttp_mock):
     aiohttp_mock.assert_called_once()
 
 
-async def test_rhel_lightspeed_not_called_without_command(rhel_lightspeed, aiohttp_mock):
+async def test_rhel_lightspeed_not_called_without_command(
+    rhel_lightspeed, aiohttp_mock
+):
     processed = await rhel_lightspeed.process(
         [
             ResponseText(

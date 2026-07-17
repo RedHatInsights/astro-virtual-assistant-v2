@@ -30,8 +30,12 @@ class IntegrationsCore:
     ) -> bool:
         return await self.sources_client.is_source_name_valid(integrations_setup_name)
 
-    async def redhat_integrations_setup(self, integrations_setup_name: str, redhat_cluster_identifier: str) -> bool:
-        return await self.sources_client.bulk_create(integrations_setup_name, redhat_cluster_identifier)
+    async def redhat_integrations_setup(
+        self, integrations_setup_name: str, redhat_cluster_identifier: str
+    ) -> bool:
+        return await self.sources_client.bulk_create(
+            integrations_setup_name, redhat_cluster_identifier
+        )
 
     async def communications_integrations_setup(
         self,
@@ -134,7 +138,9 @@ class IntegrationsCore:
         response = None
 
         if integration_type == IntegrationType.REDHAT:
-            response = await self.sources_client.sources_unpause_integration(integration_id)
+            response = await self.sources_client.sources_unpause_integration(
+                integration_id
+            )
         elif integration_type == IntegrationType.NOTIFICATIONS:
             response = await self.integrations_client.integration_resume(integration_id)
 
@@ -151,7 +157,9 @@ class IntegrationsCore:
         response = None
 
         if integration_type == IntegrationType.REDHAT:
-            response = await self.sources_client.sources_pause_integration(integration_id)
+            response = await self.sources_client.sources_pause_integration(
+                integration_id
+            )
         elif integration_type == IntegrationType.NOTIFICATIONS:
             response = await self.integrations_client.integration_pause(integration_id)
 
@@ -168,7 +176,9 @@ class IntegrationsCore:
         response = None
 
         if integration_type == IntegrationType.REDHAT:
-            response = await self.sources_client.sources_delete_integration(integration_id)
+            response = await self.sources_client.sources_delete_integration(
+                integration_id
+            )
         elif integration_type == IntegrationType.NOTIFICATIONS:
             response = await self.integrations_client.delete_integration(integration_id)
 
@@ -191,7 +201,9 @@ class IntegrationsCore:
                 integration_data={"name": new_integration_name},
             )
         elif integration_type == IntegrationType.NOTIFICATIONS:
-            response = await self.integrations_client.retrieve_notification_endpoint(integration_id)
+            response = await self.integrations_client.retrieve_notification_endpoint(
+                integration_id
+            )
 
             if response.ok:
                 integration_data = await response.json()
@@ -215,7 +227,9 @@ class IntegrationsCore:
         response = None
 
         if integration_type == IntegrationType.NOTIFICATIONS:
-            response = await self.integrations_client.retrieve_notification_endpoint(integration_id)
+            response = await self.integrations_client.retrieve_notification_endpoint(
+                integration_id
+            )
 
             if response.ok:
                 integration_data = await response.json()
@@ -239,7 +253,9 @@ class IntegrationsCore:
         response = None
 
         if integration_type == IntegrationType.NOTIFICATIONS:
-            response = await self.integrations_client.retrieve_notification_endpoint(integration_id)
+            response = await self.integrations_client.retrieve_notification_endpoint(
+                integration_id
+            )
 
             if response.ok:
                 integration_data = await response.json()

@@ -25,7 +25,9 @@ async def test_client(redhat_status_client) -> TestClientProtocol:
     return app_with_blueprint(blueprint, injector_binder).test_client()
 
 
-async def test_check_services_offline_incident_exists(test_client, redhat_status_client) -> None:
+async def test_check_services_offline_incident_exists(
+    test_client, redhat_status_client
+) -> None:
     redhat_status_client.check_services_offline = MagicMock(
         return_value=async_value(
             {
@@ -50,8 +52,12 @@ async def test_check_services_offline_incident_exists(test_client, redhat_status
     assert data["incidents"][0]["status"] == "investigating"
 
 
-async def test_check_services_offline_no_incidents(test_client, redhat_status_client) -> None:
-    redhat_status_client.check_services_offline = MagicMock(return_value=async_value({"incidents": []}))
+async def test_check_services_offline_no_incidents(
+    test_client, redhat_status_client
+) -> None:
+    redhat_status_client.check_services_offline = MagicMock(
+        return_value=async_value({"incidents": []})
+    )
 
     response = await test_client.get("/redhat_status/check_services_offline")
     assert response.status == "200 OK"
@@ -63,7 +69,9 @@ async def test_check_services_offline_no_incidents(test_client, redhat_status_cl
 
 
 async def test_check_services_offline_error(test_client, redhat_status_client) -> None:
-    redhat_status_client.check_services_offline = MagicMock(return_value=async_value(None))
+    redhat_status_client.check_services_offline = MagicMock(
+        return_value=async_value(None)
+    )
 
     response = await test_client.get("/redhat_status/check_services_offline")
     assert response.status == "200 OK"

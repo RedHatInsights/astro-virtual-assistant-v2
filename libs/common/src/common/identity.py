@@ -13,12 +13,16 @@ class AbstractUserIdentityProvider(abc.ABC):
     async def get_user_identity(self) -> str: ...
 
     async def is_internal(self) -> bool:
-        identity = decoded_identity_header(await self.user_identity_provider.get_user_identity())
+        identity = decoded_identity_header(
+            await self.user_identity_provider.get_user_identity()
+        )
         return identity["user"]["is_internal"]
 
 
 class QuartWatsonExtensionUserIdentityProvider(AbstractUserIdentityProvider):
-    def __init__(self, request: quart.Request, session_storage: injector.Inject[SessionStorage]):
+    def __init__(
+        self, request: quart.Request, session_storage: injector.Inject[SessionStorage]
+    ):
         self.request = request
         self.session_storage = session_storage
 

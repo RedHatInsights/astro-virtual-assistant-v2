@@ -34,7 +34,9 @@ class AdvisorCore:
     def __init__(self, advisor_client: injector.Inject[AdvisorClient]):
         self.advisor_client = advisor_client
 
-    async def get_recommendations(self, category_type: RecommendationCategory) -> AdvisorRecommendationResponse:
+    async def get_recommendations(
+        self, category_type: RecommendationCategory
+    ) -> AdvisorRecommendationResponse:
         if category_type == RecommendationCategory.RECOMMENDATION:
             recommendations = await self.advisor_client.get_recommendations()
             return AdvisorRecommendationResponse(
@@ -75,4 +77,6 @@ class AdvisorCore:
                 ],
             )
         else:
-            raise RuntimeError(f"Unexpected openshift advisor recommendation type: {category_type}")
+            raise RuntimeError(
+                f"Unexpected openshift advisor recommendation type: {category_type}"
+            )

@@ -8,7 +8,9 @@ class ContentSourcesCore:
         self.content_sources_client = content_sources_client
 
     async def enable_custom_repositories(self, version: str):
-        popular_repositories = await self.content_sources_client.get_popular_repositories()
+        popular_repositories = (
+            await self.content_sources_client.get_popular_repositories()
+        )
 
         repository = None
         for repo in popular_repositories.data:
@@ -28,4 +30,6 @@ class ContentSourcesCore:
             }
         ]
 
-        return await self.content_sources_client.repositories_bulk_create(formatted_repository_info)
+        return await self.content_sources_client.repositories_bulk_create(
+            formatted_repository_info
+        )

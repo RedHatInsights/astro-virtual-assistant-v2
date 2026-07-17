@@ -131,7 +131,9 @@ async def test_client(chrome_client) -> TestClientProtocol:
 
 @pytest.mark.asyncio
 async def test_favoriting_modify_favorite_service_exception(chrome_client: MagicMock):
-    chrome_client.modify_favorite_service.side_effect = Exception("Mocked network error")
+    chrome_client.modify_favorite_service.side_effect = Exception(
+        "Mocked network error"
+    )
 
     with pytest.raises(Exception) as excinfo:
         await chrome_client.modify_favorite_service()
@@ -139,42 +141,60 @@ async def test_favoriting_modify_favorite_service_exception(chrome_client: Magic
 
 
 async def test_favoriting_add_favorite(test_client, chrome_client, snapshot) -> None:
-    response = await test_client.post("/chrome/favorites", query_string={"favoriting": True, "title": "bar1"})
+    response = await test_client.post(
+        "/chrome/favorites", query_string={"favoriting": True, "title": "bar1"}
+    )
     assert response.status == "200 OK"
     data = await response.get_json()
     assert data["response"] == snapshot
 
 
-async def test_favoriting_external_service(test_client, chrome_client, snapshot) -> None:
-    response = await test_client.post("/chrome/favorites", query_string={"favoriting": True, "title": "bar2"})
+async def test_favoriting_external_service(
+    test_client, chrome_client, snapshot
+) -> None:
+    response = await test_client.post(
+        "/chrome/favorites", query_string={"favoriting": True, "title": "bar2"}
+    )
     assert response.status == "200 OK"
     data = await response.get_json()
     assert data["response"] == snapshot
 
 
-async def test_favoriting_already_favorited(test_client, chrome_client, snapshot) -> None:
-    response = await test_client.post("/chrome/favorites", query_string={"favoriting": True, "title": "bar3"})
+async def test_favoriting_already_favorited(
+    test_client, chrome_client, snapshot
+) -> None:
+    response = await test_client.post(
+        "/chrome/favorites", query_string={"favoriting": True, "title": "bar3"}
+    )
     assert response.status == "200 OK"
     data = await response.get_json()
     assert data["response"] == snapshot
 
 
 async def test_favoriting_not_found(test_client, chrome_client, snapshot) -> None:
-    response = await test_client.post("/chrome/favorites", query_string={"favoriting": True, "title": "not-found"})
+    response = await test_client.post(
+        "/chrome/favorites", query_string={"favoriting": True, "title": "not-found"}
+    )
     assert response.status == "200 OK"
     data = await response.get_json()
     assert data["response"] == snapshot
 
 
 async def test_favoriting_remove_favorite(test_client, chrome_client, snapshot) -> None:
-    response = await test_client.post("/chrome/favorites", query_string={"favoriting": False, "title": "bar3"})
+    response = await test_client.post(
+        "/chrome/favorites", query_string={"favoriting": False, "title": "bar3"}
+    )
     assert response.status == "200 OK"
     data = await response.get_json()
     assert data["response"] == snapshot
 
 
-async def test_favoriting_remove_service_not_favorited(test_client, chrome_client, snapshot) -> None:
-    response = await test_client.post("/chrome/favorites", query_string={"favoriting": False, "title": "bar1"})
+async def test_favoriting_remove_service_not_favorited(
+    test_client, chrome_client, snapshot
+) -> None:
+    response = await test_client.post(
+        "/chrome/favorites", query_string={"favoriting": False, "title": "bar1"}
+    )
     assert response.status == "200 OK"
     data = await response.get_json()
     assert data["response"] == snapshot

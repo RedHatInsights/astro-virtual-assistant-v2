@@ -15,7 +15,9 @@ async def test_quart_user_identity_provider():
 
     session_storage = MagicMock(SessionStorage)
     session_storage.get = MagicMock(
-        return_value=async_value(Session(key="123456", user_id="user-id", user_identity="identity"))
+        return_value=async_value(
+            Session(key="123456", user_id="user-id", user_identity="identity")
+        )
     )
 
     testee = QuartWatsonExtensionUserIdentityProvider(request, session_storage)

@@ -60,7 +60,9 @@ class RhelLightspeed(ResponseProcessor):
     async def process(self, responses: List[Response], query: Query) -> List[Response]:
         result: List[Response] = []
         for response in responses:
-            if is_lightspeed_command(response, RHEL_LIGHTSPEED_COMMAND, RHEL_LIGHTSPEED_PARAM):
+            if is_lightspeed_command(
+                response, RHEL_LIGHTSPEED_COMMAND, RHEL_LIGHTSPEED_PARAM
+            ):
                 result.append(*await self.lightspeed_query(query))
             else:
                 result.append(response)

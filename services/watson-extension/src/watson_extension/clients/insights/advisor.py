@@ -94,7 +94,9 @@ class AdvisorClientHttp(AdvisorClient):
             query += f"&sort={sort.value}"
 
         if only_workloads is not None:
-            query += f"&filter[system_profile][sap_system]={str(only_workloads).lower()}"
+            query += (
+                f"&filter[system_profile][sap_system]={str(only_workloads).lower()}"
+            )
 
         request = f"/api/insights/v1/rule?{query}&limit=3"
         response = await self.platform_request.get(

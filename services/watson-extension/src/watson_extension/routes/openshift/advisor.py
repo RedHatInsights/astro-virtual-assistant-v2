@@ -28,7 +28,9 @@ async def recommendations(
     query_args: RecommendationsRequestQuery,
     advisor_service: injector.Inject[AdvisorCore],
 ) -> RecommendationsResponse:
-    recommendation_response = await advisor_service.get_recommendations(query_args.category)
+    recommendation_response = await advisor_service.get_recommendations(
+        query_args.category
+    )
 
     if recommendation_response.category == RecommendationCategory.RECOMMENDATION:
         category_name = "recommendations"

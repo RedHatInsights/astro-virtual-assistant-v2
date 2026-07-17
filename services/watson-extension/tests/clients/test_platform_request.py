@@ -41,7 +41,9 @@ async def test_abstract_platform_request():
             user_identity: Optional[str] = None,
             **kwargs,
         ):
-            self.session_mock.request(method, base_url, api_path, user_identity, **kwargs)
+            self.session_mock.request(
+                method, base_url, api_path, user_identity, **kwargs
+            )
 
     mock = MagicMock()
     testee = TestAbstractPlatformRequest(mock)
@@ -80,7 +82,9 @@ async def test_dev_platform_request(session, aiohttp_mock):
     )
 
     # Initial call
-    resp = await testee.request("GET", "target-url", "/path", user_identity="not-used-but-must-be-present")
+    resp = await testee.request(
+        "GET", "target-url", "/path", user_identity="not-used-but-must-be-present"
+    )
     assert resp.status == 200
     aiohttp_mock.assert_called_with(
         "token-url",
@@ -91,7 +95,9 @@ async def test_dev_platform_request(session, aiohttp_mock):
             "refresh_token": "token",
         },
     )
-    aiohttp_mock.assert_called_with("target-url/path", "GET", headers={"Authorization": "Bearer " + token})
+    aiohttp_mock.assert_called_with(
+        "target-url/path", "GET", headers={"Authorization": "Bearer " + token}
+    )
 
     # Calling with a token already present
     aiohttp_mock.get(
@@ -136,5 +142,7 @@ async def test_dev_platform_request_gets_invalid_token(session, aiohttp_mock):
     # Also fails if we get an invalid token
     with pytest.raises(jwt.exceptions.DecodeError):
         testee._dev_token = "Invalid token"
-        aiohttp_mock.post("token-url", status=200, body=json.dumps({"access_token": "im not a token"}))
+        aiohttp_mock.post(
+            "token-url", status=200, body=json.dumps({"access_token": "im not a token"})
+        )
         await testee.request("GET", "other-url", "/path")

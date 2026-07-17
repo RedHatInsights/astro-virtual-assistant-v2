@@ -110,7 +110,9 @@ async def test_app_injection(default_app):
 
 async def test_openapi(default_app):
     test_client = default_app.test_client()
-    response = await test_client.get("/api/virtual-assistant-watson-extension/v2/openapi.json")
+    response = await test_client.get(
+        "/api/virtual-assistant-watson-extension/v2/openapi.json"
+    )
     assert response.status == "200 OK"
     validate(await response.get_json())
 
@@ -132,12 +134,16 @@ async def test_app_health(default_app):
 
 async def test_app_advisor(default_app, aiohttp_mock, session_storage):
     test_client = default_app.test_client()
-    await session_storage.put(Session(key="1234", user_identity="my-identity", user_id="theorg/theuser"))
+    await session_storage.put(
+        Session(key="1234", user_identity="my-identity", user_id="theorg/theuser")
+    )
 
     aiohttp_mock.get(
         "http://n-api.svc:8000/api/insights/v1/rulecategory/",
         status=200,
-        body=json.dumps([{"category": "performance", "id": "123", "name": "performance"}]),
+        body=json.dumps(
+            [{"category": "performance", "id": "123", "name": "performance"}]
+        ),
     )
 
     aiohttp_mock.get(
@@ -169,7 +175,9 @@ async def test_app_advisor(default_app, aiohttp_mock, session_storage):
 
 async def test_app_advisor_openshift(default_app, aiohttp_mock, session_storage):
     test_client = default_app.test_client()
-    await session_storage.put(Session(key="1234", user_identity="my-identity", user_id="theorg/theuser"))
+    await session_storage.put(
+        Session(key="1234", user_identity="my-identity", user_id="theorg/theuser")
+    )
 
     aiohttp_mock.get(
         "http://openshift-advisor:8000/api/insights-results-aggregator/v2/clusters",

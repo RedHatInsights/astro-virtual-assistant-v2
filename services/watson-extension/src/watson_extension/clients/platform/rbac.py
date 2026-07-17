@@ -101,6 +101,8 @@ class RBACClientHttp(RBACClient):
 
 class RBACClientNoOp(RBACClientHttp):
     async def send_rbac_tam_request(self, body: TAMRequestAccessPayload) -> bool:
-        logger.info(f"Called send_rbac_tam_request in local environment with body: {body}")
+        logger.info(
+            f"Called send_rbac_tam_request in local environment with body: {body}"
+        )
 
         return True

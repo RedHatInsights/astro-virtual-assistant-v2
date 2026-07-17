@@ -89,7 +89,9 @@ class ContentSourcesClientHttp(ContentSourcesClient):
             errors = content["errors"]
 
         repositories_response = None
-        if status >= 400 and any("already belongs" in error["detail"] for error in errors):
+        if status >= 400 and any(
+            "already belongs" in error["detail"] for error in errors
+        ):
             repositories_response = "already_enabled"
         elif status == 201:
             repositories_response = "enabled"

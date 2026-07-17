@@ -25,7 +25,9 @@ def session_storage(redis):
 
 
 async def test_redis_session_storage_store(session_storage, redis):
-    await session_storage.put(Session(key="my-key", user_identity="my.identity", user_id="1234"))
+    await session_storage.put(
+        Session(key="my-key", user_identity="my.identity", user_id="1234")
+    )
     raw = await redis.get("my-key")
     session = json.loads(raw)
     assert session["key"] == "my-key"

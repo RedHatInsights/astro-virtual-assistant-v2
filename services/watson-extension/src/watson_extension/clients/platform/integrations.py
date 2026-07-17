@@ -81,10 +81,14 @@ class IntegrationsClient(abc.ABC):
     async def delete_integration(self, integration_id: str) -> ClientResponse: ...
 
     @abc.abstractmethod
-    async def retrieve_notification_endpoint(self, integration_id: str) -> ClientResponse: ...
+    async def retrieve_notification_endpoint(
+        self, integration_id: str
+    ) -> ClientResponse: ...
 
     @abc.abstractmethod
-    async def update_integration(self, integration_id: str, integration_data: Dict) -> ClientResponse: ...
+    async def update_integration(
+        self, integration_id: str, integration_data: Dict
+    ) -> ClientResponse: ...
 
 
 class IntegrationsClientHttp(IntegrationsClient):
@@ -204,7 +208,9 @@ class IntegrationsClientHttp(IntegrationsClient):
             user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
-    async def retrieve_notification_endpoint(self, integration_id: str) -> ClientResponse:
+    async def retrieve_notification_endpoint(
+        self, integration_id: str
+    ) -> ClientResponse:
         request = f"/api/integrations/v1.0/endpoints/{integration_id}"
         return await self.platform_request.get(
             self.platform_notifications_url,
@@ -212,7 +218,9 @@ class IntegrationsClientHttp(IntegrationsClient):
             user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
-    async def update_integration(self, integration_id: str, integration_data: Dict) -> ClientResponse:
+    async def update_integration(
+        self, integration_id: str, integration_data: Dict
+    ) -> ClientResponse:
         request = f"/api/integrations/v1.0/endpoints/{integration_id}"
         return await self.platform_request.put(
             self.platform_notifications_url,

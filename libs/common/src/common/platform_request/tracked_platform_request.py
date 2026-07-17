@@ -49,7 +49,9 @@ class TrackedPlatformRequest(AbstractPlatformRequest):
         start = time.monotonic()
         status = "unknown"
         try:
-            response = await self.platform_request.request(method, base_url, api_path, user_identity, **kwargs)
+            response = await self.platform_request.request(
+                method, base_url, api_path, user_identity, **kwargs
+            )
             status = str(response.status)
             return response
         except Exception:
@@ -71,4 +73,6 @@ class TrackedPlatformRequest(AbstractPlatformRequest):
                 self.request_total.inc(labels)
                 self.request_duration.observe(labels, duration)
             except Exception as e:
-                logging.getLogger(__name__).error("Failed to send platform_request metrics", e)
+                logging.getLogger(__name__).error(
+                    "Failed to send platform_request metrics", e
+                )

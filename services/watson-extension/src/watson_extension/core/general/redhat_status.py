@@ -38,7 +38,8 @@ class RedhatStatusCore:
 
         if incidents:
             casted_incidents = [
-                IncidentType(name=incident["name"], status=incident["status"]) for incident in incidents
+                IncidentType(name=incident["name"], status=incident["status"])
+                for incident in incidents
             ]
             count = str(len(incidents))
             return ServicesOfflineResponseTypes.INCIDENT_EXISTS, casted_incidents, count

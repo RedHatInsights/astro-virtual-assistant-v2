@@ -17,18 +17,26 @@ if is_running_locally:
 else:
     __platform_url = None
 
-logger_type = config("LOGGER_TYPE", default="basic", cast=Choices(["basic", "cloudwatch"]))
+logger_type = config(
+    "LOGGER_TYPE", default="basic", cast=Choices(["basic", "cloudwatch"])
+)
 
-console_dot_base_url = config("CONSOLEDOT_BASE_URL", default="https://console.redhat.com")
+console_dot_base_url = config(
+    "CONSOLEDOT_BASE_URL", default="https://console.redhat.com"
+)
 
 # Session storage
-session_storage = config("SESSION_STORAGE", default="file", cast=Choices(["file", "redis"]))
+session_storage = config(
+    "SESSION_STORAGE", default="file", cast=Choices(["file", "redis"])
+)
 if session_storage == "redis":
     redis_hostname = config("REDIS_HOSTNAME")
     redis_port = config("REDIS_PORT")
 
 
-console_assistant = config("CONSOLE_ASSISTANT", default="echo", cast=Choices(["echo", "watson"]))
+console_assistant = config(
+    "CONSOLE_ASSISTANT", default="echo", cast=Choices(["echo", "watson"])
+)
 if console_assistant == "watson":
     watson_api_url = config("WATSON_API_URL")
     watson_api_key = config("WATSON_API_KEY")

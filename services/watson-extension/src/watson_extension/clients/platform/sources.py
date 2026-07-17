@@ -30,16 +30,24 @@ class SourcesClient(abc.ABC):
     ) -> bool: ...
 
     @abc.abstractmethod
-    async def sources_pause_integration(self, integration_id: str) -> ClientResponse: ...
+    async def sources_pause_integration(
+        self, integration_id: str
+    ) -> ClientResponse: ...
 
     @abc.abstractmethod
-    async def sources_unpause_integration(self, integration_id: str) -> ClientResponse: ...
+    async def sources_unpause_integration(
+        self, integration_id: str
+    ) -> ClientResponse: ...
 
     @abc.abstractmethod
-    async def sources_delete_integration(self, integration_id: str) -> ClientResponse: ...
+    async def sources_delete_integration(
+        self, integration_id: str
+    ) -> ClientResponse: ...
 
     @abc.abstractmethod
-    async def sources_update_integration(self, integration_id: str, integration_data: Dict) -> ClientResponse: ...
+    async def sources_update_integration(
+        self, integration_id: str, integration_data: Dict
+    ) -> ClientResponse: ...
 
 
 class SourcesClientHttp(SourcesClient):
@@ -87,7 +95,10 @@ class SourcesClientHttp(SourcesClient):
             sources_integrations = []
             for integration in content["data"]:
                 integration_enabled = (
-                    True if "paused_at" not in integration or integration["paused_at"] is None else False
+                    True
+                    if "paused_at" not in integration
+                    or integration["paused_at"] is None
+                    else False
                 )
                 sources_integrations.append(
                     IntegrationInfo(
@@ -107,7 +118,9 @@ class SourcesClientHttp(SourcesClient):
         response = await self.platform_request.post(
             self.sources_url,
             request,
-            json={"query": f'{{ sources(filter: {{name: "name", value: "{integration_setup_name}"}}){{ id, name }}}}'},
+            json={
+                "query": f'{{ sources(filter: {{name: "name", value: "{integration_setup_name}"}}){{ id, name }}}}'
+            },
             user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
@@ -185,7 +198,9 @@ class SourcesClientHttp(SourcesClient):
             user_identity=await self.user_identity_provider.get_user_identity(),
         )
 
-    async def sources_update_integration(self, integration_id: str, integration_data: Dict) -> ClientResponse:
+    async def sources_update_integration(
+        self, integration_id: str, integration_data: Dict
+    ) -> ClientResponse:
         request = f"/api/sources/v3.1/sources/{integration_id}"
 
         return await self.platform_request.patch(

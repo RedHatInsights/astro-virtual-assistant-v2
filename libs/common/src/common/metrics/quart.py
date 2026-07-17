@@ -12,7 +12,9 @@ QUART_EXTENSION_METRIC_REGISTRY = "metric_registry"
 
 def register_app(app: Quart, port: int, metrics_path="/metrics"):
     if QUART_EXTENSION_METRIC_REGISTRY in app.extensions:
-        raise ValueError("Metrics registry is already registered, only call it 'register_app' once.")
+        raise ValueError(
+            "Metrics registry is already registered, only call it 'register_app' once."
+        )
 
     registry = Registry()
     app.extensions[QUART_EXTENSION_METRIC_REGISTRY] = registry
@@ -69,7 +71,9 @@ def register_http_metrics(
 
             labels = {
                 "method": request.method,
-                "path": request.url_rule.rule if request.url_rule is not None else "<unknown>",
+                "path": request.url_rule.rule
+                if request.url_rule is not None
+                else "<unknown>",
                 "status": str(response.status_code),
             }
 
@@ -77,6 +81,8 @@ def register_http_metrics(
                 http_requests_total.inc(labels)
                 http_request_duration.observe(labels, duration)
             except Exception as e:
-                logging.getLogger(__name__).error("Failed to send platform_request metrics", e)
+                logging.getLogger(__name__).error(
+                    "Failed to send platform_request metrics", e
+                )
 
         return response

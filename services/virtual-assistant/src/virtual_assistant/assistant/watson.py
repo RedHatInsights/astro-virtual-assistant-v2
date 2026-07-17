@@ -57,7 +57,9 @@ def get_debug_output(response: dict) -> dict[str, Any]:
     }
 
 
-def search_for_field(tag: str, watson_msg: str, regex_flags: re.RegexFlag = 0, default: str = None) -> str:
+def search_for_field(
+    tag: str, watson_msg: str, regex_flags: re.RegexFlag = 0, default: str = None
+) -> str:
     pattern = rf"<\|start_{tag}\|>(.*?)<\|end_{tag}\|>"
     match = re.search(pattern, watson_msg, regex_flags)
     if match:
@@ -68,7 +70,9 @@ def search_for_field(tag: str, watson_msg: str, regex_flags: re.RegexFlag = 0, d
     raise ValueError(f"Missing {tag} in the message: {watson_msg}")
 
 
-def get_feedback_command_params(watson_msg: str, user_email: str) -> Tuple[str, str, str]:
+def get_feedback_command_params(
+    watson_msg: str, user_email: str
+) -> Tuple[str, str, str]:
     """
     Extracts the params from the message of the feedback command.
 
@@ -79,14 +83,20 @@ def get_feedback_command_params(watson_msg: str, user_email: str) -> Tuple[str, 
     """
 
     feedback_type = search_for_field("feedback_type", watson_msg, default="general")
-    feedback_response = search_for_field("feedback_response", watson_msg, default="", regex_flags=re.DOTALL)
+    feedback_response = search_for_field(
+        "feedback_response", watson_msg, default="", regex_flags=re.DOTALL
+    )
     usability_study = search_for_field("usability_study", watson_msg, default="false")
 
     feedback_type_label = f"{feedback_type}-feedback"
 
-    feedback_usability_study = "The user DOES NOT want to participate in our usability studies."
+    feedback_usability_study = (
+        "The user DOES NOT want to participate in our usability studies."
+    )
     if usability_study:
-        feedback_usability_study = f"The user wants to participate in a usability study. Email: {user_email}"
+        feedback_usability_study = (
+            f"The user wants to participate in a usability study. Email: {user_email}"
+        )
 
     summary = "Platform feedback from the assistant"
     description = textwrap.dedent(f"""
@@ -128,7 +138,11 @@ def get_confidence(response: dict) -> float:
 def get_action_running(response: dict) -> bool:
     try:
         b64_state = (
-            response.get("context", {}).get("skills", {}).get("actions skill", {}).get("system", {}).get("state")
+            response.get("context", {})
+            .get("skills", {})
+            .get("actions skill", {})
+            .get("system", {})
+            .get("state")
         )
         if b64_state is None:
             return False
@@ -164,11 +178,17 @@ def format_response(response: dict, user_email: str) -> List[AssistantResponse]:
                 params = generic["text"].split(" ")
                 command = params[0].strip("/")
                 if command == "feedback":
-                    feedback_params = get_feedback_command_params(generic["text"], user_email)
+                    feedback_params = get_feedback_command_params(
+                        generic["text"], user_email
+                    )
                     entry = ResponseCommand(command=command, args=feedback_params)
                 elif command == "create_service_account":
-                    service_account_params = get_service_account_command_params(generic["text"])
-                    entry = ResponseCommand(command=command, args=service_account_params)
+                    service_account_params = get_service_account_command_params(
+                        generic["text"]
+                    )
+                    entry = ResponseCommand(
+                        command=command, args=service_account_params
+                    )
                 else:
                     entry = ResponseCommand(command=command, args=params[1:])
             else:
@@ -261,10 +281,14 @@ class WatsonAssistant(Assistant):
         Returns:
         str: A valid session id
         """
-        response = await asyncio.to_thread(self.assistant.create_session, assistant_id=self.environment_id)
+        response = await asyncio.to_thread(
+            self.assistant.create_session, assistant_id=self.environment_id
+        )
         return response.get_result()["session_id"]
 
-    async def send_message(self, message: AssistantInput, context: AssistantContext) -> AssistantOutput:
+    async def send_message(
+        self, message: AssistantInput, context: AssistantContext
+    ) -> AssistantOutput:
         sanitized_text = re.sub(r"\s+", " ", message.query.text).strip()
         message_input = MessageInput(
             message_type="text",
@@ -276,7 +300,8 @@ class WatsonAssistant(Assistant):
         if message.query.option_id:
             intents_array = json.loads(message.query.option_id)
             message_input.intents = [
-                RuntimeIntent(intent=i.get("intent"), confidence=i.get("confidence")) for i in intents_array
+                RuntimeIntent(intent=i.get("intent"), confidence=i.get("confidence"))
+                for i in intents_array
             ]
 
         response = await asyncio.to_thread(
