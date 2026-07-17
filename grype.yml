@@ -1,0 +1,25 @@
+---
+# Ignore rules for CPython CVEs in UBI 8 base image.
+# Fixes only available in Python 3.15 (unreleased).
+# See: https://github.com/RedHatInsights/astro-virtual-assistant-v2/pull/175
+
+ignore:
+  - vulnerability: CVE-2026-15308
+    reason: >-
+      High severity CPython vulnerability. Fix requires Python 3.15.0 which is
+      not yet released. Installed: 3.13.14. Base image: UBI 8.
+
+  - vulnerability: CVE-2025-15366
+    reason: >-
+      Medium severity CPython vulnerability. Fix requires Python 3.15.0a6 which
+      is not yet released. Installed: 3.13.14. Base image: UBI 8.
+
+  - vulnerability: CVE-2025-15367
+    reason: >-
+      Medium severity CPython vulnerability. Fix requires Python 3.15.0a6 which
+      is not yet released. Installed: 3.13.14. Base image: UBI 8.
+
+  - vulnerability: CVE-2026-12003
+    reason: >-
+      Medium severity CPython vulnerability. Fix requires Python 3.15.0b3 which
+      is not yet released. Installed: 3.13.14. Base image: UBI 8.
