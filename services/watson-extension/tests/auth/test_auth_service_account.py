@@ -23,7 +23,9 @@ def get_identity_header(client_id):
 
 
 def get_identity_header_with_updater(updater):
-    identity_header_json = json.loads(get_resource_contents("auth/identity-header.json"))
+    identity_header_json = json.loads(
+        get_resource_contents("auth/identity-header.json")
+    )
     updater(identity_header_json)
     return base64.b64encode(json.dumps(identity_header_json).encode("utf-8"))
 

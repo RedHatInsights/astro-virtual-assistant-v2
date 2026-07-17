@@ -39,7 +39,9 @@ async def shutdown():
 quart_injector.QuartModule(app)
 quart_injector.wire(app, [injector_defaults, injector_from_config])
 quart_metrics.register_app(app, config.metrics_port)
-quart_metrics.register_http_metrics(app, config.name, lambda r: r.path.startswith("/api"))
+quart_metrics.register_http_metrics(
+    app, config.name, lambda r: r.path.startswith("/api")
+)
 
 
 @app.errorhandler(RequestSchemaValidationError)

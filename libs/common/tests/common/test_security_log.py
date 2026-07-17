@@ -96,12 +96,16 @@ class TestGetPrincipalFromIdentity:
         assert result == {"type": "invalid"}
 
     def test_missing_user_fields(self):
-        identity = _make_identity_b64({"identity": {"org_id": "org123", "type": "User", "user": {}}})
+        identity = _make_identity_b64(
+            {"identity": {"org_id": "org123", "type": "User", "user": {}}}
+        )
         result = get_principal_from_identity(identity)
         assert result == {"type": "user", "org_id": "org123", "user_id": "unknown"}
 
     def test_unknown_identity_type(self):
-        identity = _make_identity_b64({"identity": {"org_id": "org123", "type": "CustomType"}})
+        identity = _make_identity_b64(
+            {"identity": {"org_id": "org123", "type": "CustomType"}}
+        )
         result = get_principal_from_identity(identity)
         assert result == {
             "type": "CustomType",

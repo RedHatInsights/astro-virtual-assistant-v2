@@ -147,7 +147,9 @@ async def talk(
 
         if assistant_response_processors:
             for processor in assistant_response_processors:
-                assistant_response.response = await processor.process(assistant_response.response, query=query)
+                assistant_response.response = await processor.process(
+                    assistant_response.response, query=query
+                )
 
         security_log(
             action="SEND_MESSAGE",
