@@ -9,6 +9,7 @@ from quart import jsonify, request
 
 from common.security_log import security_log
 
+
 def check_identity(identity_header):
     try:
         base64.b64decode(identity_header)
