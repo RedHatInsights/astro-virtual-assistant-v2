@@ -74,8 +74,7 @@ class TalkResponse(BaseModel):
     debug_output: Optional[dict[str, Any]] = None
     """Debug output returned if specified.
 
-    This will include details the assistant went on when fulfilling
-    the request.
+    This will include details the assistant went on when fulfilling the request.
     """
 
 
