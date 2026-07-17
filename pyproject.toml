@@ -1,3 +1,10 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = []
+
 [project]
 name = "astro-virtual-assistant"
 version = "0.1.0"
@@ -9,7 +16,7 @@ dependencies = [
     "quart-injector==0.0.0b1",
     "pydantic>=2.10.5",
     "logstash_formatter>=0.5.17",
-    "aiohttp>=3.13.3",
+    "aiohttp>=3.14.1",
     "aioprometheus[aiohttp]>=23.12.0",
     "urllib3>=2.7.0",
 ]
@@ -19,7 +26,7 @@ dev = [
     "ruff>=0.9.4",
     "pytest>=8.3.4",
     "pytest-asyncio>=0.25.3",
-    "aioresponses>=0.7.8",
+    "aioresponses>=0.7.9",
     "pytest-mock-resources[docker]>=2.12.1",
     "pytest-env>=1.1.5",
     "hypothesis>=6.125.3",
@@ -32,7 +39,17 @@ dev = [
 constraint-dependencies = [
     "pyjwt>=2.12.0",
     "orjson>=3.11.6",
+    "werkzeug>=3.1.6",
+    "flask>=3.1.3",
+    "requests>=2.33.0",
+    "h2>=4.3.0",
+    "idna>=3.15",
 ]
+
+[tool.uv.sources]
+# Temporary: use fork with aiohttp 3.14 stream_writer fix until
+# aioresponses releases >= 0.7.10 (upstream PR #288).
+aioresponses = { git = "https://github.com/agners/aioresponses", rev = "8f40e0db2eed16621607ecfc857168240c795755" }
 
 [tool.uv.workspace]
 members = ["libs/*", "services/*"]
