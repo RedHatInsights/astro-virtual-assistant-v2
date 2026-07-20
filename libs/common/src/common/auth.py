@@ -7,6 +7,8 @@ import json
 
 from quart import jsonify, request
 
+from common.security_log import security_log
+
 
 def check_identity(identity_header):
     try:
@@ -21,6 +23,14 @@ def require_identity_header(func):
     async def wrapper(*args, **kwargs):
         identity_header = request.headers.get("x-rh-identity")
         if not identity_header or not check_identity(identity_header):
+            security_log(
+                action="AUTH_FAILURE",
+                resource_type="identity",
+                resource_id=request.path,
+                outcome="failure",
+                principal={"type": "anonymous"},
+                reason="missing or invalid x-rh-identity header",
+            )
             return jsonify(message="Invalid x-rh-identity"), 401
         return await func(*args, **kwargs)
 
