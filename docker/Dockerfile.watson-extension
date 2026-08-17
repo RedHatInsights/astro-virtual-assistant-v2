@@ -1,5 +1,6 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal:latest AS builder
-ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
+FROM registry.access.redhat.com/hi/python:3.13-builder AS builder
+USER 0
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_PYTHON_PREFERENCE=only-system
 
 COPY --from=ghcr.io/astral-sh/uv /uv /bin/uv
 
@@ -13,11 +14,8 @@ ADD uv.lock /app
 
 RUN uv sync --frozen --no-dev --no-editable --directory services/watson-extension
 
-FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
+FROM registry.access.redhat.com/hi/python:3.13
 WORKDIR /app
-
-# Copy python
-COPY --from=builder /root/.local/share/uv/python/ /root/.local/share/uv/python/
 
 # Copy the application from the builder
 COPY --from=builder /app/services/watson-extension/src /app
