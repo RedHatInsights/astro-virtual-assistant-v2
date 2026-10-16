@@ -17,8 +17,6 @@ metadata:
     pipelines.appstudio.openshift.io/type: build
   name: virtual-assistant-watson-extension-on-pull-request
   namespace: hcc-platex-services-tenant
-metadata:
-  creationTimestamp: null
 spec:
   params:
   - name: git-url
@@ -31,6 +29,10 @@ spec:
     value: quay.io/redhat-user-workloads/hcc-platex-services-tenant/virtual-assistant-watson-extension:on-pr-{{revision}}
   - name: dockerfile
     value: /docker/Dockerfile.watson-extension
+  - name: hermetic
+    value: "true"
+  - name: prefetch-input
+    value: '[{"type":"pip","path":".","requirements_files":["docker/requirements-watson-extension.txt"],"binary":{"packages":"aioprometheus"}}]'
   pipelineRef:
     params:
     - name: url
@@ -42,4 +44,19 @@ spec:
     resolver: git
   taskRunTemplate:
     serviceAccountName: build-pipeline-virtual-assistant-watson-extension
+  workspaces:
+  - name: workspace
+    volumeClaimTemplate:
+      metadata:
+        creationTimestamp: null
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+      status: {}
+  - name: git-auth
+    secret:
+      secretName: '{{ git_auth_secret }}'
 status: {}

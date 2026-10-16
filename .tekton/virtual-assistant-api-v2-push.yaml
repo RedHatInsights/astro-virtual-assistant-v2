@@ -26,6 +26,10 @@ spec:
     value: quay.io/redhat-user-workloads/hcc-platex-services-tenant/virtual-assistant-api-v2:{{revision}}
   - name: dockerfile
     value: /docker/Dockerfile.virtual-assistant
+  - name: hermetic
+    value: "true"
+  - name: prefetch-input
+    value: '[{"type":"pip","path":".","requirements_files":["docker/requirements-virtual-assistant.txt"],"binary":{"packages":"aioprometheus"}}]'
   pipelineRef:
     params:
     - name: url
@@ -47,7 +51,7 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 1Gi
+            storage: 5Gi
       status: {}
   - name: git-auth
     secret:
