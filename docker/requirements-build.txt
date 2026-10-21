@@ -1,0 +1,7 @@
+# Build dependencies for hermetic Konflux builds.
+# setuptools is needed to build sdist-only packages (aioprometheus, logstash-formatter,
+# quantile-python, ibm-watson) that use setuptools.build_meta as their build backend.
+# Python 3.13 no longer bundles setuptools, so it must be explicitly prefetched.
+setuptools==84.2.1 \
+    --hash=sha256:3ff8b3b5492a0aa66960f4419365a86b84e013070d4313e4d4a6894f5d64d6bc \
+    --hash=sha256:ca140b45d5325a9478f880e351484f62fef15f336462e449ca0c03c873d589c2

@@ -11,8 +11,19 @@ ADD services /app/services
 ADD .python-version /app
 ADD pyproject.toml /app
 ADD uv.lock /app
+ADD docker/requirements-build.txt /app/
+ADD docker/requirements-watson-extension.txt /app/
 
-RUN uv sync --frozen --no-dev --no-editable --directory services/watson-extension
+RUN if [ -f /cachi2/cachi2.env ]; then \
+      . /cachi2/cachi2.env && \
+      python3 -m venv .venv && \
+      .venv/bin/pip install -r requirements-build.txt && \
+      .venv/bin/pip install --no-build-isolation -r requirements-watson-extension.txt && \
+      .venv/bin/pip install --no-deps --no-build-isolation \
+        . ./libs/common ./services/watson-extension; \
+    else \
+      uv sync --frozen --no-dev --no-editable --directory services/watson-extension; \
+    fi
 
 FROM registry.access.redhat.com/hi/python:3.13
 WORKDIR /app
